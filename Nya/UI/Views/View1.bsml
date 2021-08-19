@@ -1,7 +1,10 @@
 ﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
 	<vertical>
 		<img id='nyaImage' hover-hint='Nya' preserve-aspect='true' pref-width='60' pref-height='60'/>
-		<button id='nyaButton' text='Nya' on-click='nya-click' active='true' pref-width='25'/>
-		<checkbox-setting id='nsfwCheck' on-change='nya-nsfw' text='NSFW Nya' align='Left'></checkbox-setting>
+		<horizontal>
+			<button id='nyaButton' text='Nya' on-click='nya-click' active='true' pref-width='20'/>
+			<button id='nyaDownloadButton' text='Download Nya' on-click='nya-download-click' active='true' pref-width='25'/>
+		</horizontal>
+		<checkbox-setting id='nsfwCheck' on-change='nya-nsfw' text='NSFW Nya' pad-top='5'></checkbox-setting>
 	</vertical>
 </bg>

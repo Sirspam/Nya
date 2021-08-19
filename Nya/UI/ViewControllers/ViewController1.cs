@@ -2,8 +2,10 @@
 using BeatSaberMarkupLanguage.GameplaySetup;
 using Nya.Configuration;
 using System;
+using System.IO;
 using System.Net;
 using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Zenject;
@@ -13,6 +15,9 @@ namespace Nya.UI.ViewControllers
 {
     class ViewController1 : IInitializable, IDisposable
     {
+        public byte[] nyaImageBytes;
+        public string nyaImageEndpoint;
+        public string folderPath = Environment.CurrentDirectory + "/UserData/Nya";
         public class NekoLifeEntry
         { 
             [JsonProperty("url")]
@@ -24,13 +29,12 @@ namespace Nya.UI.ViewControllers
             using var webClient = new WebClient();
             return webClient.DownloadDataTaskAsync(uri);
         }
-        public async Task<UnityEngine.Sprite> GetSprite(string endpoint)
+        public async Task<byte[]> GetImage(string endpoint)
         {
             var response = await DownloadFileToBytesAsync($"https://nekos.life/api/v2/img/{endpoint}");
             var endpointResult = JsonConvert.DeserializeObject<NekoLifeEntry>(Encoding.UTF8.GetString(response));
-            var image = await DownloadFileToBytesAsync(endpointResult.Url);
-            var sprite = BeatSaberMarkupLanguage.Utilities.LoadSpriteRaw(image);
-            return sprite;
+            nyaImageEndpoint = endpointResult.Url.Split('/').Last();
+            return await DownloadFileToBytesAsync(endpointResult.Url);
         }
         public void Initialize()
         {
@@ -52,6 +56,9 @@ namespace Nya.UI.ViewControllers
 
         [UIComponent("nyaButton")]
         public UnityEngine.UI.Button nyaButton;
+
+        [UIComponent("nyaDownloadButton")]
+        public UnityEngine.UI.Button nyaDownloadButton;
         #endregion components
 
         #region actions
@@ -61,15 +68,15 @@ namespace Nya.UI.ViewControllers
             if (nsfwCheck) // NSFW
             {
                 nyaButton.interactable = false;
-                var sprite = await GetSprite("lewd");
-                nyaImage.sprite = sprite;
+                nyaImageBytes = await GetImage("lewd");
+                nyaImage.sprite = BeatSaberMarkupLanguage.Utilities.LoadSpriteRaw(nyaImageBytes);
                 nyaButton.interactable = true;
             }
             else // SFW
             {
                 nyaButton.interactable = false;
-                var sprite = await GetSprite("neko");
-                nyaImage.sprite = sprite;
+                nyaImageBytes = await GetImage("neko");
+                nyaImage.sprite = BeatSaberMarkupLanguage.Utilities.LoadSpriteRaw(nyaImageBytes);
                 nyaButton.interactable = true;
             }
 
@@ -85,6 +92,12 @@ namespace Nya.UI.ViewControllers
         public void nsfwToggle(bool value)
         {
             nsfwCheck = value;
+        }
+
+        [UIAction("nya-download-click")]
+        public void downloadNya()
+        {
+            File.WriteAllBytes($"{folderPath}/{nyaImageEndpoint}", nyaImageBytes);
         }
         #endregion actions
 

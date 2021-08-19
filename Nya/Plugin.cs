@@ -1,4 +1,6 @@
 ﻿using Nya.Installers;
+using System;
+using System.IO;
 using IPA;
 using IPA.Config;
 using IPA.Config.Stores;
@@ -39,6 +41,9 @@ namespace Nya
         public void InitWithConfig(Config conf)
         {
             Configuration.PluginConfig.Instance = conf.Generated<Configuration.PluginConfig>();
+            var folderPath = Environment.CurrentDirectory + "/UserData/Nya";
+            if (!Directory.Exists(folderPath))
+                Directory.CreateDirectory(folderPath);
             Plugin.Log?.Debug("Config loaded");
         }
 
