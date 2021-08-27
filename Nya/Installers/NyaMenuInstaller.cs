@@ -1,9 +1,4 @@
 ﻿using Nya.UI.ViewControllers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Zenject;
 
 namespace Nya.Installers
@@ -12,7 +7,9 @@ namespace Nya.Installers
     {
         public override void InstallBindings()
         {
-            Container.BindInterfacesTo<ViewController1>().AsSingle();
+            Container.BindInterfacesTo<NyaModifierController>().AsSingle();
+            Container.BindInterfacesAndSelfTo<SettingsModalController>().AsSingle();
+            Container.BindInterfacesTo<SettingsViewController>().AsSingle();
         }
     }
 }
