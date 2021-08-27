@@ -1,0 +1,9 @@
+﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+	<settings-container>
+		<checkbox-setting id='remember-NSFW' text='Remember NSFW setting' hover-hint='If disabled Nya will always be set to SFW on start-up'/>
+		<dropdown-list-setting id='api-dropdown' text='API' hover-hint='The API to get images from. APIs can be added or changed in the Nya config json' value='api-value' choices='api-list' on-change='api-change'/>
+		<dropdown-list-setting id='sfw-dropdown' text='SFW endpoint' hover-hint='The endpoint to use for SFW images' value='sfw-value' choices='sfw-list'/>
+		<dropdown-list-setting id='nsfw-dropdown' text='NSFW endpoint' hover-hint='The endpoint to use for NSFW images' value='nsfw-value' choices='nsfw-list'/>
+		<image src='Nya.Assets.Chocola_Wave.png' preserve-aspect='true' size-delta-y='24'/>
+	</settings-container>
+</bg>
