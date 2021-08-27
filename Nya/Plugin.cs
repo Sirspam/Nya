@@ -44,6 +44,10 @@ namespace Nya
             var folderPath = Environment.CurrentDirectory + "/UserData/Nya";
             if (!Directory.Exists(folderPath))
                 Directory.CreateDirectory(folderPath);
+            if (!Configuration.PluginConfig.Instance.rememberNSFW)
+            {
+                Configuration.PluginConfig.Instance.NSFW = false;
+            }
             Plugin.Log?.Debug("Config loaded");
         }
 
