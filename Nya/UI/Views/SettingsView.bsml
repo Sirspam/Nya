@@ -1,9 +1,12 @@
 ﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
-	<settings-container>
-		<checkbox-setting id='remember-NSFW' text='Remember NSFW setting' hover-hint='If disabled Nya will always be set to SFW on start-up'/>
+	<settings-container vertical-fit='PreferredSize' child-control-height='true'>
+		<checkbox-setting id='remember-NSFW-checkbox' text='Remember NSFW setting' hover-hint='If disabled Nya will always be set to SFW on start-up' value='remember-NSFW'/>
+		<checkbox-setting id='skip-NSFW-checkbox' text='Skip NSFW confirmation' value='skip-NSFW'/>
+		<slider-setting id='auto-wait-slider' text='Auto Nya wait time' hover-hint='How many seconds Auto Nya will wait for before getting a new image' value='auto-wait' increment='1' min='4' max='60' integer-only='true'/>
 		<dropdown-list-setting id='api-dropdown' text='API' hover-hint='The API to get images from. APIs can be added or changed in the Nya config json' value='api-value' choices='api-list' on-change='api-change'/>
 		<dropdown-list-setting id='sfw-dropdown' text='SFW endpoint' hover-hint='The endpoint to use for SFW images' value='sfw-value' choices='sfw-list'/>
 		<dropdown-list-setting id='nsfw-dropdown' text='NSFW endpoint' hover-hint='The endpoint to use for NSFW images' value='nsfw-value' choices='nsfw-list'/>
-		<image src='Nya.Assets.Chocola_Wave.png' preserve-aspect='true' size-delta-y='24'/>
+		<text text="I hope you're having a good day" rich-text='true' font-color='#00000000'/>
+		<image src='Nya.Assets.Chocola_Wave.png' preserve-aspect='true' pref-width='37' pref-height='37'/>
 	</settings-container>
 </bg>

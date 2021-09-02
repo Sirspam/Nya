@@ -17,7 +17,21 @@ namespace Nya.UI.ViewControllers
             get => PluginConfig.Instance.rememberNSFW;
             set => PluginConfig.Instance.rememberNSFW = value;
         }
-        
+
+        [UIValue("skip-NSFW")]
+        public bool skipNSFW
+        {
+            get => PluginConfig.Instance.skipNSFW;
+            set => PluginConfig.Instance.skipNSFW = value;
+        }
+
+        [UIValue("auto-wait")]
+        public int autoNyaWait
+        {
+            get => PluginConfig.Instance.autoNyaWait;
+            set => PluginConfig.Instance.autoNyaWait = value;
+        }
+
         [UIValue("api-list")]
         public List<object> apiList = new List<object>();
 

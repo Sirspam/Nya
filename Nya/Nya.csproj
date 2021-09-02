@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net48</TargetFramework>
@@ -89,6 +89,7 @@
 	<ItemGroup>
 		<EmbeddedResource Include="Assets\Chocola_Dead.png" />
 		<EmbeddedResource Include="Assets\Chocola_Wave.png" />
+		<EmbeddedResource Include="Assets\Vanilla_Flushed.png" />
 		<EmbeddedResource Include="manifest.json" />
 		<EmbeddedResource Include="UI\Views\*.bsml" />
 	</ItemGroup>
@@ -96,6 +97,9 @@
 	<ItemGroup>
 	  <None Remove="Assets\Chocola_Dead.png" />
 	  <None Remove="Assets\Chocola_Wave.png" />
+	  <None Remove="Assets\Vanilla_Flushed.png" />
+	  <None Remove="UI\ViewControllers\BSMLViewController1.bsml" />
+	  <None Remove="UI\Views\NSFWConfirmModal.bsml" />
 	  <None Remove="UI\Views\SettingsModal.bsml" />
 	  <None Remove="UI\Views\SettingView.bsml" />
 	</ItemGroup>
@@ -105,5 +109,9 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Entries\" />
 	</ItemGroup>
 </Project>

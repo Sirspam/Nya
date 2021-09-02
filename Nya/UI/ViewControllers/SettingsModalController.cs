@@ -2,6 +2,7 @@
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Parser;
 using Nya.Configuration;
+using Nya.Utils;
 using HMUI;
 using IPA.Utilities;
 using System;
@@ -14,10 +15,10 @@ namespace Nya.UI.ViewControllers
 {
     public class SettingsModalController : IInitializable, IDisposable, INotifyPropertyChanged
     {
+        private NSFWConfirmModalController nsfwConfirmModalController;
         private GameplaySetupViewController gameplaySetupViewController;
         public event PropertyChangedEventHandler PropertyChanged;
         private bool parsed;
-        private string folderPath = Environment.CurrentDirectory + "/UserData/Nya";
 
         #region components
         [UIComponent("root")]
@@ -34,6 +35,9 @@ namespace Nya.UI.ViewControllers
 
         [UIComponent("nyaCopyButton")]
         private readonly UnityEngine.UI.Button nyaCopyButton;
+
+        [UIComponent("nsfwCheckbox")] // nsfwCheckbox
+        private readonly RectTransform nsfwCheckbox;
         #endregion
 
         #region values
@@ -44,7 +48,7 @@ namespace Nya.UI.ViewControllers
             set
             {
                 PluginConfig.Instance.NSFW = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PluginConfig.Instance.NSFW)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(nsfwCheck)));
             }
         }
         #endregion
@@ -52,9 +56,10 @@ namespace Nya.UI.ViewControllers
         [UIParams]
         private readonly BSMLParserParams parserParams;
 
-        public SettingsModalController(GameplaySetupViewController gameplaySetupViewController)
+        public SettingsModalController(GameplaySetupViewController gameplaySetupViewController, NSFWConfirmModalController nsfwConfirmModalController)
         {
             this.gameplaySetupViewController = gameplaySetupViewController;
+            this.nsfwConfirmModalController = nsfwConfirmModalController;
             parsed = false;
         }
 
@@ -94,20 +99,29 @@ namespace Nya.UI.ViewControllers
         [UIAction("nya-download-click")]
         private void downloadNya()
         {
-            NyaModifierController.downloadNya();
+            ImageUtils.downloadNyaImage();
         }
 
         [UIAction("nya-copy-click")]
         private void copyNya()
         {
-            NyaModifierController.copyNya();
+            ImageUtils.copyNyaImage();
         }
 
         [UIAction("nya-nsfw")]
         private void nsfwToggle(bool value)
         {
-            nsfwCheck = value;
+            if (value && !PluginConfig.Instance.skipNSFW)
+            {
+                nsfwConfirmModalController.ShowModal(nsfwCheckbox, nsfwConfirmYes, nsfwConfirmNo);
+            }
+            else
+            {
+                nsfwCheck = value;
+            }
         }
         #endregion
+        private void nsfwConfirmYes() => nsfwCheck = true;
+        private void nsfwConfirmNo() => nsfwCheck = false;
     }
 }

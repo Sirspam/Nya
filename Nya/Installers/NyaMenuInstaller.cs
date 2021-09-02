@@ -7,9 +7,10 @@ namespace Nya.Installers
     {
         public override void InstallBindings()
         {
-            Container.BindInterfacesTo<NyaModifierController>().AsSingle();
+            Container.BindInterfacesAndSelfTo<NyaModifierController>().AsSingle();
             Container.BindInterfacesAndSelfTo<SettingsModalController>().AsSingle();
-            Container.BindInterfacesTo<SettingsViewController>().AsSingle();
+            Container.BindInterfacesAndSelfTo<NSFWConfirmModalController>().AsSingle();
+            Container.BindInterfacesAndSelfTo<SettingsViewController>().AsSingle();
         }
     }
 }

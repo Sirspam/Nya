@@ -1,17 +1,9 @@
-﻿using BeatSaberMarkupLanguage;
-using BeatSaberMarkupLanguage.Animations;
+﻿using Nya.Utils;
+using Nya.Configuration;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.GameplaySetup;
-using Nya.Configuration;
 using System;
-using System.IO;
-using System.Text;
-using System.Linq;
-using System.Windows.Forms;
-using System.Drawing;
-using System.Net.Http;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Zenject;
 using HMUI;
 using UnityEngine;
@@ -21,103 +13,13 @@ namespace Nya.UI.ViewControllers
 {
     public class NyaModifierController : IInitializable, IDisposable
     {
-        private readonly HttpClient client = new HttpClient();
         private SettingsModalController settingsModalController;
         private GameplaySetupViewController gameplaySetupViewController;
-        private static byte[] nyaImageBytes;
-        private static string nyaImageEndpoint;
-        private static string nyaImageURL;
-        private static string folderPath = Environment.CurrentDirectory + "/UserData/Nya";
         private bool autoNyaToggle = false;
-
-        public static void downloadNya()
-        {
-            File.WriteAllBytes($"{folderPath}/{nyaImageEndpoint}", nyaImageBytes);
-        }
-        public static void copyNya()
-        {
-            using (MemoryStream ms = new MemoryStream(nyaImageBytes))
-            {
-                Bitmap bm = new Bitmap(ms);
-                Clipboard.SetImage(bm); // Converts gifs to pngs because ???
-            }
-        }
-        private class NekoLifeEntry
-        { 
-            [JsonProperty("url")]
-            public string Url { get; set; }
-        }
-        private async Task<byte[]> GetWebDataToBytesAsync(string url)
-        {
-            try
-            {
-                HttpResponseMessage response = await client.GetAsync(url);
-                return await response.Content.ReadAsByteArrayAsync();
-            }
-            catch (HttpRequestException error)
-            {
-                Plugin.Log.Error($"Error getting data from {url}, Message: {error}");
-                Utilities.GetData("Nya.Assets.Chocola_Dead.png", (byte[] data) =>
-                {
-                    nyaImageBytes = data;
-                    nyaImage.sprite = Utilities.LoadSpriteRaw(data);
-                });
-                return null; // Breaks GetImageURL Task, prob an easy way to fix but I don't know it so I left it be for now.
-            }
-        }
-        private async Task<string> GetImageURL(string endpoint)
-        {
-            var response = await GetWebDataToBytesAsync(PluginConfig.Instance.APIs[PluginConfig.Instance.selectedAPI].URL + endpoint);
-            var endpointResult = JsonConvert.DeserializeObject<NekoLifeEntry>(Encoding.UTF8.GetString(response));
-            nyaImageEndpoint = endpointResult.Url.Split('/').Last();
-            return endpointResult.Url;
-        }
-
-        public async Task loadNyaSprite()
-        {
-            if (PluginConfig.Instance.NSFW) // NSFW
-            {
-                nyaImageURL = await GetImageURL(PluginConfig.Instance.APIs[PluginConfig.Instance.selectedAPI].selectedNSFW_Endpoint);
-            }
-            else // SFW
-            {
-                nyaImageURL = await GetImageURL(PluginConfig.Instance.APIs[PluginConfig.Instance.selectedAPI].selectedSFW_Endpoint);
-            }
-            Plugin.Log.Debug($"Loading from {nyaImageURL}");
-
-            // Below is essentially BSML's SetImage method but adapted "better" for Nya
-            // I didn't like that it would show a yucky loading gif >:(
-            AnimationStateUpdater oldStateUpdater = nyaImage.GetComponent<AnimationStateUpdater>();
-            if (oldStateUpdater != null)
-                UnityEngine.Object.DestroyImmediate(oldStateUpdater);
-
-            if (nyaImageURL.EndsWith(".gif") || nyaImageURL.EndsWith(".apng"))
-            {
-                AnimationStateUpdater stateUpdater = nyaImage.gameObject.AddComponent<AnimationStateUpdater>();
-                stateUpdater.image = nyaImage;
-                var data = await GetWebDataToBytesAsync(nyaImageURL);
-                AnimationLoader.Process((nyaImageURL.EndsWith(".gif") || (nyaImageURL.EndsWith(".gif"))) ? AnimationType.GIF : AnimationType.APNG, data, (Texture2D tex, Rect[] uvs, float[] delays, int width, int height) =>
-                {
-                    nyaImageBytes = data; 
-                    AnimationControllerData controllerData = AnimationController.instance.Register(nyaImageURL, tex, uvs, delays);
-                    stateUpdater.controllerData = controllerData;
-                });
-            }
-            else
-            {
-                AnimationStateUpdater stateUpdater = nyaImage.gameObject.AddComponent<AnimationStateUpdater>();
-                stateUpdater.image = nyaImage;
-                var data = await GetWebDataToBytesAsync(nyaImageURL);
-                if (stateUpdater != null)
-                    UnityEngine.Object.DestroyImmediate(stateUpdater);
-                nyaImageBytes = data;
-                nyaImage.sprite = Utilities.LoadSpriteRaw(data);
-            }
-        }
 
         #region components
         [UIComponent("nyaImage")]
-        private readonly ImageView nyaImage;
+        internal readonly ImageView nyaImage;
 
         [UIComponent("nyaButton")]
         private readonly UnityEngine.UI.Button nyaButton;
@@ -137,14 +39,14 @@ namespace Nya.UI.ViewControllers
         public async void NyaClicked()
         {
             nyaButton.interactable = false;
-            await loadNyaSprite();
+            await ImageUtils.loadNewNyaSprite(nyaImage);
             nyaButton.interactable = true;
         }
 
         [UIAction("#post-parse")]
         public async void NyaPostParse()
         {
-            await loadNyaSprite();
+            await ImageUtils.loadNewNyaSprite(nyaImage);
         }
 
         [UIAction("nya-auto-clicked")]
@@ -157,8 +59,8 @@ namespace Nya.UI.ViewControllers
                 nyaButton.interactable = false;
                 while (autoNyaToggle)
                 {
-                    await loadNyaSprite();
-                    await Task.Delay(4000);
+                    await ImageUtils.loadNewNyaSprite(nyaImage);
+                    await Task.Delay(PluginConfig.Instance.autoNyaWait * 1000);
                 }
             }
             else // Off
