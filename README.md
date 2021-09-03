@@ -1,5 +1,5 @@
 # Nya
-BeatSaber mod for displaying images from the web APIs
+Beat Saber mod for displaying images from web APIs
 
 I don't want to grind for PP anymore, I just want to look at nekos.
 ## Installation
