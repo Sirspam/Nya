@@ -1,7 +1,5 @@
 # Nya
-Beat Saber mod for displaying images from web APIs
-
-I don't want to grind for PP anymore, I just want to look at nekos.
+A Beat Saber mod for displaying and downloading nya-tastic images from web APIs
 ## Installation
 Download the latest version of Nya from [releases](https://github.com/Sirspam/Nya/releases) and slap it into your BeatSaber's plugin folder.
 
