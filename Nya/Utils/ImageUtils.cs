@@ -19,10 +19,10 @@ namespace Nya.Utils
     public class ImageUtils
     {
         private static readonly HttpClient client = new HttpClient();
-        private static byte[] nyaImageBytes;
-        private static string nyaImageEndpoint;
-        private static string nyaImageURL;
-        private static string folderPath = Environment.CurrentDirectory + "/UserData/Nya";
+        public static byte[] nyaImageBytes;
+        public static string nyaImageEndpoint;
+        public static string nyaImageURL;
+        public static string folderPath = Environment.CurrentDirectory + "/UserData/Nya";
 
         public static void downloadNyaImage()
         {
@@ -53,7 +53,7 @@ namespace Nya.Utils
 
         public static async Task<string?> GetImageURL(string endpoint)
         {
-            var response = await GetWebDataToBytesAsync(PluginConfig.Instance.APIs[PluginConfig.Instance.selectedAPI].URL + endpoint);
+            var response = await GetWebDataToBytesAsync(WebAPIs.APIs[PluginConfig.Instance.selectedAPI].URL + endpoint);
             if (response == null)
             {
                 return null;
@@ -72,11 +72,11 @@ namespace Nya.Utils
         {
             if (PluginConfig.Instance.NSFW) // NSFW
             {
-                nyaImageURL = await GetImageURL(PluginConfig.Instance.APIs[PluginConfig.Instance.selectedAPI].selectedNSFW_Endpoint);
+                nyaImageURL = await GetImageURL(PluginConfig.Instance.APIs[PluginConfig.Instance.selectedAPI].selected_NSFW_Endpoint);
             }
             else // SFW
             {
-                nyaImageURL = await GetImageURL(PluginConfig.Instance.APIs[PluginConfig.Instance.selectedAPI].selectedSFW_Endpoint);
+                nyaImageURL = await GetImageURL(PluginConfig.Instance.APIs[PluginConfig.Instance.selectedAPI].selected_SFW_Endpoint);
             }
             if (nyaImageURL == null)
             {
@@ -87,7 +87,7 @@ namespace Nya.Utils
                     return;
                 });
             }
-            Plugin.Log.Debug($"Loading from {nyaImageURL}");
+            Plugin.Log.Info($"Loading image from {nyaImageURL}");
 
             // Below is essentially BSML's SetImage method but adapted "better" for Nya
             // I didn't like that it would show a yucky loading gif >:(

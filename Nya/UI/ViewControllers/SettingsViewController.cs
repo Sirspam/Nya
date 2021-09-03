@@ -2,6 +2,7 @@
 using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.Settings;
 using Nya.Configuration;
+using Nya.Utils;
 using System;
 using System.Collections.Generic;
 using Zenject;
@@ -48,8 +49,8 @@ namespace Nya.UI.ViewControllers
         [UIValue("sfw-value")]
         public string sfwValue
         {
-            get => PluginConfig.Instance.APIs[apiValue].selectedSFW_Endpoint;
-            set => PluginConfig.Instance.APIs[apiValue].selectedSFW_Endpoint = value;
+            get => PluginConfig.Instance.APIs[apiValue].selected_SFW_Endpoint;
+            set => PluginConfig.Instance.APIs[apiValue].selected_SFW_Endpoint = value;
         }
 
         [UIValue("nsfw-list")]
@@ -58,8 +59,8 @@ namespace Nya.UI.ViewControllers
         [UIValue("nsfw-value")]
         public string nsfwValue
         {
-            get => PluginConfig.Instance.APIs[apiValue].selectedNSFW_Endpoint;
-            set => PluginConfig.Instance.APIs[apiValue].selectedNSFW_Endpoint = value;
+            get => PluginConfig.Instance.APIs[apiValue].selected_NSFW_Endpoint;
+            set => PluginConfig.Instance.APIs[apiValue].selected_NSFW_Endpoint = value;
         }
 
         [UIComponent("sfw-dropdown")]
@@ -83,15 +84,15 @@ namespace Nya.UI.ViewControllers
         public void Dispose() => BSMLSettings.instance?.RemoveSettingsMenu(this);
         public void SetupLists()
         {
-            foreach (var api in PluginConfig.Instance.APIs.Keys)
+            foreach (var api in WebAPIs.APIs.Keys)
             {
                 apiList.Add(api);
             }
-            foreach (var endpoint in PluginConfig.Instance.APIs[apiValue].SFW_Endpoints)
+            foreach (var endpoint in WebAPIs.APIs[apiValue].SFW_Endpoints)
             {
                 sfwList.Add(endpoint);
             }
-            foreach (var endpoint in PluginConfig.Instance.APIs[apiValue].NSFW_Endpoints)
+            foreach (var endpoint in WebAPIs.APIs[apiValue].NSFW_Endpoints)
             {
                 nsfwList.Add(endpoint);
             }
@@ -100,11 +101,11 @@ namespace Nya.UI.ViewControllers
         {
             sfwDropDownListSetting.values.Clear();
             nsfwDropDownListSetting.values.Clear();
-            foreach (var endpoint in PluginConfig.Instance.APIs[apiValue].SFW_Endpoints)
+            foreach (var endpoint in WebAPIs.APIs[apiValue].SFW_Endpoints)
             {
                 sfwDropDownListSetting.values.Add(endpoint);
             }
-            foreach (var endpoint in PluginConfig.Instance.APIs[apiValue].NSFW_Endpoints)
+            foreach (var endpoint in WebAPIs.APIs[apiValue].NSFW_Endpoints)
             {
                 nsfwDropDownListSetting.values.Add(endpoint);
             }
