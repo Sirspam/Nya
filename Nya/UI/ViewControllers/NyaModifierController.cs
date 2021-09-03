@@ -71,8 +71,12 @@ namespace Nya.UI.ViewControllers
         }
 
         [UIAction("settings-button-clicked")]
-        public void SettingsButtonClicked()
+        public async void SettingsButtonClicked()
         {
+            if (autoNyaToggle)
+            {
+                autoNya();
+            }
             settingsModalController.ShowModal(settingsButtonTransform);
         }
         #endregion

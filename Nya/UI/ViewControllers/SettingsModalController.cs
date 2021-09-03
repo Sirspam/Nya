@@ -93,6 +93,14 @@ namespace Nya.UI.ViewControllers
             Parse(parentTransform);
             parserParams.EmitEvent("close-modal");
             parserParams.EmitEvent("open-modal");
+            if (ImageUtils.nyaImageURL.EndsWith(".gif") || ImageUtils.nyaImageURL.EndsWith(".apng"))
+            {
+                nyaCopyButton.interactable = false;
+            }
+            else
+            {
+                nyaCopyButton.interactable = true;
+            }
         }
 
         #region actions
