@@ -1,5 +1,4 @@
-﻿
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using IPA.Config.Stores;
 using IPA.Config.Stores.Attributes;

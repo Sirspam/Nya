@@ -16,6 +16,7 @@ namespace Nya.UI.ViewControllers
         private SettingsModalController settingsModalController;
         private GameplaySetupViewController gameplaySetupViewController;
         private bool autoNyaToggle = false;
+        private bool AutoNyaCooldown = false;
 
         #region components
         [UIComponent("nyaImage")]
@@ -52,9 +53,17 @@ namespace Nya.UI.ViewControllers
         [UIAction("nya-auto-clicked")]
         public async void autoNya()
         {
+            Plugin.Log.Debug(AutoNyaCooldown.ToString());
+            if (AutoNyaCooldown)
+            {
+                return;
+            }
+            AutoNyaCooldown = true;
+
             autoNyaToggle = !autoNyaToggle;
             if (autoNyaToggle) // On
             {
+                autoNyaCooldownHandler(); // Stops users from spamming Auto Nya and by extension spamming the API
                 nyaAutoButton.faceColor = new Color32(46, 204, 113, 255); // Green
                 nyaButton.interactable = false;
                 while (autoNyaToggle)
@@ -67,7 +76,14 @@ namespace Nya.UI.ViewControllers
             {
                 nyaAutoButton.faceColor = new Color32(255, 255, 255, 255); // White
                 nyaButton.interactable = true;
+                AutoNyaCooldown = false;
             }
+        }
+
+        private async Task autoNyaCooldownHandler()
+        {
+            await Task.Delay(2000);
+            AutoNyaCooldown = false;
         }
 
         [UIAction("settings-button-clicked")]
