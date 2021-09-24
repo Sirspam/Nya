@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Nya.Utils
 {
-    class WebAPIs
+    internal class WebAPIs
     {
         public static Dictionary<string, APIData> APIs { get; set; } = new Dictionary<string, APIData>() {
             { "waifu.pics", new APIData() {
@@ -16,7 +12,7 @@ namespace Nya.Utils
             } },
             { "nekos.life", new APIData() {
                 URL = "https://nekos.life/api/v2/img/",
-                SFW_Endpoints = new List<string> { "neko", "ngif", "waifu", "smug" },
+                SFW_Endpoints = new List<string> { "neko", "ngif", "waifu", "smug", "gecg", "meow" },
                 NSFW_Endpoints = new List<string> { "lewd", "lewd_gif", "yuri", "futa", "femdom", "boobs", "cum"} // Not all API endpoints because nekos.life has so many nsfw endpoints it's ludicrous
             } }
         };

@@ -2,7 +2,7 @@
 	<modal id='modal' show-event='open-modal' hide-event='close-modal' size-delta-x='70' size-delta-y='50' move-to-center='true' horizontal-fit='PreferredSize' vertical-fit='PreferredSize'>
 		<vertical pad-top='2'>
 			<text text='Are you sure you want to enable NSFW images?'/>
-			<image src='Nya.Assets.Vanilla_Flushed.png' preserve-aspect='true' pref-width='25' pref-height='25'/>
+			<image src='Nya.Resources.Vanilla_Flushed.png' preserve-aspect='true' pref-width='25' pref-height='25'/>
 			<horizontal spacing='-2'>
 				<button id='noButton' text='No' on-click='no-click' active='true' min-width='22'/>
 				<button id='yesButton' text="Yes, I'm 18+" on-click='yes-click' active='true' min-width='22'/>

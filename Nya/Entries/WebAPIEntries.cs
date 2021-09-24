@@ -1,5 +1,4 @@
-﻿using Nya.Configuration;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Nya.Entries
 {

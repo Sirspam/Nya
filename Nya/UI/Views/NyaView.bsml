@@ -1,0 +1,10 @@
+﻿<bg id='root' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+	<vertical pad-top='2'>
+		<img id='nyaImage' preserve-aspect='true' pref-width='70' pref-height='70'/>
+		<horizontal spacing='10'>
+			<button id='nyaAutoButton' text='Auto Nya' hover-hint="It's Auto-nya-ted!" on-click='nya-auto-clicked' active='true' min-width='20'/>
+			<action-button id='nyaButton' text='Nya' on-click='nya-click' active='true' min-width='20'/>
+			<button id='settingsButton' text='⚙' hover-hint='Image Settings' on-click='settings-button-clicked' min-width='20'/>
+		</horizontal>
+	</vertical>
+</bg>

@@ -3,7 +3,7 @@
 
 namespace Nya.Utils
 {
-    class APIData
+    internal class APIData
     {
         public string URL { get; set; }
         public List<string> SFW_Endpoints { get; set; }

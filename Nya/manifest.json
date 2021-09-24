@@ -3,8 +3,8 @@
   "id": "Nya",
   "name": "Nya",
   "author": "Sirspam",
-  "version": "0.1.0",
-  "description": "BeatSaber mod for displaying and downloading images from web APIs",
+  "version": "0.2.0",
+  "description": "BeatSaber mod for displaying nya-tastic images from various anime themed web APIs",
   "gameVersion": "1.16.4",
   "dependsOn": {
     "BSIPA": "^4.2.0",

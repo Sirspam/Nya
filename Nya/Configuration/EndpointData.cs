@@ -1,8 +1,4 @@
-﻿using IPA.Config.Stores.Attributes;
-using IPA.Config.Stores.Converters;
-using System.Collections.Generic;
-
-namespace Nya.Configuration
+﻿namespace Nya.Configuration
 {
     class EndpointData
     {

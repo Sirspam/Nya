@@ -1,24 +1,29 @@
 ﻿using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Parser;
-using Nya.Configuration;
-using Nya.Utils;
 using HMUI;
 using IPA.Utilities;
-using System;
+using Nya.Configuration;
+using Nya.Utils;
+using System.ComponentModel;
 using System.Reflection;
 using UnityEngine;
-using Zenject;
-using System.ComponentModel;
 
 namespace Nya.UI.ViewControllers
 {
-    public class SettingsModalController : IInitializable, IDisposable, INotifyPropertyChanged
+    internal class SettingsModalController : INotifyPropertyChanged
     {
-        private NSFWConfirmModalController nsfwConfirmModalController;
-        private GameplaySetupViewController gameplaySetupViewController;
+        private readonly NSFWConfirmModalController nsfwConfirmModalController;
+        private readonly ButtonUtils _buttonUtils;
         public event PropertyChangedEventHandler PropertyChanged;
         private bool parsed;
+
+        public SettingsModalController(NSFWConfirmModalController nsfwConfirmModalController, ButtonUtils buttonUtils)
+        {
+            this.nsfwConfirmModalController = nsfwConfirmModalController;
+            _buttonUtils = buttonUtils;
+            parsed = false;
+        }
 
         #region components
         [UIComponent("root")]
@@ -36,7 +41,7 @@ namespace Nya.UI.ViewControllers
         [UIComponent("nyaCopyButton")]
         private readonly UnityEngine.UI.Button nyaCopyButton;
 
-        [UIComponent("nsfwCheckbox")] // nsfwCheckbox
+        [UIComponent("nsfwCheckbox")]
         private readonly RectTransform nsfwCheckbox;
         #endregion
 
@@ -55,23 +60,6 @@ namespace Nya.UI.ViewControllers
 
         [UIParams]
         private readonly BSMLParserParams parserParams;
-
-        public SettingsModalController(GameplaySetupViewController gameplaySetupViewController, NSFWConfirmModalController nsfwConfirmModalController)
-        {
-            this.gameplaySetupViewController = gameplaySetupViewController;
-            this.nsfwConfirmModalController = nsfwConfirmModalController;
-            parsed = false;
-        }
-
-        public void Initialize()
-        {
-            gameplaySetupViewController.didDeactivateEvent += GameplaySetupViewController_didActivateEvent;
-        }
-
-        public void Dispose()
-        {
-            gameplaySetupViewController.didDeactivateEvent -= GameplaySetupViewController_didActivateEvent;
-        }
 
         private void GameplaySetupViewController_didActivateEvent(bool firstActivation, bool addedToHierarchy)
         {
@@ -107,13 +95,15 @@ namespace Nya.UI.ViewControllers
         [UIAction("nya-download-click")]
         private void downloadNya()
         {
-            ImageUtils.downloadNyaImage();
+            _buttonUtils.UnderlineClick(nyaDownloadButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>());
+            ImageUtils.DownloadNyaImage();
         }
 
         [UIAction("nya-copy-click")]
         private void copyNya()
         {
-            ImageUtils.copyNyaImage();
+            _buttonUtils.UnderlineClick(nyaCopyButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>());
+            ImageUtils.CopyNyaImage();
         }
 
         [UIAction("nya-nsfw")]
@@ -126,10 +116,15 @@ namespace Nya.UI.ViewControllers
             else
             {
                 nsfwCheck = value;
+                PluginConfig.Instance.Changed();
             }
         }
         #endregion
-        private void nsfwConfirmYes() => nsfwCheck = true;
+        private void nsfwConfirmYes()
+        {
+            nsfwCheck = true;
+            PluginConfig.Instance.Changed();
+        }
         private void nsfwConfirmNo() => nsfwCheck = false;
     }
 }

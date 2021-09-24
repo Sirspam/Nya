@@ -1,11 +1,10 @@
-﻿using Nya.Installers;
-using Nya.UI.ViewControllers;
-using System;
-using System.IO;
-using IPA;
+﻿using IPA;
 using IPA.Config;
 using IPA.Config.Stores;
+using Nya.Installers;
 using SiraUtil.Zenject;
+using System;
+using System.IO;
 using IPALogger = IPA.Logging.Logger;
 
 namespace Nya
@@ -33,6 +32,7 @@ namespace Nya
             Plugin.Log = logger;
             Plugin.Log?.Debug("Logger initialized.");
             zenjector.OnMenu<NyaMenuInstaller>();
+            zenjector.OnGame<NyaGameInstaller>();
         }
 
         #region BSIPA Config

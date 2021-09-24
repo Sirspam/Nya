@@ -1,34 +1,36 @@
 ﻿using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Animations;
-using System;
-using System.IO;
-using System.Text;
-using System.Linq;
-using System.Windows.Forms;
-using System.Drawing;
-using System.Threading.Tasks;
-using System.Net.Http;
+using HMUI;
 using Newtonsoft.Json;
 using Nya.Configuration;
 using Nya.Entries;
+using System;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 using UnityEngine;
-using HMUI;
 
 namespace Nya.Utils
 {
-    public class ImageUtils
+    internal class ImageUtils
     {
         private static readonly HttpClient client = new HttpClient();
-        public static byte[] nyaImageBytes;
+        private static string folderPath = Environment.CurrentDirectory + "/UserData/Nya";
+
+        public static byte[] nyaImageBytes = null;
         public static string nyaImageEndpoint;
         public static string nyaImageURL;
-        public static string folderPath = Environment.CurrentDirectory + "/UserData/Nya";
 
-        public static void downloadNyaImage()
+        public static void DownloadNyaImage()
         {
             File.WriteAllBytes($"{folderPath}/{nyaImageEndpoint}", nyaImageBytes);
         }
-        public static void copyNyaImage()
+
+        public static void CopyNyaImage()
         {
             using (MemoryStream ms = new MemoryStream(nyaImageBytes))
             {
@@ -36,7 +38,8 @@ namespace Nya.Utils
                 Clipboard.SetImage(bm); // Converts gifs to pngs because ???
             }
         }
-        #nullable enable
+#nullable enable
+
         public static async Task<byte[]?> GetWebDataToBytesAsync(string url)
         {
             try
@@ -66,9 +69,50 @@ namespace Nya.Utils
             nyaImageEndpoint = endpointResult.Url.Split('/').Last();
             return endpointResult.Url;
         }
-        #nullable disable
+#nullable disable
 
-        public static async Task loadNewNyaSprite(ImageView image)
+        public static async Task LoadNyaSprite(ImageView image)
+        {
+            if (nyaImageBytes == null)
+            {
+                await LoadNewNyaSprite(image);
+                return;
+            }
+            if (image.sprite.texture.GetRawTextureData() == nyaImageBytes)
+            {
+                Plugin.Log.Debug("asdfadsfasdf");
+                return;
+            }
+
+
+            Plugin.Log.Info($"Loading image from {nyaImageURL}");
+            // Below is essentially BSML's SetImage method but adapted "better" for Nya
+            // I didn't like that it would show a yucky loading gif >:(
+            AnimationStateUpdater oldStateUpdater = image.GetComponent<AnimationStateUpdater>();
+            if (oldStateUpdater != null)
+                UnityEngine.Object.DestroyImmediate(oldStateUpdater);
+
+            if (nyaImageURL.EndsWith(".gif") || nyaImageURL.EndsWith(".apng"))
+            {
+                AnimationStateUpdater stateUpdater = image.gameObject.AddComponent<AnimationStateUpdater>();
+                stateUpdater.image = image;
+                AnimationLoader.Process((nyaImageURL.EndsWith(".gif") || (nyaImageURL.EndsWith(".gif"))) ? AnimationType.GIF : AnimationType.APNG, nyaImageBytes, (Texture2D tex, Rect[] uvs, float[] delays, int width, int height) =>
+                {
+                    AnimationControllerData controllerData = AnimationController.instance.Register(nyaImageURL, tex, uvs, delays);
+                    stateUpdater.controllerData = controllerData;
+                });
+            }
+            else
+            {
+                AnimationStateUpdater stateUpdater = image.gameObject.AddComponent<AnimationStateUpdater>();
+                stateUpdater.image = image;
+                if (stateUpdater != null)
+                    UnityEngine.Object.DestroyImmediate(stateUpdater);
+                image.sprite = Utilities.LoadSpriteRaw(nyaImageBytes);
+            }
+        }
+
+        public static async Task LoadNewNyaSprite(ImageView image)
         {
             if (PluginConfig.Instance.NSFW) // NSFW
             {
@@ -80,43 +124,15 @@ namespace Nya.Utils
             }
             if (nyaImageURL == null)
             {
-                Utilities.GetData("Nya.Assets.Chocola_Dead.png", (byte[] data) =>
+                Utilities.GetData("Nya.Resources.Chocola_Dead.png", (byte[] data) =>
                 {
                     nyaImageBytes = data;
                     image.sprite = Utilities.LoadSpriteRaw(data);
                     return;
                 });
             }
-            Plugin.Log.Info($"Loading image from {nyaImageURL}");
-
-            // Below is essentially BSML's SetImage method but adapted "better" for Nya
-            // I didn't like that it would show a yucky loading gif >:(
-            AnimationStateUpdater oldStateUpdater = image.GetComponent<AnimationStateUpdater>();
-            if (oldStateUpdater != null)
-                UnityEngine.Object.DestroyImmediate(oldStateUpdater);
-
-            if (nyaImageURL.EndsWith(".gif") || nyaImageURL.EndsWith(".apng"))
-            {
-                AnimationStateUpdater stateUpdater = image.gameObject.AddComponent<AnimationStateUpdater>();
-                stateUpdater.image = image;
-                var data = await GetWebDataToBytesAsync(nyaImageURL);
-                AnimationLoader.Process((nyaImageURL.EndsWith(".gif") || (nyaImageURL.EndsWith(".gif"))) ? AnimationType.GIF : AnimationType.APNG, data, (Texture2D tex, Rect[] uvs, float[] delays, int width, int height) =>
-                {
-                    nyaImageBytes = data;
-                    AnimationControllerData controllerData = AnimationController.instance.Register(nyaImageURL, tex, uvs, delays);
-                    stateUpdater.controllerData = controllerData;
-                });
-            }
-            else
-            {
-                AnimationStateUpdater stateUpdater = image.gameObject.AddComponent<AnimationStateUpdater>();
-                stateUpdater.image = image;
-                if (stateUpdater != null)
-                    UnityEngine.Object.DestroyImmediate(stateUpdater);
-                var data = await GetWebDataToBytesAsync(nyaImageURL);
-                nyaImageBytes = data;
-                image.sprite = Utilities.LoadSpriteRaw(data);
-            }
+            nyaImageBytes = await GetWebDataToBytesAsync(nyaImageURL);
+            await LoadNyaSprite(image);
         }
     }
 }
