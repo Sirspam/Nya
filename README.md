@@ -1,5 +1,5 @@
 # Nya
-A Beat Saber mod for displaying and downloading nya-tastic images from web APIs
+BeatSaber mod for displaying nya-tastic images from various anime themed web APIs
 ## Installation
 Download the latest version of Nya from [releases](https://github.com/Sirspam/Nya/releases) and slap it into your BeatSaber's plugin folder.
 
