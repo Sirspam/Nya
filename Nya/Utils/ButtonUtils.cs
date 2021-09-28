@@ -7,8 +7,8 @@ namespace Nya.Utils
 {
     internal class ButtonUtils
     {
-        private readonly TweeningManager tweeningManager;
-        public ButtonUtils(TweeningManager tweeningManager)
+        private readonly TimeTweeningManager tweeningManager;
+        public ButtonUtils(TimeTweeningManager tweeningManager)
         {
             this.tweeningManager = tweeningManager;
         }
