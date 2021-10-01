@@ -17,8 +17,8 @@ namespace Nya.Configuration
         public virtual bool inMenu { get; set; } = false;
         public virtual bool inPause { get; set; } = false;
         public virtual bool showHandle { get; set; } = false;
-        public virtual Vector3 menuPosition { get; set; } = new Vector3(-3.5f, 1f, -0.5f);
-        public virtual Vector3 menuRotation { get; set; } = new Vector3(0f, 265f, 0f);
+        public virtual Vector3 menuPosition { get; set; } = new Vector3(0f, 3f, 4f);
+        public virtual Vector3 menuRotation { get; set; } = new Vector3(340f, 0f, 0f);
         public virtual Vector3 pausePosition { get; set; } = new Vector3(-2f, 1.5f, 0f);
         public virtual Vector3 pauseRotation { get; set; } = new Vector3(0f, 270f, 0f);
         public virtual int autoNyaWait { get; set; } = 5;
