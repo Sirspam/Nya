@@ -35,7 +35,10 @@ namespace Nya.Utils
             using (MemoryStream ms = new MemoryStream(nyaImageBytes))
             {
                 Bitmap bm = new Bitmap(ms);
-                Clipboard.SetImage(bm); // Converts gifs to pngs because ???
+                Clipboard.SetImage(bm);
+                // Converts gifs to pngs because ???
+                // Also really doesn't like transparency
+                // Might just remove this feature at some point lmao
             }
         }
 #nullable enable
@@ -56,6 +59,7 @@ namespace Nya.Utils
 
         public static async Task<string?> GetImageURL(string endpoint)
         {
+            Plugin.Log.Debug($"Attempting to get image url from {PluginConfig.Instance.selectedAPI}");
             var response = await GetWebDataToBytesAsync(WebAPIs.APIs[PluginConfig.Instance.selectedAPI].URL + endpoint);
             if (response == null)
             {
@@ -80,7 +84,6 @@ namespace Nya.Utils
             }
             if (image.sprite.texture.GetRawTextureData() == nyaImageBytes)
             {
-                Plugin.Log.Debug("asdfadsfasdf");
                 return;
             }
 

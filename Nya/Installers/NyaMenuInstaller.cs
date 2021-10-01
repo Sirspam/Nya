@@ -13,7 +13,7 @@ namespace Nya.Installers
             Container.BindInterfacesAndSelfTo<NSFWConfirmModalController>().AsSingle();
             Container.BindInterfacesTo<SettingsViewController>().AsSingle();
 
-            Container.BindInterfacesAndSelfTo<ButtonUtils>().AsSingle();
+            Container.BindInterfacesAndSelfTo<UIUtils>().AsSingle();
         }
     }
 }

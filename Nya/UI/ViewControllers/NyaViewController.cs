@@ -52,8 +52,6 @@ namespace Nya.UI.ViewControllers
         [UIAction("nya-click")]
         protected async void NyaClicked()
         {
-            Plugin.Log.Debug(nyaButton.gameObject.transform.Find("BG").gameObject.GetComponent<ImageView>().color0.ToString());
-
             nyaButton.interactable = false;
             await ImageUtils.LoadNewNyaSprite(nyaImage);
             nyaButton.interactable = true;
@@ -71,7 +69,7 @@ namespace Nya.UI.ViewControllers
             autoNyaToggle = !autoNyaToggle;
             if (autoNyaToggle) // On
             {
-                autoNyaCooldownHandler(); // Stops users from spamming Auto Nya and by extension spamming the API
+                autoNyaCooldownHandler(); // Stops users from spamming Auto Nya and by extension spamming whatever API is selected
                 nyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = Color.green;
                 nyaButton.interactable = false;
                 while (autoNyaToggle)

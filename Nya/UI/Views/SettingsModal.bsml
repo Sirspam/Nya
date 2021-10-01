@@ -1,8 +1,8 @@
 ﻿<bg id="root" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
-	<modal id='modal' show-event='open-modal' hide-event='close-modal' clickerino-offerino-closerino='true' size-delta-x='50' size-delta-y='30' move-to-center='true' horizontal-fit='PreferredSize' vertical-fit='PreferredSize'>
-		<vertical horizontal-fit='PreferredSize' vertical-fit='PreferredSize' preferred-width='40' preferred-height='30' spacing='-5' padding-top='5'>
-			<button id='nyaDownloadButton' text='Download Nya' on-click='nya-download-click' active='true' hover-hint='Download the current image to UserData\Nya'/>
-			<button id='nyaCopyButton' text='Copy Nya' on-click='nya-copy-click' active='true' hover-hint='Copy the current image to clipboard'/>
+	<modal id='modal' show-event='open-modal' hide-event='close-modal' clickerino-offerino-closerino='true' size-delta-x='60' size-delta-y='40' move-to-center='true' horizontal-fit='PreferredSize' vertical-fit='PreferredSize'>
+		<vertical horizontal-fit='PreferredSize' vertical-fit='PreferredSize' preferred-width='50' preferred-height='35' spacing='0'>
+			<button id='nyaDownloadButton' text='Download Nya' on-click='nya-download-click' active='true' min-height='10' min-width='25' hover-hint='Download the current image to UserData\Nya'/>
+			<button id='nyaCopyButton' text='Copy Nya' on-click='nya-copy-click' active='true' min-height='10' min-width='25' hover-hint='Copy the current image to clipboard'/>
 			<checkbox-setting id='nsfwCheckbox' text='NSFW Nya' value='nya-nsfw-check' on-change='nya-nsfw' apply-on-change='true' bind-value='true'></checkbox-setting>
 		</vertical>
 	</modal>

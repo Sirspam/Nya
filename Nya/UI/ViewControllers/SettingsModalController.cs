@@ -14,15 +14,13 @@ namespace Nya.UI.ViewControllers
     internal class SettingsModalController : INotifyPropertyChanged
     {
         private readonly NSFWConfirmModalController nsfwConfirmModalController;
-        private readonly ButtonUtils _buttonUtils;
+        private readonly UIUtils _uiUtils;
         public event PropertyChangedEventHandler PropertyChanged;
-        private bool parsed;
 
-        public SettingsModalController(NSFWConfirmModalController nsfwConfirmModalController, ButtonUtils buttonUtils)
+        public SettingsModalController(NSFWConfirmModalController nsfwConfirmModalController, UIUtils uiUtils)
         {
             this.nsfwConfirmModalController = nsfwConfirmModalController;
-            _buttonUtils = buttonUtils;
-            parsed = false;
+            _uiUtils = uiUtils;
         }
 
         #region components
@@ -61,26 +59,33 @@ namespace Nya.UI.ViewControllers
         [UIParams]
         private readonly BSMLParserParams parserParams;
 
-        private void GameplaySetupViewController_didActivateEvent(bool firstActivation, bool addedToHierarchy)
+        private void Parse(Transform parentTransform)
         {
-            if (parsed && rootTransform != null && modalTransform != null)
+            BSMLParser.instance.Parse(BeatSaberMarkupLanguage.Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.SettingsModal.bsml"), parentTransform.gameObject, this);
+            FieldAccessor<ModalView, bool>.Set(ref modalView, "_animateParentCanvas", true);
+            if (rootTransform != null && modalTransform != null)
             {
                 modalTransform.SetParent(rootTransform);
                 modalTransform.gameObject.SetActive(false);
             }
         }
 
-        private void Parse(Transform parentTransform)
-        {
-            BSMLParser.instance.Parse(BeatSaberMarkupLanguage.Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.SettingsModal.bsml"), parentTransform.gameObject, this);
-            FieldAccessor<ModalView, bool>.Set(ref modalView, "_animateParentCanvas", true);
-        }
-
         internal void ShowModal(Transform parentTransform)
-        {
+        {   
             Parse(parentTransform);
             parserParams.EmitEvent("close-modal");
             parserParams.EmitEvent("open-modal");
+
+            var root = parentTransform.root;
+            if (root.name == "NyaMenuFloatingScreen" || root.name == "NyaGameFloatingScreen")
+            {
+                root.gameObject.GetComponentsInChildren<HoverHint>();
+                foreach (HoverHint hoverComponent in root.gameObject.GetComponentsInChildren<HoverHint>())
+                {
+                    hoverComponent.enabled = false;
+                }
+            }
+
             if (ImageUtils.nyaImageURL.EndsWith(".gif") || ImageUtils.nyaImageURL.EndsWith(".apng"))
             {
                 nyaCopyButton.interactable = false;
@@ -89,20 +94,35 @@ namespace Nya.UI.ViewControllers
             {
                 nyaCopyButton.interactable = true;
             }
+
+            var thingos = parserParams.GetObjectsWithTag("ButtonTag");
+            foreach (GameObject thingo in thingos)
+            {
+                Plugin.Log.Debug(thingo.name);
+            }
+        }
+
+        internal void HideModal()
+        {
+            if (modalTransform != null)
+            {
+                modalTransform.GetComponent<ModalView>().Hide(false);
+                nsfwConfirmModalController.HideModal();
+            }
         }
 
         #region actions
         [UIAction("nya-download-click")]
         private void downloadNya()
         {
-            _buttonUtils.UnderlineClick(nyaDownloadButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>());
+            _uiUtils.ButtonUnderlineClick(nyaDownloadButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>());
             ImageUtils.DownloadNyaImage();
         }
 
         [UIAction("nya-copy-click")]
         private void copyNya()
         {
-            _buttonUtils.UnderlineClick(nyaCopyButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>());
+            _uiUtils.ButtonUnderlineClick(nyaCopyButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>());
             ImageUtils.CopyNyaImage();
         }
 

@@ -14,80 +14,80 @@ namespace Nya.UI.ViewControllers
 {
     internal class SettingsViewController : IInitializable, IDisposable
     {
-        private readonly ButtonUtils _buttonUtils;
+        private readonly UIUtils _uiUtils;
 
-        public SettingsViewController(ButtonUtils buttonUtils)
+        private SettingsViewController(UIUtils uiUtils)
         {
-            _buttonUtils = buttonUtils;
+            _uiUtils = uiUtils;
         }
 
         [UIValue("remember-NSFW")]
-        public bool rememberNSFW
+        private bool rememberNSFW
         {
             get => PluginConfig.Instance.rememberNSFW;
             set => PluginConfig.Instance.rememberNSFW = value;
         }
 
         [UIValue("skip-NSFW")]
-        public bool skipNSFW
+        private bool skipNSFW
         {
             get => PluginConfig.Instance.skipNSFW;
             set => PluginConfig.Instance.skipNSFW = value;
         }
 
         [UIValue("in-menu")]
-        public bool inMenu
+        private bool inMenu
         {
             get => PluginConfig.Instance.inMenu;
             set => PluginConfig.Instance.inMenu = value;
         }
 
         [UIValue("in-pause")]
-        public bool inPause
+        private bool inPause
         {
             get => PluginConfig.Instance.inPause;
             set => PluginConfig.Instance.inPause = value;
         }
 
         [UIValue("show-handle")]
-        public bool pauseHandle
+        private bool pauseHandle
         {
             get => PluginConfig.Instance.showHandle;
             set => PluginConfig.Instance.showHandle = value;
         }
 
         [UIValue("auto-wait-value")]
-        public int autoNyaWait
+        private int autoNyaWait
         {
             get => PluginConfig.Instance.autoNyaWait;
             set => PluginConfig.Instance.autoNyaWait = value;
         }
 
         [UIValue("api-list")]
-        public List<object> apiList = new List<object>();
+        private List<object> apiList = new List<object>();
 
         [UIValue("api-value")]
-        public string apiValue
+        private string apiValue
         {
             get => PluginConfig.Instance.selectedAPI;
             set => PluginConfig.Instance.selectedAPI = value;
         }
 
         [UIValue("sfw-list")]
-        public List<object> sfwList = new List<object>();
+        private List<object> sfwList = new List<object>();
 
         [UIValue("sfw-value")]
-        public string sfwValue
+        private string sfwValue
         {
             get => PluginConfig.Instance.APIs[apiValue].selected_SFW_Endpoint;
             set => PluginConfig.Instance.APIs[apiValue].selected_SFW_Endpoint = value;
         }
 
         [UIValue("nsfw-list")]
-        public List<object> nsfwList = new List<object>();
+        private List<object> nsfwList = new List<object>();
 
         [UIValue("nsfw-value")]
-        public string nsfwValue
+        private string nsfwValue
         {
             get => PluginConfig.Instance.APIs[apiValue].selected_NSFW_Endpoint;
             set => PluginConfig.Instance.APIs[apiValue].selected_NSFW_Endpoint = value;
@@ -106,24 +106,33 @@ namespace Nya.UI.ViewControllers
         private readonly DropDownListSetting nsfwDropDownListSetting;
 
         [UIAction("api-change")]
-        public async void ApiChange(string value)
+        private async void ApiChange(string value)
         {
             apiValue = value;
             updateLists();
         }
 
-        [UIAction("reset-menu-clicked")]
-        public async void ResetMenuPosition()
+        [UIAction("in-menu-changed")]
+        private async void InMenuChanged(bool value)
         {
-            _buttonUtils.UnderlineClick(resetMenuPositionButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>());
+            if (value)
+            {
+
+            }
+        }
+
+        [UIAction("reset-menu-clicked")]
+        private async void ResetMenuPosition()
+        {
+            _uiUtils.ButtonUnderlineClick(resetMenuPositionButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>());
             PluginConfig.Instance.menuPosition = new Vector3(-3.5f, 1f, -0.5f);
             PluginConfig.Instance.menuRotation = new Vector3(0f, 265f, 0f);
         }
 
         [UIAction("reset-pause-clicked")]
-        public async void ResetPausePosition()
+        private async void ResetPausePosition()
         {
-            _buttonUtils.UnderlineClick(resetPausePositionButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>());
+            _uiUtils.ButtonUnderlineClick(resetPausePositionButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>());
             PluginConfig.Instance.pausePosition = new Vector3(-2f, 1.5f, 0f);
             PluginConfig.Instance.pauseRotation = new Vector3(0f, 270f, 0f);
         }

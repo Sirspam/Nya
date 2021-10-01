@@ -11,11 +11,11 @@ namespace Nya.Installers
         {
             if (PluginConfig.Instance.inPause)
             {
-                Container.BindInterfacesAndSelfTo<NyaViewPauseController>().AsSingle();
+                Container.BindInterfacesAndSelfTo<NyaViewGameController>().AsSingle();
                 Container.BindInterfacesAndSelfTo<SettingsModalController>().AsSingle();
                 Container.BindInterfacesAndSelfTo<NSFWConfirmModalController>().AsSingle();
 
-                Container.BindInterfacesAndSelfTo<ButtonUtils>().AsSingle();
+                Container.BindInterfacesAndSelfTo<UIUtils>().AsSingle();
             }
         }
     }

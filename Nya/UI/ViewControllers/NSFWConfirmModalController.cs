@@ -47,6 +47,11 @@ namespace Nya.UI.ViewControllers
         {
             BSMLParser.instance.Parse(BeatSaberMarkupLanguage.Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.NSFWConfirmModal.bsml"), parentTransform.gameObject, this);
             FieldAccessor<ModalView, bool>.Set(ref modalView, "_animateParentCanvas", true);
+            if (rootTransform != null && modalTransform != null)
+            {
+                modalTransform.SetParent(rootTransform);
+                modalTransform.gameObject.SetActive(false);
+            }
         }
 
         internal void ShowModal(Transform parentTransform, ButtonPressed yesButtonPressedCallback, ButtonPressed noButtonPressedCallback)
@@ -56,6 +61,14 @@ namespace Nya.UI.ViewControllers
             parserParams.EmitEvent("open-modal");
             yesButtonPressed = yesButtonPressedCallback;
             noButtonPressed = noButtonPressedCallback;
+        }
+
+        internal void HideModal()
+        {
+            if (modalTransform != null)
+            {
+                modalTransform.GetComponent<ModalView>().Hide(false);
+            }
         }
     }
 }
