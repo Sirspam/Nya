@@ -61,7 +61,7 @@ namespace Nya.UI.ViewControllers
 
         private void Parse(Transform parentTransform)
         {
-            BSMLParser.instance.Parse(BeatSaberMarkupLanguage.Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.SettingsModal.bsml"), parentTransform.gameObject, this);
+            BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.SettingsModal.bsml"), parentTransform.gameObject, this);
             FieldAccessor<ModalView, bool>.Set(ref modalView, "_animateParentCanvas", true);
             if (rootTransform != null && modalTransform != null)
             {
@@ -79,7 +79,6 @@ namespace Nya.UI.ViewControllers
             var root = parentTransform.root;
             if (root.name == "NyaMenuFloatingScreen" || root.name == "NyaGameFloatingScreen")
             {
-                root.gameObject.GetComponentsInChildren<HoverHint>();
                 foreach (HoverHint hoverComponent in root.gameObject.GetComponentsInChildren<HoverHint>())
                 {
                     hoverComponent.enabled = false;
@@ -93,12 +92,6 @@ namespace Nya.UI.ViewControllers
             else
             {
                 nyaCopyButton.interactable = true;
-            }
-
-            var thingos = parserParams.GetObjectsWithTag("ButtonTag");
-            foreach (GameObject thingo in thingos)
-            {
-                Plugin.Log.Debug(thingo.name);
             }
         }
 
