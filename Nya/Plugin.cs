@@ -32,7 +32,7 @@ namespace Nya
             Plugin.Log = logger;
             Plugin.Log?.Debug("Logger initialized.");
             zenjector.OnMenu<NyaMenuInstaller>();
-            zenjector.OnGame<NyaGameInstaller>();
+            zenjector.OnGame<NyaGameInstaller>().ShortCircuitForMultiplayer();
         }
 
         #region BSIPA Config
