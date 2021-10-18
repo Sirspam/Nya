@@ -24,15 +24,22 @@ namespace Nya.Configuration
         public virtual int autoNyaWait { get; set; } = 5;
         public virtual string selectedAPI { get; set; } = "waifu.pics";
         [NonNullable, UseConverter(typeof(DictionaryConverter<EndpointData>))]
-        public virtual Dictionary<string, EndpointData> APIs { get; set; } = new Dictionary<string, EndpointData>() {
-            { "waifu.pics", new EndpointData() {
-                selected_SFW_Endpoint = "sfw/neko",
-                selected_NSFW_Endpoint = "nsfw/neko"
-            } },
-            { "nekos.life", new EndpointData() {
-                selected_SFW_Endpoint = "neko",
-                selected_NSFW_Endpoint = "lewd",
-            } }
+        public virtual Dictionary<string, EndpointData> APIs { get; set; } = new Dictionary<string, EndpointData>
+        {
+            { 
+                "waifu.pics", new EndpointData
+                {
+                    selected_SFW_Endpoint = "sfw/neko",
+                    selected_NSFW_Endpoint = "nsfw/neko"
+                }
+            },
+            { 
+                "nekos.life", new EndpointData
+                {
+                    selected_SFW_Endpoint = "neko",
+                    selected_NSFW_Endpoint = "lewd",
+                }
+            }
         };
 
         /// <summary>
