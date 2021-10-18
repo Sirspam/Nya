@@ -126,7 +126,7 @@ namespace Nya.UI.ViewControllers
         {
             _uiUtils.ButtonUnderlineClick(resetMenuPositionButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>());
             PluginConfig.Instance.menuPosition = new Vector3(0f, 3.65f, 4f);
-            PluginConfig.Instance.menuRotation = new Vector3(340f, 0f, 0f);
+            PluginConfig.Instance.menuRotation = new Vector3(335f, 0f, 0f);
         }
 
         [UIAction("reset-pause-clicked")]
