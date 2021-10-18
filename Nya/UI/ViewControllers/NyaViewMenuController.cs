@@ -23,6 +23,7 @@ namespace Nya.UI.ViewControllers
             this.gameplaySetupViewController = gameplaySetupViewController;
             _uiUtils = uiUtils;
         }
+
         public void Initialize()
         {
             if (PluginConfig.Instance.inMenu)
@@ -40,7 +41,11 @@ namespace Nya.UI.ViewControllers
 
         public void Dispose()
         {
-            GameplaySetup.instance.RemoveTab("Nya");
+            if (GameplaySetup.IsSingletonAvailable)
+            {
+                GameplaySetup.instance.RemoveTab("Nya");
+            }
+
             gameplaySetupViewController.didActivateEvent -= GameplaySetupViewController_didActivateEvent;
             gameplaySetupViewController.didDeactivateEvent -= GameplaySetupViewController_didDeactivateEvent;
         }

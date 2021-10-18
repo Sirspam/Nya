@@ -34,7 +34,6 @@ namespace Nya.UI.ViewControllers
 
         public void Dispose()
         {
-            floatingScreen.gameObject.SetActive(false);
             _gamePause.didPauseEvent -= GamePause_didPauseEvent;
             _gamePause.willResumeEvent -= GamePause_didResumeEvent;
         }
