@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Nya.UI.ViewControllers
 {
-    internal class NyaViewController
+    internal abstract class NyaViewController
     {
         protected readonly SettingsModalController settingsModalController;
         protected static SemaphoreSlim semaphore;
