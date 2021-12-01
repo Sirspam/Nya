@@ -1,6 +1,7 @@
 ﻿using Nya.Configuration;
 using Nya.UI.ViewControllers;
 using Nya.Utils;
+using SiraUtil;
 using Zenject;
 
 namespace Nya.Installers
@@ -9,11 +10,11 @@ namespace Nya.Installers
     {
         public override void InstallBindings()
         {
-            if (PluginConfig.Instance.inPause)
+            if (PluginConfig.Instance.InPause)
             {
                 Container.BindInterfacesAndSelfTo<NyaViewGameController>().AsSingle();
-                Container.BindInterfacesAndSelfTo<SettingsModalController>().AsSingle();
-                Container.BindInterfacesAndSelfTo<NSFWConfirmModalController>().AsSingle();
+                Container.BindInterfacesAndSelfTo<SettingsModalGameController>().AsSingle();
+                Container.BindInterfacesAndSelfTo<NsfwConfirmModalController>().AsSingle();
 
                 Container.BindInterfacesAndSelfTo<UIUtils>().AsSingle();
             }

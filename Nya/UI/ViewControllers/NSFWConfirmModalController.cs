@@ -6,16 +6,17 @@ using IPA.Utilities;
 using System.Reflection;
 using UnityEngine;
 
-
 namespace Nya.UI.ViewControllers
 {
-    public class NSFWConfirmModalController
+    public class NsfwConfirmModalController
     {
         public delegate void ButtonPressed();
+
         private ButtonPressed yesButtonPressed;
         private ButtonPressed noButtonPressed;
 
         #region components
+
         [UIComponent("root")]
         private readonly RectTransform rootTransform;
 
@@ -24,17 +25,18 @@ namespace Nya.UI.ViewControllers
 
         [UIComponent("modal")]
         private readonly RectTransform modalTransform;
-        #endregion
+
+        #endregion components
 
         [UIAction("yes-click")]
-        private void yesNSFW()
+        private void YesNsfw()
         {
             yesButtonPressed?.Invoke();
             parserParams.EmitEvent("close-modal");
         }
 
         [UIAction("no-click")]
-        private void noNSFW()
+        private void NoNsfw()
         {
             noButtonPressed?.Invoke();
             parserParams.EmitEvent("close-modal");

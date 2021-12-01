@@ -1,4 +1,5 @@
-﻿using BeatSaberMarkupLanguage.FloatingScreen;
+﻿using BeatSaberMarkupLanguage.Attributes;
+using BeatSaberMarkupLanguage.FloatingScreen;
 using BeatSaberMarkupLanguage.GameplaySetup;
 using HMUI;
 using Nya.Configuration;
@@ -9,27 +10,29 @@ using Zenject;
 
 namespace Nya.UI.ViewControllers
 {
-    internal class NyaViewMenuController : NyaViewController, IInitializable, IDisposable
+    public class NyaViewMenuController : NyaViewController, IInitializable, IDisposable
     {
-        private readonly SettingsModalController settingsModalController;
         private readonly GameplaySetupViewController gameplaySetupViewController;
-        private readonly UIUtils _uiUtils;
-        private FloatingScreen floatingScreen;
+        private readonly SettingsModalMenuController settingsModalMenuController;
+        private readonly UIUtils uiUtils;
+        public FloatingScreen floatingScreen;
 
-
-        public NyaViewMenuController(SettingsModalController settingsModalController, UIUtils uiUtils, GameplaySetupViewController gameplaySetupViewController) : base(settingsModalController)
+        public NyaViewMenuController(GameplaySetupViewController gameplaySetupViewController, SettingsModalMenuController settingsModalMenuController, UIUtils uiUtils)
         {
-            this.settingsModalController = settingsModalController;
             this.gameplaySetupViewController = gameplaySetupViewController;
-            _uiUtils = uiUtils;
+            this.settingsModalMenuController = settingsModalMenuController;
+            this.uiUtils = uiUtils;
         }
 
         public void Initialize()
         {
-            if (PluginConfig.Instance.inMenu)
+            
+            
+            if (PluginConfig.Instance.InMenu)
             {
-                floatingScreen = _uiUtils.CreateNyaFloatingScreen(this, PluginConfig.Instance.menuPosition, Quaternion.Euler(PluginConfig.Instance.menuRotation));
+                floatingScreen = uiUtils.CreateNyaFloatingScreen(this, PluginConfig.Instance.MenuPosition, Quaternion.Euler(PluginConfig.Instance.MenuRotation));
                 floatingScreen.gameObject.name = "NyaMenuFloatingScreen";
+                floatingScreen.HandleReleased += FloatingScreen_HandleReleased;
             }
             else
             {
@@ -48,12 +51,19 @@ namespace Nya.UI.ViewControllers
 
             gameplaySetupViewController.didActivateEvent -= GameplaySetupViewController_didActivateEvent;
             gameplaySetupViewController.didDeactivateEvent -= GameplaySetupViewController_didDeactivateEvent;
+            floatingScreen.HandleReleased -= FloatingScreen_HandleReleased;
         }
 
         private async void GameplaySetupViewController_didActivateEvent(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
         {
             if (!firstActivation)
             {
+                if (floatingScreen.transform.position != PluginConfig.Instance.MenuPosition) // in case game floatingscreen got moved
+                {
+                    floatingScreen.transform.position = PluginConfig.Instance.MenuPosition;
+                    floatingScreen.transform.rotation = Quaternion.Euler(PluginConfig.Instance.MenuRotation);
+                }
+                
                 nyaButton.interactable = false;
                 await ImageUtils.LoadNyaSprite(nyaImage);
                 nyaButton.interactable = true;
@@ -68,6 +78,31 @@ namespace Nya.UI.ViewControllers
                 nyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = new Color(1f, 1f, 1f, 0.502f);
                 nyaButton.interactable = true;
             }
+            settingsModalMenuController.HideModal();
+        }
+
+        private void FloatingScreen_HandleReleased(object sender, FloatingScreenHandleEventArgs args)
+        {
+            PluginConfig.Instance.MenuPosition = floatingScreen.transform.position;
+            PluginConfig.Instance.MenuRotation = floatingScreen.transform.eulerAngles;
+        }
+
+        public void ReloadFloatingScreenPosition()
+        {
+            floatingScreen.transform.position = PluginConfig.Instance.MenuPosition;
+            floatingScreen.transform.eulerAngles = PluginConfig.Instance.MenuRotation;
+        }
+
+        [UIAction("settings-button-clicked")]
+        protected void SettingsButtonClicked()
+        {
+            Plugin.Log.Debug("haha hi 1");
+            
+            if (autoNyaToggle)
+            {
+                AutoNya();
+            }
+            settingsModalMenuController.ShowModal(settingsButtonTransform);
         }
     }
 }

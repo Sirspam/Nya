@@ -4,49 +4,57 @@ using Nya.Configuration;
 using Nya.Utils;
 using System.Threading;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 
 namespace Nya.UI.ViewControllers
 {
-    internal abstract class NyaViewController
+    public abstract class NyaViewController
     {
-        protected readonly SettingsModalController settingsModalController;
         protected static SemaphoreSlim semaphore;
+        // protected CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
         protected bool autoNyaToggle = false;
-        protected bool AutoNyaCooldown = false;
+        protected bool autoNyaCooldown = false;
 
-        public NyaViewController(SettingsModalController settingsModalController)
+        public NyaViewController()
         {
-            this.settingsModalController = settingsModalController;
             semaphore = new SemaphoreSlim(1);
         }
 
         #region components
+
         [UIComponent("root")]
         internal readonly RectTransform rootTransform;
 
-        [UIComponent("nyaImage")]
+        [UIComponent("nya-image")]
         internal readonly ImageView nyaImage;
 
-        [UIComponent("nyaButton")]
+        [UIComponent("nya-button")]
         internal readonly UnityEngine.UI.Button nyaButton;
 
-        [UIComponent("nyaDownloadButton")]
-        internal readonly UnityEngine.UI.Button nyaDownloadButton;
-
-        [UIComponent("nyaAutoButton")]
+        [UIComponent("auto-button")]
         internal readonly UnityEngine.UI.Button nyaAutoButton;
+        
+        [UIComponent("auto-button")]
+        internal readonly TextMeshProUGUI nyaAutoText;
 
-        [UIComponent("settingsButton")]
+        [UIComponent("settings-button")]
+        internal readonly UnityEngine.UI.Button nyaSettingsButton;
+
+        [UIComponent("settings-button")]
         internal readonly RectTransform settingsButtonTransform;
-        #endregion
+
+        #endregion components
 
         #region actions
+
         [UIAction("#post-parse")]
         protected async void NyaPostParse()
         {
+            nyaButton.interactable = false;
             await ImageUtils.LoadNyaSprite(nyaImage);
+            nyaButton.interactable = true;
         }
 
         [UIAction("nya-click")]
@@ -58,51 +66,63 @@ namespace Nya.UI.ViewControllers
         }
 
         [UIAction("nya-auto-clicked")]
-        protected async void autoNya()
+        protected async void AutoNya()
         {
-            if (AutoNyaCooldown)
+            if (autoNyaCooldown)
             {
                 return;
             }
-            AutoNyaCooldown = true;
+            autoNyaCooldown = true;
 
             autoNyaToggle = !autoNyaToggle;
             if (autoNyaToggle) // On
             {
-                autoNyaCooldownHandler(); // Stops users from spamming Auto Nya and by extension spamming whatever API is selected
+                AutoNyaCooldownHandler(); // This isn't suppoed to be awaited I swear, please Mr green swiggly line go away you're scaring me
                 nyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = Color.green;
                 nyaButton.interactable = false;
                 while (autoNyaToggle)
                 {
                     await semaphore.WaitAsync();
                     await ImageUtils.LoadNewNyaSprite(nyaImage);
-                    await Task.Delay(PluginConfig.Instance.autoNyaWait * 1000);
+                    await Task.Delay(PluginConfig.Instance.AutoNyaWait * 1000);
                     semaphore.Release();
                 }
+                // This is a neat little thing I wanted to do but couldn't get it to work ):
+                // Might come back to it later
+                //await IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew( async () =>
+                //{
+                //    var third = (PluginConfig.Instance.AutoNyaWait * 1000) / 3;
+                //    while (autoNyaToggle)
+                //    {
+                //        await semaphore.WaitAsync();
+                //        await ImageUtils.LoadNewNyaSprite(nyaImage);
+                //        nyaAutoText.text = ".";
+                //        await Task.Delay(third);
+                //        nyaAutoText.text = ". .";
+                //        await Task.Delay(third);
+                //        nyaAutoText.text = ". . .";
+                //        await Task.Delay(third);
+                //        nyaAutoText.text = "Nya!";
+                //        semaphore.Release();
+                //    }
+                //}, cancellationTokenSource.Token);
             }
             else // Off
             {
+                // cancellationTokenSource.Cancel();
                 nyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = new Color(1f, 1f, 1f, 0.502f); // Beatgames why 0.502
+                nyaAutoText.text = "Auto Nya";
                 nyaButton.interactable = true;
-                AutoNyaCooldown = false;
+                autoNyaCooldown = false;
             }
         }
-
-        private async Task autoNyaCooldownHandler()
+        
+        private async Task AutoNyaCooldownHandler()
         {
             await Task.Delay(1000);
-            AutoNyaCooldown = false;
+            autoNyaCooldown = false;
         }
 
-        [UIAction("settings-button-clicked")]
-        protected async void SettingsButtonClicked()
-        {
-            if (autoNyaToggle)
-            {
-                autoNya();
-            }
-            settingsModalController.ShowModal(settingsButtonTransform);
-        }
-        #endregion
+        #endregion actions
     }
 }

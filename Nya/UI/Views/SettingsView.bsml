@@ -1,34 +1,42 @@
 ﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
-	<settings-container vertical-fit='PreferredSize' child-control-height='true'>
-		
-		<text text='Floating Screens' align='Center' font-size='5'/>
+	<horizontal active='~view-controller-active' background='panel-top' anchor-min-y='1' pad-left='5' pad-right='5' pad-top='1' pad-bottom='1' horizontal-fit='PreferredSize' spacing='5'>
+		<!-- These images are an requirement, I will fight you if you remove them. -->
+		<image src='Nya.Resources.Chocola_Mini_Sitting.png' preserve-aspect='true' pref-width='12' pref-height='12'/>
+		<text text='Nya' align='Center' font-size='8' italics='true'/>
+		<image src='Nya.Resources.Vanilla_Mini_Sitting.png' preserve-aspect='true' pref-width='12' pref-height='12'/>
+	</horizontal>
+	
+	<settings-container vertical-fit='PreferredSize' child-control-height='true' size-delta-x='~size-delta-view-controller'>
+		<text text='Floating Screens' italics='true' align='Left' font-size='5'/>
 		<vertical background="round-rect-panel" background-color="white" pad="2">
-			<checkbox-setting id='in-menu-checkbox' text='Detach Nya in the menu' hover-hint='Puts Nya onto a floating screen rather than the modifier panel in the menu' value='in-menu' on-change='in-menu-changed'/>
-			<checkbox-setting id='in-pause-checkbox' text='Show Nya in the pause menu' value='in-pause'/>
-			<checkbox-setting id='show-handle-checkbox' text="Show Nya's movement handle" value='show-handle'/>
 			<horizontal>
-				<button id='reset-menu-position' text='Reset menu Nya position' hover-hint="Resets the menu Nya screen to the default position" on-click='reset-menu-clicked'/>
-				<button id='reset-pause-position' text='Reset pause Nya position' hover-hint="Resets the pause Nya screen to the default position" on-click='reset-pause-clicked'/>
+				<color-setting id='bg-colour-setting' text='Nya background colour' hover-hint='Only effects the floating screens' value='bg-colour' apply-on-change='true' bind-value='true' pref-width='70'/>
+				<button id='bg-colour-default' text='Default' on-click='bg-colour-default-clicked' font-size='3'/>
+			</horizontal>
+			<checkbox-setting id='seperate-positions-checkbox' text="Seperate menu Nya's and pause Nya's positions" value="seperate-positions" apply-on-change='true'/>
+			<horizontal>
+				<button id='reset-nya-position' active='~seperate-positions-but-opposite' text="Reset Nya's position" hover-hint="Resets Nya's screen to the it's default position" on-click='reset-menu-clicked'/>
+				<button id='reset-menu-position' active='~seperate-positions' text="Reset menu Nya's position" hover-hint='Resets the menu Nya screen to the default position' on-click='reset-menu-clicked'/>
+				<button id='reset-pause-position' active='~seperate-positions' text="Reset pause Nya's position" hover-hint='Resets the pause Nya screen to the default position' on-click='reset-pause-clicked'/>
 			</horizontal>
 		</vertical>
-		
-		<text text='API Settings' align='Center' font-size='5'/>
+			
+		<text text='Behaviour' italics='true' align='Left' font-size='5'/>
 		<vertical background="round-rect-panel" background-color="white" pad="2">
-			<dropdown-list-setting id='api-dropdown' text='API' hover-hint='The API to get images from' value='api-value' choices='api-list' on-change='api-change'/>
-			<dropdown-list-setting id='sfw-dropdown' text='SFW endpoint' hover-hint='The endpoint to use for SFW images' value='sfw-value' choices='sfw-list'/>
-			<dropdown-list-setting id='nsfw-dropdown' text='NSFW endpoint' hover-hint='The endpoint to use for NSFW images' value='nsfw-value' choices='nsfw-list'/>
+			<slider-setting id='auto-wait-slider' text='Auto Nya wait time' hover-hint='How many seconds Auto Nya will wait for before getting a new image' value='auto-wait-value' increment='1' min='4' max='60' integer-only='true'/>
+			<checkbox-setting id='remember-NSFW-checkbox' text='Remember NSFW setting' hover-hint='If disabled Nya will always be set to SFW on start-up' value='remember-NSFW' apply-on-change='true'/>
+			<checkbox-setting id='skip-NSFW-checkbox' text='Skip NSFW confirmation' hover-hint='You horny pastry puffer' value='skip-NSFW' apply-on-change='true'/>	
+			<checkbox-setting id='easter-eggs-checkbox' text='Easter Eggs' hover-hint="Please keep this on they're funny I swear" value='easter-eggs' apply-on-change='true'/>
 		</vertical>
-		
-		<text text='Other' align='Center' font-size='5'/>
-		<vertical background="round-rect-panel" background-color="white" pad="2">
-			<slider-setting id='auto-wait-slider' text='Auto Nya wait time' hover-hint='How many seconds Auto Nya will wait for before getting a new image' value='auto-wait-value' increment='1' min='3' max='60' integer-only='true'/>
-			<checkbox-setting id='remember-NSFW-checkbox' text='Remember NSFW setting' hover-hint='If disabled Nya will always be set to SFW on start-up' value='remember-NSFW'/>
-			<checkbox-setting id='skip-NSFW-checkbox' text='Skip NSFW confirmation' hover-hint='You horny pastry puffer' value='skip-NSFW'/>
-		</vertical>
-		
-		<text text="Hello" font-color='#00000000'/>
-		<text text="I hope you're having a good day :)" font-color='#00000000'/>
-		<text text="Bye" font-color='#00000000'/>
-		<image src='Nya.Resources.Chocola_Wave.png' preserve-aspect='true' pref-width='35' pref-height='35'/>
+				
+		<!-- This part is crucial I swear -->
+		<!-- <text text="Commenting out this in case I forgor" font-color='#00000000'/> -->
+		<text text="This probably isn't a good method for spacing" font-color='#00000000'/>
+		<image src='Nya.Resources.Chocovani_Greeting.png' preserve-aspect='true' pref-width='37' pref-height='37' hover-hint="Thanks for using Nya~"/>
 	</settings-container>
+	
+	<horizontal active='~view-controller-active' horizontal-fit='PreferredSize' child-control-height='false' child-expand-height='false' child-align='MiddleCenter' anchor-min-x='0.5' anchor-max-x='0.5' anchor-min-y='0' anchor-max-y='0' size-delta-x='120' size-delta-y='10' pivot-y='0' spacing='2'>
+		<button text='Cancel' pref-width='34' pref-height='10' on-click='cancel-clicked' />
+		<action-button text='Ok' pref-width='34' pref-height='10' on-click='ok-clicked' />
+	</horizontal>
 </bg>

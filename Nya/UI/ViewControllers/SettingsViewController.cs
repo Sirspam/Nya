@@ -1,97 +1,124 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
-using BeatSaberMarkupLanguage.Components.Settings;
+using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Settings;
+using BeatSaberMarkupLanguage.ViewControllers;
 using HMUI;
+using IPA.Utilities;
 using Nya.Configuration;
 using Nya.Utils;
 using System;
-using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using Zenject;
 
-
 namespace Nya.UI.ViewControllers
 {
-    internal class SettingsViewController : IInitializable, IDisposable
+    [HotReload(RelativePathToLayout = @"..\Views\SettingsView.bsml")]
+    [ViewDefinition("Nya.UI.Views.SettingsView.bsml")]
+    public class SettingsViewController : BSMLAutomaticViewController, IInitializable, IDisposable
     {
-        private readonly UIUtils _uiUtils;
+        private MainFlowCoordinator mainFlowCoordinator;
+        private MenuTransitionsHelper menuTransitionsHelper;
+        private UIUtils uiUtils;
 
-        private SettingsViewController(UIUtils uiUtils)
+        [Inject]
+        public void Constructor(MainFlowCoordinator mainFlowCoordinator, MenuTransitionsHelper menuTransitionsHelper, UIUtils uiUtils)
         {
-            _uiUtils = uiUtils;
+            this.mainFlowCoordinator = mainFlowCoordinator;
+            this.menuTransitionsHelper = menuTransitionsHelper;
+            this.uiUtils = uiUtils;
+        }
+
+        //protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
+        //{
+        //    base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
+        //}
+
+        [UIValue("easter-eggs")]
+        private bool EasterEggs
+        {
+            get => PluginConfig.Instance.EasterEggs;
+            set => PluginConfig.Instance.EasterEggs = value;
+        }
+
+        [UIValue("bg-colour")]
+        private Color bgColour
+        {
+            get => PluginConfig.Instance.BackgroundColor;
+            set
+            {
+                Plugin.Log.Debug("Yes this is running, no you're not insane");
+                uiUtils.NyaBGMaterial.color = value;
+                PluginConfig.Instance.BackgroundColor = value;
+
+                uiUtils.NyaBGMaterial = Resources.FindObjectsOfTypeAll<Material>().First(x => x.name == "UIFogBG");
+            }
         }
 
         [UIValue("remember-NSFW")]
-        private bool rememberNSFW
+        private bool RememberNsfw
         {
-            get => PluginConfig.Instance.rememberNSFW;
-            set => PluginConfig.Instance.rememberNSFW = value;
+            get => PluginConfig.Instance.RememberNsfw;
+            set => PluginConfig.Instance.RememberNsfw = value;
         }
 
         [UIValue("skip-NSFW")]
-        private bool skipNSFW
+        private bool SkipNsfw
         {
-            get => PluginConfig.Instance.skipNSFW;
-            set => PluginConfig.Instance.skipNSFW = value;
-        }
-
-        [UIValue("in-menu")]
-        private bool inMenu
-        {
-            get => PluginConfig.Instance.inMenu;
-            set => PluginConfig.Instance.inMenu = value;
-        }
-
-        [UIValue("in-pause")]
-        private bool inPause
-        {
-            get => PluginConfig.Instance.inPause;
-            set => PluginConfig.Instance.inPause = value;
-        }
-
-        [UIValue("show-handle")]
-        private bool pauseHandle
-        {
-            get => PluginConfig.Instance.showHandle;
-            set => PluginConfig.Instance.showHandle = value;
+            get => PluginConfig.Instance.SkipNsfw;
+            set => PluginConfig.Instance.SkipNsfw = value;
         }
 
         [UIValue("auto-wait-value")]
-        private int autoNyaWait
+        private int AutoNyaWait
         {
-            get => PluginConfig.Instance.autoNyaWait;
-            set => PluginConfig.Instance.autoNyaWait = value;
+            get => PluginConfig.Instance.AutoNyaWait;
+            set => PluginConfig.Instance.AutoNyaWait = value;
         }
 
-        [UIValue("api-list")]
-        private List<object> apiList = new List<object>();
-
-        [UIValue("api-value")]
-        private string apiValue
+        [UIValue("seperate-positions")]
+        private bool seperatePositions
         {
-            get => PluginConfig.Instance.selectedAPI;
-            set => PluginConfig.Instance.selectedAPI = value;
+            get => PluginConfig.Instance.SeperatePositions;
+            set
+            { 
+                PluginConfig.Instance.SeperatePositions = value;
+                seperatePositionsButOpposite = !value;
+                NotifyPropertyChanged("seperatePositions");
+            }
         }
 
-        [UIValue("sfw-list")]
-        private List<object> sfwList = new List<object>();
-
-        [UIValue("sfw-value")]
-        private string sfwValue
+        [UIValue("seperate-positions-but-opposite")] // Might be a better way to do this 💀
+        private bool seperatePositionsButOpposite
         {
-            get => PluginConfig.Instance.APIs[apiValue].selected_SFW_Endpoint;
-            set => PluginConfig.Instance.APIs[apiValue].selected_SFW_Endpoint = value;
+            get => !seperatePositions;
+            set => NotifyPropertyChanged("seperatePositionsButOpposite");
         }
 
-        [UIValue("nsfw-list")]
-        private List<object> nsfwList = new List<object>();
+        [UIValue("view-controller-active")]
+        private bool ViewControllerActive { get => isActiveAndEnabled; }
 
-        [UIValue("nsfw-value")]
-        private string nsfwValue
+        [UIValue("size-delta-view-controller")]
+
+        private int SizeDeltaViewController
         {
-            get => PluginConfig.Instance.APIs[apiValue].selected_NSFW_Endpoint;
-            set => PluginConfig.Instance.APIs[apiValue].selected_NSFW_Endpoint = value;
+            get
+            {
+                if (isActiveAndEnabled) return -50;
+                return 0;
+            }
         }
+    
+        [UIComponent("bg-colour-setting")]
+        private readonly Transform bgColourSettingTransform;
+        
+        [UIComponent("bg-colour-default")]
+        private readonly UnityEngine.UI.Button bgColourDefaultButton;
+
+        [UIComponent("reset-nya-position")]
+        private readonly UnityEngine.UI.Button resetNyaPositionButton;
 
         [UIComponent("reset-menu-position")]
         private readonly UnityEngine.UI.Button resetMenuPositionButton;
@@ -99,80 +126,44 @@ namespace Nya.UI.ViewControllers
         [UIComponent("reset-pause-position")]
         private readonly UnityEngine.UI.Button resetPausePositionButton;
 
-        [UIComponent("sfw-dropdown")]
-        private readonly DropDownListSetting sfwDropDownListSetting;
-
-        [UIComponent("nsfw-dropdown")]
-        private readonly DropDownListSetting nsfwDropDownListSetting;
-
-        [UIAction("api-change")]
-        private async void ApiChange(string value)
+        [UIAction("bg-colour-default-clicked")]
+        private void bgColourDefaultClicked()
         {
-            apiValue = value;
-            updateLists();
+            uiUtils.ButtonUnderlineClick(bgColourDefaultButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>());
+            var modalColourPicker = bgColourSettingTransform.GetChild(2).GetComponent<ModalColorPicker>();
+            modalColourPicker.CurrentColor = new Color(0.745f, 0.745f, 0.745f);
+            modalColourPicker.DonePressed(); // Thank you DonePressed for making everything magically work
         }
-
-        [UIAction("in-menu-changed")]
-        private async void InMenuChanged(bool value)
-        {
-            if (value)
-            {
-
-            }
-        }
-
+        
         [UIAction("reset-menu-clicked")]
-        private async void ResetMenuPosition()
+        private void ResetMenuPosition()
         {
-            _uiUtils.ButtonUnderlineClick(resetMenuPositionButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>());
-            PluginConfig.Instance.menuPosition = new Vector3(0f, 3.65f, 4f);
-            PluginConfig.Instance.menuRotation = new Vector3(335f, 0f, 0f);
+            uiUtils.ButtonUnderlineClick(resetMenuPositionButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>());
+            PluginConfig.Instance.MenuPosition = new Vector3(0f, 3.65f, 4f);
+            PluginConfig.Instance.MenuRotation = new Vector3(335f, 0f, 0f);
         }
 
         [UIAction("reset-pause-clicked")]
-        private async void ResetPausePosition()
+        private void ResetPausePosition()
         {
-            _uiUtils.ButtonUnderlineClick(resetPausePositionButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>());
-            PluginConfig.Instance.pausePosition = new Vector3(-2f, 1.5f, 0f);
-            PluginConfig.Instance.pauseRotation = new Vector3(0f, 270f, 0f);
+            uiUtils.ButtonUnderlineClick(resetPausePositionButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>());
+            PluginConfig.Instance.PausePosition = new Vector3(-2f, 1.5f, 0f);
+            PluginConfig.Instance.PauseRotation = new Vector3(0f, 270f, 0f);
         }
 
-        public void Initialize()
+        [UIAction("ok-clicked")]
+        private void OkClicked()
         {
-            SetupLists();
-            BSMLSettings.instance.AddSettingsMenu("Nya", "Nya.UI.Views.SettingsView.bsml", this);
+            menuTransitionsHelper.RestartGame();
         }
+
+        [UIAction("cancel-clicked")]
+        private void CancelClicked()
+        {
+            ReflectionUtil.InvokeMethod<object, FlowCoordinator>(mainFlowCoordinator.YoungestChildFlowCoordinatorOrSelf(), "DismissViewController", this, AnimationDirection.Vertical, null, false);
+        }
+
+        public void Initialize() => BSMLSettings.instance.AddSettingsMenu("Nya", "Nya.UI.Views.SettingsView.bsml", this);
         public void Dispose() => BSMLSettings.instance?.RemoveSettingsMenu(this);
-
-        private void SetupLists()
-        {
-            foreach (var api in WebAPIs.APIs.Keys)
-            {
-                apiList.Add(api);
-            }
-            foreach (var endpoint in WebAPIs.APIs[apiValue].SFW_Endpoints)
-            {
-                sfwList.Add(endpoint);
-            }
-            foreach (var endpoint in WebAPIs.APIs[apiValue].NSFW_Endpoints)
-            {
-                nsfwList.Add(endpoint);
-            }
-        }
-        private void updateLists()
-        {
-            sfwDropDownListSetting.values.Clear();
-            nsfwDropDownListSetting.values.Clear();
-            foreach (var endpoint in WebAPIs.APIs[apiValue].SFW_Endpoints)
-            {
-                sfwDropDownListSetting.values.Add(endpoint);
-            }
-            foreach (var endpoint in WebAPIs.APIs[apiValue].NSFW_Endpoints)
-            {
-                nsfwDropDownListSetting.values.Add(endpoint);
-            }
-            sfwDropDownListSetting.UpdateChoices();
-            nsfwDropDownListSetting.UpdateChoices();
-        }
     }
 }

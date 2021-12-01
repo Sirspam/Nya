@@ -1,5 +1,6 @@
 ﻿using Nya.UI.ViewControllers;
 using Nya.Utils;
+using SiraUtil;
 using Zenject;
 
 namespace Nya.Installers
@@ -9,9 +10,9 @@ namespace Nya.Installers
         public override void InstallBindings()
         {
             Container.BindInterfacesAndSelfTo<NyaViewMenuController>().AsSingle();
-            Container.BindInterfacesAndSelfTo<SettingsModalController>().AsSingle();
-            Container.BindInterfacesAndSelfTo<NSFWConfirmModalController>().AsSingle();
-            Container.BindInterfacesTo<SettingsViewController>().AsSingle();
+            Container.BindInterfacesAndSelfTo<SettingsModalMenuController>().AsSingle();
+            Container.BindInterfacesAndSelfTo<NsfwConfirmModalController>().AsSingle();
+            Container.BindInterfacesAndSelfTo<SettingsViewController>().FromNewComponentAsViewController().AsSingle();
 
             Container.BindInterfacesAndSelfTo<UIUtils>().AsSingle();
         }
