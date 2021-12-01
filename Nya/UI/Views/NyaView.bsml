@@ -1,6 +1,5 @@
 ﻿<bg id='root' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
 	<vertical pad-top='2'>
-		
 		<img id='nya-image' preserve-aspect='true' pref-width='70' pref-height='70'/>
 		<horizontal spacing='10'>
 			<button id='auto-button' text='Auto Nya' on-click='nya-auto-clicked' active='true' min-width='20'/>
