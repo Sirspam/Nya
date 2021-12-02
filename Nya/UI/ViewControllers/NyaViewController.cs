@@ -11,7 +11,7 @@ namespace Nya.UI.ViewControllers
     internal abstract class NyaViewController
     {
         protected readonly SettingsModalController settingsModalController;
-        protected static SemaphoreSlim semaphore;
+        protected static SemaphoreSlim semaphore = new SemaphoreSlim(1);
 
         protected bool autoNyaToggle = false;
         protected bool AutoNyaCooldown = false;
@@ -19,7 +19,6 @@ namespace Nya.UI.ViewControllers
         public NyaViewController(SettingsModalController settingsModalController)
         {
             this.settingsModalController = settingsModalController;
-            semaphore = new SemaphoreSlim(1);
         }
 
         #region components
