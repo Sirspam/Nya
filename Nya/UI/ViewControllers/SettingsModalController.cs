@@ -61,12 +61,11 @@ namespace Nya.UI.ViewControllers
 
         private void Parse(Transform parentTransform)
         {
-            BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.SettingsModal.bsml"), parentTransform.gameObject, this);
-            FieldAccessor<ModalView, bool>.Set(ref modalView, "_animateParentCanvas", true);
-            if (rootTransform != null && modalTransform != null)
+            if (!modalView)
             {
-                modalTransform.SetParent(rootTransform);
-                modalTransform.gameObject.SetActive(false);
+                BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.SettingsModal.bsml"), parentTransform.gameObject, this);
+                FieldAccessor<ModalView, bool>.Set(ref modalView, "_animateParentCanvas", true);
+                modalView.name = "NyaSettingsModal";
             }
         }
 

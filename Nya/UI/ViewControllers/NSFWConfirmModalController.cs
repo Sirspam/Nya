@@ -45,12 +45,11 @@ namespace Nya.UI.ViewControllers
 
         private void Parse(Transform parentTransform)
         {
-            BSMLParser.instance.Parse(BeatSaberMarkupLanguage.Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.NSFWConfirmModal.bsml"), parentTransform.gameObject, this);
-            modalView.SetField("_animateParentCanvas", false);
-            if (rootTransform != null && modalTransform != null)
+            if (!modalView)
             {
-                modalTransform.SetParent(rootTransform);
-                modalTransform.gameObject.SetActive(false);
+                BSMLParser.instance.Parse(BeatSaberMarkupLanguage.Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.NSFWConfirmModal.bsml"), parentTransform.gameObject, this);
+                modalView.SetField("_animateParentCanvas", false);
+                modalView.name = "NyaNSFWConfirmaModal";
             }
         }
 
