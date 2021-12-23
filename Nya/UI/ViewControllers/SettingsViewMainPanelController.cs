@@ -58,8 +58,6 @@ namespace Nya.UI.ViewControllers
             _menuRotation = PluginConfig.Instance.MenuRotation;
             _pausePosition = PluginConfig.Instance.PausePosition;
             _pauseRotation = PluginConfig.Instance.PauseRotation;
-
-            Plugin.Log.Debug(System.IO.Path.GetFullPath(System.IO.Path.GetDirectoryName(@"C:\Users\Charlie\OneDrive\Documents\GitHub\Nya\Nya\UI\ViewControllers\SettingsViewMainPanelController.cs") + System.IO.Path.DirectorySeparatorChar + @"..\Views\SettingsViewMainPanel.bsml".ToString()));
         }
 
         [UIValue("view-controller-active")]
