@@ -123,6 +123,7 @@ namespace Nya.Utils
                     while (nyaImageURL == oldImageURL)
                     {
                         var files = Directory.GetFiles($"{Path.Combine(UnityGame.UserDataPath, "Nya")}/{type}");
+                        if (files.Length == 1 && oldImageURL != null) return;
                         var rand = new System.Random();
                         nyaImageURL = files[rand.Next(files.Length)];
                     }
