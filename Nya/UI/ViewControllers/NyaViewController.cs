@@ -35,7 +35,7 @@ namespace Nya.UI.ViewControllers
 
         [UIComponent("auto-button")]
         internal readonly UnityEngine.UI.Button nyaAutoButton;
-        
+
         [UIComponent("auto-button")]
         internal readonly TextMeshProUGUI nyaAutoText;
 
@@ -88,7 +88,7 @@ namespace Nya.UI.ViewControllers
                     semaphore.Release();
                 }
                 // This is a neat little thing I wanted to do but couldn't get it to work ):
-                // Might come back to it later
+                // Might come back to it in the future
                 //await IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew( async () =>
                 //{
                 //    var third = (PluginConfig.Instance.AutoNyaWait * 1000) / 3;
@@ -116,7 +116,7 @@ namespace Nya.UI.ViewControllers
                 autoNyaCooldown = false;
             }
         }
-        
+
         private async Task AutoNyaCooldownHandler()
         {
             await Task.Delay(1000);

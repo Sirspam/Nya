@@ -1,9 +1,9 @@
-﻿using BeatSaberMarkupLanguage.FloatingScreen;
+﻿using BeatSaberMarkupLanguage.Attributes;
+using BeatSaberMarkupLanguage.FloatingScreen;
 using HMUI;
 using Nya.Configuration;
 using Nya.Utils;
 using System;
-using System.Threading.Tasks;
 using Tweening;
 using UnityEngine;
 using Zenject;
@@ -15,50 +15,47 @@ namespace Nya.UI.ViewControllers
         private readonly UIUtils uiUtils;
         private readonly SettingsModalGameController settingsModalGameController;
         private readonly IGamePause gamePause;
-        private readonly IDifficultyBeatmap beatmap;
         private readonly TimeTweeningManager timeTweeningManager;
-        private readonly IAudioTimeSource audioTimeSource;
         private FloatingScreen floatingScreen;
 
-        public NyaViewGameController(UIUtils uiUtils, SettingsModalGameController settingsModalGameController, IDifficultyBeatmap beatmap, IGamePause gamePause, TimeTweeningManager timeTweeningManager, IAudioTimeSource audioTimeSource)
+        public NyaViewGameController(UIUtils uiUtils, SettingsModalGameController settingsModalGameController, IGamePause gamePause, TimeTweeningManager timeTweeningManager)
         {
             this.uiUtils = uiUtils;
             this.settingsModalGameController = settingsModalGameController;
             this.gamePause = gamePause;
-            this.beatmap = beatmap;
             this.timeTweeningManager = timeTweeningManager;
-            this.audioTimeSource = audioTimeSource;
         }
 
         public void Initialize()
         {
-            floatingScreen = uiUtils.CreateNyaFloatingScreen(this, PluginConfig.Instance.PausePosition, Quaternion.Euler(PluginConfig.Instance.PauseRotation));
+            if (PluginConfig.Instance.SeperatePositions)
+                floatingScreen = uiUtils.CreateNyaFloatingScreen(this, PluginConfig.Instance.PausePosition, Quaternion.Euler(PluginConfig.Instance.PauseRotation));
+            else
+                floatingScreen = uiUtils.CreateNyaFloatingScreen(this, PluginConfig.Instance.MenuPosition, Quaternion.Euler(PluginConfig.Instance.MenuRotation));
             floatingScreen.gameObject.name = "NyaGameFloatingScreen";
 
-            if (PluginConfig.Instance.EasterEggs && beatmap.level.levelID == "custom_level_69E494F4A295197BF03720029086FABE6856FBCE") // e970 my beloved
-            {
-                // while (!audioTimeSource.isReady)
-                // {
-                    // Plugin.Log.Debug("weeeee!!"); // I'll improve this later I swear
-                    // Task.Delay(25);
-                // }
-                floatingScreen.handle.SetActive(false);
-                nyaButton.gameObject.SetActive(false);
-                nyaAutoButton.gameObject.SetActive(false);
-                nyaSettingsButton.gameObject.SetActive(false);
+            // Wanted to do a wacky easter egg for my beloved shiny happy days map but it prooved to be too much of a hassle
+            // Leaving this commented in case I come back to it in the future
+            //
+            //if (PluginConfig.Instance.EasterEggs && beatmap.level.levelID == "custom_level_69E494F4A295197BF03720029086FABE6856FBCE") // e970 my beloved
+            //{
+            //    floatingScreen.handle.SetActive(false);
+            //    nyaButton.gameObject.SetActive(false);
+            //    nyaAutoButton.gameObject.SetActive(false);
+            //    nyaSettingsButton.gameObject.SetActive(false);
 
-                BeatSaberMarkupLanguage.BeatSaberUI.SetImage(nyaImage, "Nya.Resources.Rainbow_Dance.gif");
-                timeTweeningManager.KillAllTweens(floatingScreen);
-                var positionTween = new FloatTween(0f, 1f, val => floatingScreen.gameObject.transform.position = Vector3.Lerp(floatingScreen.gameObject.transform.position, new Vector3(0f, 3f, 8f), val), 861.7f, EaseType.Linear, 1.621f);
-                var rotationTween = new FloatTween(0f, 1f, val => floatingScreen.gameObject.transform.rotation = Quaternion.Lerp(floatingScreen.gameObject.transform.rotation, Quaternion.Euler(0f, 0f, 0f), val), 861.7f, EaseType.Linear, 1.621f);
-                var theThing = floatingScreen.gameObject.transform.GetChild(0).GetComponent<ImageView>();
-                var colorTween = new FloatTween(0f, 1f, val => theThing.color = Color.Lerp(Color.HSVToRGB(0f, 1f, 1f), Color.HSVToRGB(1f, 1f, 1f), val), 10f, EaseType.Linear);
-                timeTweeningManager.AddTween(positionTween, floatingScreen);
-                timeTweeningManager.AddTween(rotationTween, floatingScreen);
-                colorTween.loop = true;
-                timeTweeningManager.AddTween(colorTween, floatingScreen);
-                return;
-            }
+            //    BeatSaberMarkupLanguage.BeatSaberUI.SetImage(nyaImage, "Nya.Resources.Rainbow_Dance.gif");
+            //    timeTweeningManager.KillAllTweens(floatingScreen);
+            //    var positionTween = new FloatTween(0f, 1f, val => floatingScreen.gameObject.transform.position = Vector3.Lerp(floatingScreen.gameObject.transform.position, new Vector3(0f, 3f, 8f), val), 861.7f, EaseType.Linear, 1.621f);
+            //    var rotationTween = new FloatTween(0f, 1f, val => floatingScreen.gameObject.transform.rotation = Quaternion.Lerp(floatingScreen.gameObject.transform.rotation, Quaternion.Euler(0f, 0f, 0f), val), 861.7f, EaseType.Linear, 1.621f);
+            //    var theThing = floatingScreen.gameObject.transform.GetChild(0).GetComponent<ImageView>();
+            //    var colorTween = new FloatTween(0f, 1f, val => theThing.color = Color.Lerp(Color.HSVToRGB(0f, 1f, 1f), Color.HSVToRGB(1f, 1f, 1f), val), 10f, EaseType.Linear);
+            //    timeTweeningManager.AddTween(positionTween, floatingScreen);
+            //    timeTweeningManager.AddTween(rotationTween, floatingScreen);
+            //    colorTween.loop = true;
+            //    timeTweeningManager.AddTween(colorTween, floatingScreen);
+            //    return;
+            //}
             floatingScreen.gameObject.SetActive(false);
             floatingScreen.HandleReleased += FloatingScreen_HandleReleased;
             gamePause.didPauseEvent += GamePause_didPauseEvent;
@@ -70,6 +67,7 @@ namespace Nya.UI.ViewControllers
             gamePause.didPauseEvent -= GamePause_didPauseEvent;
             gamePause.willResumeEvent -= GamePause_didResumeEvent;
             floatingScreen.HandleReleased -= FloatingScreen_HandleReleased;
+            settingsModalGameController.HideModal();
             floatingScreen.gameObject.SetActive(false);
             timeTweeningManager.KillAllTweens(floatingScreen);
         }
@@ -100,6 +98,16 @@ namespace Nya.UI.ViewControllers
                 PluginConfig.Instance.MenuPosition = floatingScreen.transform.position;
                 PluginConfig.Instance.MenuRotation = floatingScreen.transform.eulerAngles;
             }
+        }
+
+        [UIAction("settings-button-clicked")]
+        protected void SettingsButtonClicked()
+        {
+            if (autoNyaToggle)
+            {
+                AutoNya();
+            }
+            settingsModalGameController.ShowModal(settingsButtonTransform);
         }
     }
 }

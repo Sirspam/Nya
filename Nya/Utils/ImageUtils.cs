@@ -1,6 +1,7 @@
 ﻿using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Animations;
 using HMUI;
+using IPA.Utilities;
 using Newtonsoft.Json;
 using Nya.Configuration;
 using Nya.Entries;
@@ -26,8 +27,8 @@ namespace Nya.Utils
 
         public static void DownloadNyaImage()
         {
-            if (PluginConfig.Instance.Nsfw) File.WriteAllBytes($"{PluginConfig.Instance.LocalFilesPath}/nsfw/{nyaImageEndpoint}", nyaImageBytes);
-            else File.WriteAllBytes($"{PluginConfig.Instance.LocalFilesPath}/sfw/{nyaImageEndpoint}", nyaImageBytes);
+            if (PluginConfig.Instance.Nsfw) File.WriteAllBytes($"{Path.Combine(UnityGame.UserDataPath, "Nya")}/nsfw/{nyaImageEndpoint}", nyaImageBytes);
+            else File.WriteAllBytes($"{Path.Combine(UnityGame.UserDataPath, "Nya")}/sfw/{nyaImageEndpoint}", nyaImageBytes);
         }
 
         public static void CopyNyaImage()
@@ -62,7 +63,7 @@ namespace Nya.Utils
         {
             try
             {
-                Plugin.Log.Debug($"Attempting to get image url from {PluginConfig.Instance.SelectedAPI}");
+                Plugin.Log.Info($"Attempting to get image url from {PluginConfig.Instance.SelectedAPI}, {endpoint}");
                 var response = await GetWebDataToBytesAsync(WebAPIs.APIs[PluginConfig.Instance.SelectedAPI].URL + endpoint);
                 var endpointResult = JsonConvert.DeserializeObject<WebAPIEntries>(Encoding.UTF8.GetString(response));
                 nyaImageEndpoint = endpointResult.Url.Split('/').Last();
@@ -121,7 +122,7 @@ namespace Nya.Utils
                     var oldImageURL = nyaImageURL;
                     while (nyaImageURL == oldImageURL)
                     {
-                        var files = Directory.GetFiles($"{PluginConfig.Instance.LocalFilesPath}/{type}");
+                        var files = Directory.GetFiles($"{Path.Combine(UnityGame.UserDataPath, "Nya")}/{type}");
                         var rand = new System.Random();
                         nyaImageURL = files[rand.Next(files.Length)];
                     }

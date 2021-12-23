@@ -14,7 +14,6 @@ namespace Nya.Configuration
     internal class PluginConfig
     {
         public static PluginConfig Instance { get; set; }
-        public virtual bool EasterEggs { get; set; } = true; // Must be 'virtual' if you want BSIPA to detect a value change and save the config automatically.
         public bool Nsfw { get; set; } = false;
         public virtual bool RememberNsfw { get; set; } = false;
         public virtual bool SkipNsfw { get; set; } = false;
@@ -26,12 +25,15 @@ namespace Nya.Configuration
         public virtual Vector3 MenuRotation { get; set; } = new Vector3(335f, 0f, 0f);
         public virtual Vector3 PausePosition { get; set; } = new Vector3(0f, 3.65f, 4f);
         public virtual Vector3 PauseRotation { get; set; } = new Vector3(335f, 0f, 0f);
+        public virtual bool RainbowBackgroundColor { get; set; } = false;
         public virtual Color BackgroundColor { get; set; } = new Color(0.745f, 0.745f, 0.745f);
         public virtual int AutoNyaWait { get; set; } = 4;
-        public virtual string LocalFilesPath { get; set; } = Path.Combine(UnityGame.UserDataPath, "Nya");
+        // public virtual string LocalFilesPath { get; set; } = Path.Combine(UnityGame.UserDataPath, "Nya");
         public virtual string SelectedAPI { get; set; } = "waifu.pics";
+
         [NonNullable, UseConverter(typeof(DictionaryConverter<EndpointData>))]
         public virtual Dictionary<string, EndpointData> SelectedEndpoints { get; set; } = new Dictionary<string, EndpointData>();
+
         //{
         //    {
         //        "waifu.pics", new EndpointData
@@ -49,7 +51,7 @@ namespace Nya.Configuration
         //    },
         //    {
         //        "Local Files", new EndpointData
-        //        { 
+        //        {
         //            SelectedSfwEndpoint = "/sfw",
         //            SelectedNsfwEndpoint = "/nsfw",
         //        }

@@ -1,16 +1,18 @@
 ﻿using Nya.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Nya.UI.ViewControllers
 {
     public class SettingsModalGameController : SettingsModalController
     {
-        public SettingsModalGameController(NsfwConfirmModalController nsfwConfirmModalController, SettingsViewController settingsViewController, UIUtils uiUtils) : base(nsfwConfirmModalController, settingsViewController, uiUtils)
+        public SettingsModalGameController(MainCamera mainCamera, NsfwConfirmModalController nsfwConfirmModalController, UIUtils uiUtils) : base(mainCamera, nsfwConfirmModalController, uiUtils)
         {
+        }
+
+        public void ShowModal(Transform parentTransform)
+        {
+            ShowModal(parentTransform, this);
+            MoreSettingsTab.IsVisible = false;
         }
     }
 }

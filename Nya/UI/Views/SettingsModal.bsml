@@ -8,8 +8,8 @@
 			
 			<tab tab-name="Nya" tags='settings-modal-tab'>
 				<vertical horizontal-fit='PreferredSize' vertical-fit='PreferredSize' preferred-width='60' preferred-height='40' spacing='1'>
-					<button id='nya-download-button' text='Download Nya' on-click='nya-download-click' active='true' min-height='10' min-width='25' hover-hint='Download the current image to UserData\Nya'/>
-					<button id='nya-copy-button' text='Copy Nya' on-click='nya-copy-click' active='true' min-height='10' min-width='25' hover-hint='Copy the current image to clipboard'/>
+					<button id='nya-download-button' text='Download Nya' on-click='nya-download-clicked' active='true' min-height='10' min-width='25'/>
+					<button id='nya-copy-button' text='Copy Nya' on-click='nya-copy-clicked' active='true' min-height='10' min-width='25'/>
 					<checkbox-setting id='nsfw-checkbox' text='NSFW Nya' value='nya-nsfw-check' on-change='nya-nsfw-changed' bind-value='true'/>
 				</vertical>
 			</tab>
@@ -20,11 +20,12 @@
 					<dropdown-list-setting id='nsfw-dropdown' text='NSFW endpoint' value='nsfw-value' choices='nsfw-list' on-change='nsfw-change'/>
 				</vertical>
 			</tab>
-			<tab tab-name="Screen" tags='settings-modal-tab'>
-				<vertical horizontal-fit='PreferredSize' vertical-fit='PreferredSize' preferred-width='60' preferred-height='45' spacing='-3'>
-					<checkbox-setting id='in-menu-checkbox' text='Detach Nya in the menu' value='in-menu' on-change='in-menu-changed' apply-on-change='true'/>
-					<checkbox-setting id='in-pause-checkbox' text='Show Nya in the pause menu' value='in-pause' on-change='in-pause-changed' apply-on-change='true'/>
+			<tab id='screen-tab' tab-name="Screen" tags='settings-modal-tab'>
+				<vertical horizontal-fit='PreferredSize' vertical-fit='PreferredSize' preferred-width='60' preferred-height='42' spacing='-3'>
 					<checkbox-setting id='show-handle-checkbox' text="Show Nya's movement handle" value='show-handle' on-change='show-handle-changed' apply-on-change='true'/>
+					<button id='face-headset-button' text='Face Headset' on-click='face-headset-clicked' min-height='10' min-width='28'/>
+					<button id='reset-rotation-button' text='Reset Rotation' on-click='reset-rotation-clicked' min-height='10' min-width='28'/>
+					<button id='reset-position-button' text='Reset Position' on-click='reset-position-clicked' min-height='10' min-width='28'/>
 				</vertical>
 			</tab>
 			<tab id='more-settings-tab' tab-name="+" tags='settings-modal-tab' pref-width='10'>

@@ -1,4 +1,9 @@
 ﻿<bg id='root' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+	
+	<vertical ignore-layout='true'>
+		<text text='So all the text tags fucking die if this isnt here. If anyone knows a fix please tell me :pleading:' color='#00000000'/>
+	</vertical>
+	
 	<vertical pad-top='2'>
 		<img id='nya-image' preserve-aspect='true' pref-width='70' pref-height='70'/>
 		<horizontal spacing='10'>

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Nya.Configuration
+﻿namespace Nya.Configuration
 {
     internal class EndpointData
     {

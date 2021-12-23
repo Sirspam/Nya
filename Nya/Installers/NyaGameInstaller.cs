@@ -1,7 +1,6 @@
 ﻿using Nya.Configuration;
 using Nya.UI.ViewControllers;
 using Nya.Utils;
-using SiraUtil;
 using Zenject;
 
 namespace Nya.Installers

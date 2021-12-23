@@ -1,5 +1,7 @@
-﻿using Nya.Configuration;
+﻿using IPA.Utilities;
+using Nya.Configuration;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Nya.Utils
 {
@@ -27,7 +29,7 @@ namespace Nya.Utils
             {
                 "Local Files", new APIData()
                 {
-                    URL = PluginConfig.Instance.LocalFilesPath,
+                    URL = Path.Combine(UnityGame.UserDataPath, "Nya"),
                     json = null,
                     SfwEndpoints = new List<string> { "/sfw" },
                     NsfwEndpoints = new List<string> { "/nsfw" }

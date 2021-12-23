@@ -1,68 +1,67 @@
 ﻿using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
+using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.Parser;
-using BeatSaberMarkupLanguage.Settings;
-using BeatSaberMarkupLanguage.GameplaySetup;
 using HMUI;
 using IPA.Utilities;
 using Nya.Configuration;
 using Nya.Utils;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 using Zenject;
-using UnityEngine.SceneManagement;
-using BeatSaberMarkupLanguage.Components;
 
 namespace Nya.UI.ViewControllers
 {
     public abstract class SettingsModalController : IInitializable, INotifyPropertyChanged
     {
+        protected MainCamera mainCamera;
         protected readonly NsfwConfirmModalController nsfwConfirmModalController;
-        protected readonly SettingsViewController settingsViewController;
         protected readonly UIUtils uiUtils;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public SettingsModalController(NsfwConfirmModalController nsfwConfirmModalController, SettingsViewController settingsViewController, UIUtils uiUtils)
+        public SettingsModalController(MainCamera mainCamera, NsfwConfirmModalController nsfwConfirmModalController, UIUtils uiUtils)
         {
+            this.mainCamera = mainCamera;
             this.nsfwConfirmModalController = nsfwConfirmModalController;
-            this.settingsViewController = settingsViewController;
             this.uiUtils = uiUtils;
         }
 
         #region components
 
         [UIComponent("root")]
-        private readonly RectTransform RootTransform;
+        protected readonly RectTransform RootTransform;
 
         [UIComponent("modal")]
-        protected ModalView ModalView;
+        protected readonly ModalView ModalView;
 
         [UIComponent("modal")]
-        private readonly RectTransform ModalTransform;
-        
+        protected readonly RectTransform ModalTransform;
+
+        [UIComponent("screen-tab")]
+        protected readonly Tab ScreenTab;
+
         [UIComponent("more-settings-tab")]
         protected readonly Tab MoreSettingsTab;
 
         [UIComponent("nya-download-button")]
-        protected readonly UnityEngine.UI.Button NyaDownloadButton;
+        protected readonly Button NyaDownloadButton;
 
         [UIComponent("nya-copy-button")]
-        protected readonly UnityEngine.UI.Button NyaCopyButton;
+        protected readonly Button NyaCopyButton;
 
         [UIComponent("nsfw-checkbox")]
-        private readonly RectTransform NsfwCheckbox;
+        protected readonly RectTransform NsfwCheckbox;
 
         [UIComponent("sfw-dropdown")]
-        private readonly DropDownListSetting SfwDropDownListSetting;
+        protected readonly DropDownListSetting SfwDropDownListSetting;
 
         [UIComponent("nsfw-dropdown")]
-        private readonly DropDownListSetting NsfwDropDownListSetting;
+        protected readonly DropDownListSetting NsfwDropDownListSetting;
 
         [UIComponent("api-dropdown")]
         protected readonly Transform ApiDropDownTransform;
@@ -73,8 +72,17 @@ namespace Nya.UI.ViewControllers
         [UIComponent("nsfw-dropdown")]
         protected readonly Transform NsfwDropDownTransform;
 
+        [UIComponent("face-headset-button")]
+        protected readonly Button FaceHeadsetButton;
+
+        [UIComponent("reset-rotation-button")]
+        protected readonly Button ResetRotationButton;
+
+        [UIComponent("reset-position-button")]
+        protected readonly Button ResetPositionButton;
+
         [UIComponent("show-handle-checkbox")]
-        private readonly GenericInteractableSetting ShowHandleCheckbox;
+        protected readonly GenericInteractableSetting ShowHandleCheckbox;
 
         #endregion components
 
@@ -121,20 +129,6 @@ namespace Nya.UI.ViewControllers
             set => PluginConfig.Instance.SelectedEndpoints[APIValue].SelectedNsfwEndpoint = value;
         }
 
-        [UIValue("in-menu")]
-        protected bool InMenu
-        {
-            get => PluginConfig.Instance.InMenu;
-            set => PluginConfig.Instance.InMenu = value;
-        }
-
-        [UIValue("in-pause")]
-        protected bool InPause
-        {
-            get => PluginConfig.Instance.InPause;
-            set => PluginConfig.Instance.InPause = value;
-        }
-
         [UIValue("show-handle")]
         protected bool PauseHandle
         {
@@ -152,29 +146,23 @@ namespace Nya.UI.ViewControllers
             SetupLists();
         }
 
-        protected void Parse(Transform parentTransform)
+        protected void BaseParse(Transform parentTransform, object host)
         {
-            BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.SettingsModal.bsml"), parentTransform.gameObject, this);
-            ModalView.SetField("_animateParentCanvas", true);
-            ApiDropDownTransform.Find("DropdownTableView").GetComponent<ModalView>().SetField("_animateParentCanvas", false);
-            SfwDropDownTransform.Find("DropdownTableView").GetComponent<ModalView>().SetField("_animateParentCanvas", false);
-            NsfwDropDownTransform.Find("DropdownTableView").GetComponent<ModalView>().SetField("_animateParentCanvas", false);
+            if (!ModalView)
+            {
+                BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.SettingsModal.bsml"), parentTransform.gameObject, host);
+                ModalView.SetField("_animateParentCanvas", true);
+                ApiDropDownTransform.Find("DropdownTableView").GetComponent<ModalView>().SetField("_animateParentCanvas", false);
+                SfwDropDownTransform.Find("DropdownTableView").GetComponent<ModalView>().SetField("_animateParentCanvas", false);
+                NsfwDropDownTransform.Find("DropdownTableView").GetComponent<ModalView>().SetField("_animateParentCanvas", false);
+            }
         }
 
-        public void ShowModal(Transform parentTransform)
+        public void ShowModal(Transform parentTransform, object host)
         {
-            Parse(parentTransform);
+            BaseParse(parentTransform, host);
             parserParams.EmitEvent("close-modal");
             parserParams.EmitEvent("open-modal");
-
-            var root = parentTransform.root;
-            if (root.name == "NyaMenuFloatingScreen" || root.name == "NyaGameFloatingScreen")
-            {
-                foreach (HoverHint hoverComponent in root.gameObject.GetComponentsInChildren<HoverHint>())
-                {
-                    hoverComponent.enabled = false;
-                }
-            }
 
             if (ImageUtils.nyaImageURL.EndsWith(".gif") || ImageUtils.nyaImageURL.EndsWith(".apng"))
             {
@@ -197,17 +185,17 @@ namespace Nya.UI.ViewControllers
 
         #region actions
 
-        [UIAction("nya-download-click")]
+        [UIAction("nya-download-clicked")]
         protected void DownloadNya()
         {
-            uiUtils.ButtonUnderlineClick(NyaDownloadButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>());
+            uiUtils.ButtonUnderlineClick(NyaDownloadButton.gameObject);
             ImageUtils.DownloadNyaImage();
         }
 
-        [UIAction("nya-copy-click")]
+        [UIAction("nya-copy-clicked")]
         protected void CopyNya()
         {
-            uiUtils.ButtonUnderlineClick(NyaCopyButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>());
+            uiUtils.ButtonUnderlineClick(NyaCopyButton.gameObject);
             ImageUtils.CopyNyaImage();
         }
 
@@ -246,34 +234,37 @@ namespace Nya.UI.ViewControllers
             PluginConfig.Instance.Changed();
         }
 
-        [UIAction("in-menu-changed")]
-        protected void InMenuChanged(bool value)
+        [UIAction("face-headset-clicked")]
+        protected void FaceHeadsetClicked()
         {
-            GameplaySetup.instance.SetTabVisibility("Nya", value);
-            RootTransform.root.gameObject.SetActive(!value);
-            // if (rootTransform.root.name == "NyaMenuFloatingScreen")
-            
-            
-
+            uiUtils.ButtonUnderlineClick(FaceHeadsetButton.gameObject);
+            RootTransform.root.gameObject.transform.LookAt(mainCamera.camera.transform);
+            RootTransform.root.gameObject.transform.Rotate(0f, 180f, 0, Space.Self); // Nya decides that it's shy and faces away from the user, so we do a little flipping
         }
 
-        [UIAction("in-pause-changed")]
-        protected async void InPauseChanged(bool value)
+        [UIAction("reset-rotation-clicked")]
+        protected void ReseteRotationClicked()
         {
-            if (RootTransform.root.name == "NyaGameFloatingScreen")
+            uiUtils.ButtonUnderlineClick(ResetRotationButton.gameObject);
+            Vector3 rotation = RootTransform.root.gameObject.transform.rotation.eulerAngles;
+            RootTransform.root.gameObject.transform.rotation = Quaternion.Euler(0f, rotation.y, 0f);
+        }
+
+        [UIAction("reset-position-clicked")]
+        protected void ResetPositionClicked()
+        {
+            uiUtils.ButtonUnderlineClick(ResetPositionButton.gameObject);
+            RootTransform.root.gameObject.transform.position = new Vector3(0f, 3.65f, 4f);
+            RootTransform.root.gameObject.transform.rotation = Quaternion.Euler(new Vector3(335f, 0f, 0f));
+            if (RootTransform.root.name == "NyaGameFloatingScreen" && PluginConfig.Instance.SeperatePositions)
             {
-                var path = "Nya.Resources.Chocola_Wave.png";
-                if (new System.Random().Next(0, 11) == 0)
-                {
-                    path = "Nya.Resources.Peace.png";
-                }
-                Utilities.GetData(path, (byte[] data) => RootTransform.root.transform.Find("BSMLBackground").Find("BSMLVerticalLayoutGroup").Find("BSMLImage").GetComponent<ImageView>().sprite = Utilities.LoadSpriteRaw(data)); // .Find("Some Bitches")
-                parserParams.EmitEvent("close-modal");
-                RootTransform.root.GetChild(1).gameObject.SetActive(false);
-                await Task.Delay(300);
-                uiUtils.CanvasFadeOut(RootTransform.root.GetComponent<CanvasGroup>(), 2.5f);
-                await Task.Delay(2500); // I don't know how to properly wait for the tweening to finish 😔
-                RootTransform.root.gameObject.SetActive(false);
+                PluginConfig.Instance.PausePosition = RootTransform.root.gameObject.transform.position;
+                PluginConfig.Instance.PauseRotation = RootTransform.root.gameObject.transform.eulerAngles;
+            }
+            else
+            {
+                PluginConfig.Instance.MenuPosition = RootTransform.root.gameObject.transform.position;
+                PluginConfig.Instance.MenuRotation = RootTransform.root.gameObject.transform.eulerAngles;
             }
         }
 
@@ -293,7 +284,7 @@ namespace Nya.UI.ViewControllers
 
         protected void NsfwConfirmNo()
         {
-            if (NsfwCheck) // Stops editing the config if the nsfw value is already false
+            if (NsfwCheck) // Stops from editing the config if the nsfw value is already false
             {
                 NsfwCheck = false;
                 PluginConfig.Instance.Changed();

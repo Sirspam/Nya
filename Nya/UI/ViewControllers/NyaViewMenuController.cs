@@ -26,8 +26,6 @@ namespace Nya.UI.ViewControllers
 
         public void Initialize()
         {
-            
-            
             if (PluginConfig.Instance.InMenu)
             {
                 floatingScreen = uiUtils.CreateNyaFloatingScreen(this, PluginConfig.Instance.MenuPosition, Quaternion.Euler(PluginConfig.Instance.MenuRotation));
@@ -44,26 +42,22 @@ namespace Nya.UI.ViewControllers
 
         public void Dispose()
         {
-            if (GameplaySetup.IsSingletonAvailable)
-            {
-                GameplaySetup.instance.RemoveTab("Nya");
-            }
-
+            if (GameplaySetup.IsSingletonAvailable) GameplaySetup.instance.RemoveTab("Nya");
+            if (PluginConfig.Instance.InMenu) floatingScreen.HandleReleased -= FloatingScreen_HandleReleased;
             gameplaySetupViewController.didActivateEvent -= GameplaySetupViewController_didActivateEvent;
             gameplaySetupViewController.didDeactivateEvent -= GameplaySetupViewController_didDeactivateEvent;
-            floatingScreen.HandleReleased -= FloatingScreen_HandleReleased;
         }
 
         private async void GameplaySetupViewController_didActivateEvent(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
         {
             if (!firstActivation)
             {
-                if (floatingScreen.transform.position != PluginConfig.Instance.MenuPosition) // in case game floatingscreen got moved
+                if (floatingScreen.transform.position != PluginConfig.Instance.MenuPosition || floatingScreen.transform.rotation.eulerAngles != PluginConfig.Instance.MenuRotation) // in case game floatingscreen got moved
                 {
                     floatingScreen.transform.position = PluginConfig.Instance.MenuPosition;
                     floatingScreen.transform.rotation = Quaternion.Euler(PluginConfig.Instance.MenuRotation);
                 }
-                
+
                 nyaButton.interactable = false;
                 await ImageUtils.LoadNyaSprite(nyaImage);
                 nyaButton.interactable = true;
@@ -96,8 +90,6 @@ namespace Nya.UI.ViewControllers
         [UIAction("settings-button-clicked")]
         protected void SettingsButtonClicked()
         {
-            Plugin.Log.Debug("haha hi 1");
-            
             if (autoNyaToggle)
             {
                 AutoNya();

@@ -1,6 +1,7 @@
 ﻿using IPA;
 using IPA.Config;
 using IPA.Config.Stores;
+using IPA.Utilities;
 using Nya.Installers;
 using Nya.Utils;
 using SiraUtil.Zenject;
@@ -21,21 +22,13 @@ namespace Nya
         internal static IPALogger Log { get; private set; }
 
         [Init]
-        /// <summary>
-        /// Called when the plugin is first loaded by IPA (either when the game starts or when the plugin is enabled if it starts disabled).
-        /// [Init] methods that use a Constructor or called before regular methods like InitWithConfig.
-        /// Only use [Init] with one Constructor.
-        /// </summary>
         public Plugin(IPALogger logger, Zenjector zenjector)
         {
             Instance = this;
             Plugin.Log = logger;
             Plugin.Log?.Debug("Logger initialized.");
-            // SiraUtil 3 my beloved
-            // zenjector.Install<NyaMenuInstaller>(Location.Menu);
-            // zenjector.Install<NyaGameInstaller>(Location.Singleplayer);
-            zenjector.OnMenu<NyaMenuInstaller>();
-            zenjector.OnGame<NyaGameInstaller>().ShortCircuitForMultiplayer();
+            zenjector.Install<NyaMenuInstaller>(Location.Menu);
+            zenjector.Install<NyaGameInstaller>(Location.Singleplayer);
         }
 
         #region BSIPA Config
@@ -46,7 +39,7 @@ namespace Nya
         public void InitWithConfig(Config conf)
         {
             Configuration.PluginConfig.Instance = conf.Generated<Configuration.PluginConfig>();
-            var folderPath = Configuration.PluginConfig.Instance.LocalFilesPath;
+            var folderPath = Path.Combine(UnityGame.UserDataPath, "Nya");
             if (!Directory.Exists($"{folderPath}/sfw")) Directory.CreateDirectory($"{folderPath}/sfw");
             if (!Directory.Exists($"{folderPath}/nsfw")) Directory.CreateDirectory($"{folderPath}/nsfw");
 
@@ -55,13 +48,13 @@ namespace Nya
             // May have to make this check more than just the count in the future but for now this works
             // Let's pray that the user never dare tampers with the config otherwise values in the SelectedEndpoints will never fix themselves
             // enums? I hardly know thems!
-            if (Configuration.PluginConfig.Instance.SelectedEndpoints.Count != WebAPIs.APIs.Count) 
+            if (Configuration.PluginConfig.Instance.SelectedEndpoints.Count != WebAPIs.APIs.Count)
             {
                 Configuration.PluginConfig.Instance.SelectedEndpoints.Clear();
                 foreach (string key in WebAPIs.APIs.Keys)
                 {
                     Configuration.PluginConfig.Instance.SelectedEndpoints.Add(key, new Configuration.EndpointData()
-                    { 
+                    {
                         SelectedSfwEndpoint = WebAPIs.APIs[key].SfwEndpoints[0],
                         SelectedNsfwEndpoint = WebAPIs.APIs[key].NsfwEndpoints[0]
                     });
