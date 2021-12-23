@@ -2,60 +2,63 @@
 using BeatSaberMarkupLanguage.FloatingScreen;
 using HMUI;
 using Nya.Configuration;
+using System.Linq;
 using System.Reflection;
 using Tweening;
 using UnityEngine;
 
 namespace Nya.Utils
 {
-    internal class UIUtils
+    public class UIUtils
     {
-        private readonly TimeTweeningManager timeTweeningManager;
-        private FloatingScreen _floatingScreen;
+        private readonly TimeTweeningManager uwuTweenyManager; // Thanks PixelBoom
+        public Material NyaBGMaterial = new Material(Resources.FindObjectsOfTypeAll<Material>().First(x => x.name == "UIFogBG")) // UIFogBG, UINoGlow
+        {
+            name = "NyaBG",
+            color = PluginConfig.Instance.BackgroundColor,
+        };
 
         public UIUtils(TimeTweeningManager timeTweeningManager)
         {
-            this.timeTweeningManager = timeTweeningManager;
+            this.uwuTweenyManager = timeTweeningManager;
         }
 
         public FloatingScreen CreateNyaFloatingScreen(object host, Vector3 position, Quaternion rotation)
         {
-            _floatingScreen = FloatingScreen.CreateFloatingScreen(new Vector2(100f, 80f), PluginConfig.Instance.showHandle, position, rotation, curvatureRadius: 220, true);
-            BSMLParser.instance.Parse(BeatSaberMarkupLanguage.Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.NyaView.bsml"), _floatingScreen.gameObject, host);
-            if (_floatingScreen.handle != null)
-            {
-                _floatingScreen.handle.transform.localPosition = new Vector3(0f, -_floatingScreen.ScreenSize.y / 1.8f, -5f);
-                _floatingScreen.handle.transform.localScale = new Vector3(_floatingScreen.ScreenSize.x * 0.8f, _floatingScreen.ScreenSize.y / 15f, _floatingScreen.ScreenSize.y / 15f);
-                _floatingScreen.handle.GetComponent<MeshRenderer>().material.color = Color.blue; // Changes pratically nothing but I think it looks a neater :)
-                _floatingScreen.handle.gameObject.layer = 5;
-                _floatingScreen.HighlightHandle = true;
-                _floatingScreen.HandleReleased += FloatingScreen_HandleReleased;
-            }
-            _floatingScreen.gameObject.layer = 5;
-            return _floatingScreen;
+            FloatingScreen floatingScreen = FloatingScreen.CreateFloatingScreen(new Vector2(100f, 80f), true, position, rotation, curvatureRadius: 220, true);
+            BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.NyaView.bsml"), floatingScreen.gameObject, host);
+            floatingScreen.gameObject.layer = 5;
+            floatingScreen.gameObject.transform.GetChild(0).GetComponent<ImageView>().material = NyaBGMaterial;
+            floatingScreen.handle.transform.localPosition = new Vector3(0f, -floatingScreen.ScreenSize.y / 1.8f, -5f);
+            floatingScreen.handle.transform.localScale = new Vector3(floatingScreen.ScreenSize.x * 0.8f, floatingScreen.ScreenSize.y / 15f, floatingScreen.ScreenSize.y / 15f);
+            floatingScreen.handle.gameObject.layer = 5;
+            floatingScreen.HighlightHandle = true;
+            if (!PluginConfig.Instance.ShowHandle) floatingScreen.handle.gameObject.SetActive(false);
+            if (PluginConfig.Instance.RainbowBackgroundColor) RainbowNyaBG(true);
+            return floatingScreen;
         }
 
-        private void FloatingScreen_HandleReleased(object sender, FloatingScreenHandleEventArgs args)
+        public void ButtonUnderlineClick(GameObject gameObject)
         {
-            if (sender.ToString() == "NyaMenuFloatingScreen (BeatSaberMarkupLanguage.FloatingScreen.FloatingScreen)")
-            {
-                PluginConfig.Instance.menuPosition = _floatingScreen.transform.position;
-                PluginConfig.Instance.menuRotation = _floatingScreen.transform.eulerAngles;
-            }
-            else if (sender.ToString() == "NyaGameFloatingScreen (BeatSaberMarkupLanguage.FloatingScreen.FloatingScreen)")
-            {
-                PluginConfig.Instance.pausePosition = _floatingScreen.transform.position;
-                PluginConfig.Instance.pauseRotation = _floatingScreen.transform.eulerAngles;
-            }
+            ImageView underline = gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>();
+            uwuTweenyManager.KillAllTweens(underline);
+            FloatTween tween = new FloatTween(0f, 1f, val => underline.color = Color.Lerp(new Color(0f, 0.502f, 1f, 1f), new Color(1f, 1f, 1f, 0.502f), val), 1f, EaseType.InSine);
+            uwuTweenyManager.AddTween(tween, underline);
         }
 
-
-        public void ButtonUnderlineClick(ImageView underline)
+        public void RainbowNyaBG(bool active)
         {
-            Color oldColor = underline.color;
-            timeTweeningManager.KillAllTweens(underline);
-            var tween = new FloatTween(0f, 1f, val => underline.color = Color.Lerp(new Color(0f, 0.502f, 1f, 1f), oldColor, val), 1f, EaseType.InOutSine);
-            timeTweeningManager.AddTween(tween, underline);
+            uwuTweenyManager.KillAllTweens(NyaBGMaterial);
+            if (!active)
+            {
+                NyaBGMaterial.color = PluginConfig.Instance.BackgroundColor;
+                return;
+            }
+            FloatTween tween = new FloatTween(0f, 1, val => NyaBGMaterial.color = Color.HSVToRGB(val, 1f, 1f), 5f, EaseType.Linear)
+            {
+                loop = true,
+            };
+            uwuTweenyManager.AddTween(tween, NyaBGMaterial);
         }
     }
 }

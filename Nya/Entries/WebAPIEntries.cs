@@ -2,7 +2,7 @@
 
 namespace Nya.Entries
 {
-    class WebAPIEntries
+    internal class WebAPIEntries
     {
         [JsonProperty("url")]
         public string Url { get; set; }

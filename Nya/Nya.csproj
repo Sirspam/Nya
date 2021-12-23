@@ -62,6 +62,10 @@
 			<HintPath>$(BeatSaberDir)\Plugins\BSML.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
+		<Reference Include="UnityEngine.UIModule">
+		  <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+		  <Private>False</Private>
+		</Reference>
 		<Reference Include="UnityEngine.UnityWebRequestModule">
 		  <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
 		  <Private>False</Private>
@@ -93,22 +97,11 @@
 		<None Include="Directory.Build.targets" Condition="Exists('Directory.Build.targets')" />
 		<None Include="Nya.csproj.user" Condition="Exists('Nya.csproj.user')" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
-		<EmbeddedResource Include="Resources\Chocola_Dead.png" />
-		<EmbeddedResource Include="Resources\Chocola_Wave.png" />
-		<EmbeddedResource Include="Resources\Vanilla_Flushed.png" />
+		<EmbeddedResource Include="Resources\*.png" />
 		<EmbeddedResource Include="manifest.json" />
 		<EmbeddedResource Include="UI\Views\*.bsml" />
-	</ItemGroup>
-	
-	<ItemGroup>
-	  <None Remove="Resources\Chocola_Dead.png" />
-	  <None Remove="Resources\Chocola_Wave.png" />
-	  <None Remove="Resources\Vanilla_Flushed.png" />
-	  <None Remove="UI\Views\NSFWConfirmModal.bsml" />
-	  <None Remove="UI\Views\SettingsModal.bsml" />
-	  <None Remove="UI\Views\SettingView.bsml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -118,7 +111,4 @@
 		</PackageReference>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Entries\" />
-	</ItemGroup>
 </Project>

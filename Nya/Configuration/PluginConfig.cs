@@ -1,46 +1,62 @@
 ﻿using IPA.Config.Stores;
 using IPA.Config.Stores.Attributes;
 using IPA.Config.Stores.Converters;
+using IPA.Utilities;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
 [assembly: InternalsVisibleTo(GeneratedStore.AssemblyVisibilityTarget)]
+
 namespace Nya.Configuration
 {
     internal class PluginConfig
     {
         public static PluginConfig Instance { get; set; }
-        public bool NSFW { get; set; } = false; // Must be 'virtual' if you want BSIPA to detect a value change and save the config automatically.
-        public virtual bool rememberNSFW { get; set; } = false;
-        public virtual bool skipNSFW { get; set; } = false;
-        public virtual bool inMenu { get; set; } = false;
-        public virtual bool inPause { get; set; } = false;
-        public virtual bool showHandle { get; set; } = false;
-        public virtual Vector3 menuPosition { get; set; } = new Vector3(0f, 3.65f, 4f);
-        public virtual Vector3 menuRotation { get; set; } = new Vector3(335f, 0f, 0f);
-        public virtual Vector3 pausePosition { get; set; } = new Vector3(-2f, 1.5f, 0f);
-        public virtual Vector3 pauseRotation { get; set; } = new Vector3(0f, 270f, 0f);
-        public virtual int autoNyaWait { get; set; } = 5;
-        public virtual string selectedAPI { get; set; } = "waifu.pics";
+        public bool Nsfw { get; set; } = false;
+        public virtual bool RememberNsfw { get; set; } = false;
+        public virtual bool SkipNsfw { get; set; } = false;
+        public virtual bool InMenu { get; set; } = false;
+        public virtual bool InPause { get; set; } = false;
+        public virtual bool ShowHandle { get; set; } = false;
+        public virtual bool SeperatePositions { get; set; } = false;
+        public virtual Vector3 MenuPosition { get; set; } = new Vector3(0f, 3.65f, 4f);
+        public virtual Vector3 MenuRotation { get; set; } = new Vector3(335f, 0f, 0f);
+        public virtual Vector3 PausePosition { get; set; } = new Vector3(0f, 3.65f, 4f);
+        public virtual Vector3 PauseRotation { get; set; } = new Vector3(335f, 0f, 0f);
+        public virtual bool RainbowBackgroundColor { get; set; } = false;
+        public virtual Color BackgroundColor { get; set; } = new Color(0.745f, 0.745f, 0.745f);
+        public virtual int AutoNyaWait { get; set; } = 4;
+        // public virtual string LocalFilesPath { get; set; } = Path.Combine(UnityGame.UserDataPath, "Nya");
+        public virtual string SelectedAPI { get; set; } = "waifu.pics";
+
         [NonNullable, UseConverter(typeof(DictionaryConverter<EndpointData>))]
-        public virtual Dictionary<string, EndpointData> APIs { get; set; } = new Dictionary<string, EndpointData>
-        {
-            { 
-                "waifu.pics", new EndpointData
-                {
-                    selected_SFW_Endpoint = "sfw/neko",
-                    selected_NSFW_Endpoint = "nsfw/neko"
-                }
-            },
-            { 
-                "nekos.life", new EndpointData
-                {
-                    selected_SFW_Endpoint = "neko",
-                    selected_NSFW_Endpoint = "lewd",
-                }
-            }
-        };
+        public virtual Dictionary<string, EndpointData> SelectedEndpoints { get; set; } = new Dictionary<string, EndpointData>();
+
+        //{
+        //    {
+        //        "waifu.pics", new EndpointData
+        //        {
+        //            SelectedSfwEndpoint = "sfw/neko",
+        //            SelectedNsfwEndpoint = "nsfw/neko"
+        //        }
+        //    },
+        //    {
+        //        "nekos.life", new EndpointData
+        //        {
+        //            SelectedSfwEndpoint = "neko",
+        //            SelectedNsfwEndpoint = "lewd",
+        //        }
+        //    },
+        //    {
+        //        "Local Files", new EndpointData
+        //        {
+        //            SelectedSfwEndpoint = "/sfw",
+        //            SelectedNsfwEndpoint = "/nsfw",
+        //        }
+        //    }
+        //};
 
         /// <summary>
         /// This is called whenever BSIPA reads the config from disk (including when file changes are detected).

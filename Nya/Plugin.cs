@@ -1,9 +1,10 @@
 ﻿using IPA;
 using IPA.Config;
 using IPA.Config.Stores;
+using IPA.Utilities;
 using Nya.Installers;
+using Nya.Utils;
 using SiraUtil.Zenject;
-using System;
 using System.IO;
 using IPALogger = IPA.Logging.Logger;
 
@@ -21,39 +22,48 @@ namespace Nya
         internal static IPALogger Log { get; private set; }
 
         [Init]
-        /// <summary>
-        /// Called when the plugin is first loaded by IPA (either when the game starts or when the plugin is enabled if it starts disabled).
-        /// [Init] methods that use a Constructor or called before regular methods like InitWithConfig.
-        /// Only use [Init] with one Constructor.
-        /// </summary>
         public Plugin(IPALogger logger, Zenjector zenjector)
         {
             Instance = this;
             Plugin.Log = logger;
             Plugin.Log?.Debug("Logger initialized.");
-            zenjector.OnMenu<NyaMenuInstaller>();
-            zenjector.OnGame<NyaGameInstaller>().ShortCircuitForMultiplayer();
+            zenjector.Install<NyaMenuInstaller>(Location.Menu);
+            zenjector.Install<NyaGameInstaller>(Location.Singleplayer);
         }
 
         #region BSIPA Config
+
         //Uncomment to use BSIPA's config
 
         [Init]
         public void InitWithConfig(Config conf)
         {
             Configuration.PluginConfig.Instance = conf.Generated<Configuration.PluginConfig>();
-            var folderPath = Environment.CurrentDirectory + "/UserData/Nya";
-            if (!Directory.Exists(folderPath))
-                Directory.CreateDirectory(folderPath);
-            if (!Configuration.PluginConfig.Instance.rememberNSFW)
+            var folderPath = Path.Combine(UnityGame.UserDataPath, "Nya");
+            if (!Directory.Exists($"{folderPath}/sfw")) Directory.CreateDirectory($"{folderPath}/sfw");
+            if (!Directory.Exists($"{folderPath}/nsfw")) Directory.CreateDirectory($"{folderPath}/nsfw");
+
+            if (!Configuration.PluginConfig.Instance.RememberNsfw) Configuration.PluginConfig.Instance.Nsfw = false;
+
+            // May have to make this check more than just the count in the future but for now this works
+            // Let's pray that the user never dare tampers with the config otherwise values in the SelectedEndpoints will never fix themselves
+            // enums? I hardly know thems!
+            if (Configuration.PluginConfig.Instance.SelectedEndpoints.Count != WebAPIs.APIs.Count)
             {
-                Configuration.PluginConfig.Instance.NSFW = false;
+                Configuration.PluginConfig.Instance.SelectedEndpoints.Clear();
+                foreach (string key in WebAPIs.APIs.Keys)
+                {
+                    Configuration.PluginConfig.Instance.SelectedEndpoints.Add(key, new Configuration.EndpointData()
+                    {
+                        SelectedSfwEndpoint = WebAPIs.APIs[key].SfwEndpoints[0],
+                        SelectedNsfwEndpoint = WebAPIs.APIs[key].NsfwEndpoints[0]
+                    });
+                }
             }
             Plugin.Log?.Debug("Config loaded");
         }
 
-        #endregion
-
+        #endregion BSIPA Config
 
         #region Disableable
 
@@ -89,10 +99,13 @@ namespace Nya
             await LongRunningUnloadTask().ConfigureAwait(false);
         }
         */
-        #endregion
+
+        #endregion Disableable
 
         // Uncomment the methods in this section if using Harmony
+
         #region Harmony
+
         /*
         /// <summary>
         /// Attempts to apply all the Harmony patches in this assembly.
@@ -128,6 +141,7 @@ namespace Nya
             }
         }
         */
-        #endregion
+
+        #endregion Harmony
     }
 }
