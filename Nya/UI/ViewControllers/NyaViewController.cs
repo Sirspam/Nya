@@ -11,16 +11,11 @@ namespace Nya.UI.ViewControllers
 {
     public abstract class NyaViewController
     {
-        protected static SemaphoreSlim semaphore;
+        protected static SemaphoreSlim semaphore = new SemaphoreSlim(1);
         // protected CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
         protected bool autoNyaToggle = false;
         protected bool autoNyaCooldown = false;
-
-        public NyaViewController()
-        {
-            semaphore = new SemaphoreSlim(1);
-        }
 
         #region components
 
