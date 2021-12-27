@@ -48,7 +48,7 @@ namespace Nya.UI.ViewControllers
             gameplaySetupViewController.didDeactivateEvent -= GameplaySetupViewController_didDeactivateEvent;
         }
 
-        private async void GameplaySetupViewController_didActivateEvent(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
+        private void GameplaySetupViewController_didActivateEvent(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
         {
             if (!firstActivation)
             {
@@ -59,7 +59,7 @@ namespace Nya.UI.ViewControllers
                 }
 
                 nyaButton.interactable = false;
-                await ImageUtils.LoadNyaSprite(nyaImage);
+                ImageUtils.LoadNyaImage(nyaImage);
                 nyaButton.interactable = true;
             }
         }

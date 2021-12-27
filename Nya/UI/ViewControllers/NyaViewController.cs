@@ -45,18 +45,18 @@ namespace Nya.UI.ViewControllers
         #region actions
 
         [UIAction("#post-parse")]
-        protected async void NyaPostParse()
+        protected void NyaPostParse()
         {
             nyaButton.interactable = false;
-            await ImageUtils.LoadNyaSprite(nyaImage);
+            ImageUtils.LoadNyaImage(nyaImage);
             nyaButton.interactable = true;
         }
 
         [UIAction("nya-click")]
-        protected async void NyaClicked()
+        protected void NyaClicked()
         {
             nyaButton.interactable = false;
-            await ImageUtils.LoadNewNyaSprite(nyaImage);
+            ImageUtils.GetNewNyaImage(nyaImage);
             nyaButton.interactable = true;
         }
 
@@ -78,7 +78,7 @@ namespace Nya.UI.ViewControllers
                 while (autoNyaToggle)
                 {
                     await semaphore.WaitAsync();
-                    await ImageUtils.LoadNewNyaSprite(nyaImage);
+                    ImageUtils.GetNewNyaImage(nyaImage);
                     await Task.Delay(PluginConfig.Instance.AutoNyaWait * 1000);
                     semaphore.Release();
                 }
@@ -112,7 +112,7 @@ namespace Nya.UI.ViewControllers
             }
         }
 
-        private async Task AutoNyaCooldownHandler()
+        private async void AutoNyaCooldownHandler()
         {
             await Task.Delay(1000);
             autoNyaCooldown = false;
