@@ -52,7 +52,7 @@ namespace Nya.UI.ViewControllers
         {
             if (!firstActivation)
             {
-                if (floatingScreen.transform.position != PluginConfig.Instance.MenuPosition || floatingScreen.transform.rotation.eulerAngles != PluginConfig.Instance.MenuRotation) // in case game floatingscreen got moved
+                if (PluginConfig.Instance.InMenu && (floatingScreen.transform.position != PluginConfig.Instance.MenuPosition || floatingScreen.transform.rotation.eulerAngles != PluginConfig.Instance.MenuRotation)) // in case game floatingscreen got moved
                 {
                     floatingScreen.transform.position = PluginConfig.Instance.MenuPosition;
                     floatingScreen.transform.rotation = Quaternion.Euler(PluginConfig.Instance.MenuRotation);
