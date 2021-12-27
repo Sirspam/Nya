@@ -7,6 +7,7 @@ using Nya.Configuration;
 using Nya.Entries;
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -14,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using UnityEngine;
+using Graphics = System.Drawing.Graphics;
 
 namespace Nya.Utils
 {
@@ -22,13 +24,16 @@ namespace Nya.Utils
         private static readonly HttpClient Client = new HttpClient();
 
         public static byte[] nyaImageBytes = null;
+        public static byte[] nyaImageBytesCompressed;
         public static string nyaImageEndpoint;
         public static string nyaImageURL;
 
         public static void DownloadNyaImage()
         {
-            if (PluginConfig.Instance.Nsfw) File.WriteAllBytes($"{Path.Combine(UnityGame.UserDataPath, "Nya")}/nsfw/{nyaImageEndpoint}", nyaImageBytes);
-            else File.WriteAllBytes($"{Path.Combine(UnityGame.UserDataPath, "Nya")}/sfw/{nyaImageEndpoint}", nyaImageBytes);
+            if (PluginConfig.Instance.Nsfw) 
+                File.WriteAllBytes($"{Path.Combine(UnityGame.UserDataPath, "Nya")}/nsfw/{nyaImageEndpoint}", nyaImageBytes);
+            else 
+                File.WriteAllBytes($"{Path.Combine(UnityGame.UserDataPath, "Nya")}/sfw/{nyaImageEndpoint}", nyaImageBytes);
         }
 
         public static void CopyNyaImage()
@@ -36,10 +41,10 @@ namespace Nya.Utils
             // Converts gifs to pngs because ???
             // Also doesn't seem to like transparency sometimes
             // Might just remove this feature at some point lmao
-            using (MemoryStream ms = new MemoryStream(nyaImageBytes))
+            using (MemoryStream memoryStream = new MemoryStream(nyaImageBytes))
             {
-                Bitmap bm = new Bitmap(ms);
-                Clipboard.SetImage(bm);
+                Bitmap bitmap = new Bitmap(memoryStream);
+                Clipboard.SetImage(bitmap);
             }
         }
 
@@ -77,41 +82,7 @@ namespace Nya.Utils
 
 #nullable disable
 
-        public static async Task LoadNyaSprite(ImageView image)
-        {
-            if (nyaImageBytes == null)
-            {
-                await LoadNewNyaSprite(image);
-                return;
-            }
-            if (image.sprite.texture.GetRawTextureData() == nyaImageBytes) return;
-
-            Plugin.Log.Info($"Loading image from {nyaImageURL}");
-            // Below is essentially BSML's SetImage method but adapted "better" for Nya
-            // I didn't like that it would show a yucky loading gif >:(
-            AnimationStateUpdater oldStateUpdater = image.GetComponent<AnimationStateUpdater>();
-            if (oldStateUpdater != null) UnityEngine.Object.DestroyImmediate(oldStateUpdater);
-
-            if (nyaImageURL.EndsWith(".gif") || nyaImageURL.EndsWith(".apng"))
-            {
-                AnimationStateUpdater stateUpdater = image.gameObject.AddComponent<AnimationStateUpdater>();
-                stateUpdater.image = image;
-                AnimationLoader.Process(nyaImageURL.EndsWith(".gif") ? AnimationType.GIF : AnimationType.APNG, nyaImageBytes, (Texture2D tex, Rect[] uvs, float[] delays, int width, int height) =>
-                {
-                    AnimationControllerData controllerData = AnimationController.instance.Register(nyaImageURL, tex, uvs, delays);
-                    stateUpdater.controllerData = controllerData;
-                });
-            }
-            else
-            {
-                AnimationStateUpdater stateUpdater = image.gameObject.AddComponent<AnimationStateUpdater>();
-                stateUpdater.image = image;
-                if (stateUpdater != null) UnityEngine.Object.DestroyImmediate(stateUpdater);
-                image.sprite = Utilities.LoadSpriteRaw(nyaImageBytes);
-            }
-        }
-
-        public static async Task LoadNewNyaSprite(ImageView image)
+        public static async void GetNewNyaImage(ImageView image)
         {
             try
             {
@@ -128,7 +99,8 @@ namespace Nya.Utils
                         nyaImageURL = files[rand.Next(files.Length)];
                     }
                     Utilities.GetData(nyaImageURL, (byte[] data) => nyaImageBytes = data);
-                    await LoadNyaSprite(image);
+                    await Task.Run(() => DownscaleNyaImage());
+                    LoadNyaImage(image);
                     return;
                 }
 
@@ -146,12 +118,78 @@ namespace Nya.Utils
                     }
                 }
                 nyaImageBytes = await GetWebDataToBytesAsync(nyaImageURL);
-                await LoadNyaSprite(image);
+                await Task.Run(() => DownscaleNyaImage());
+                LoadNyaImage(image);
             }
             catch (Exception e) // e for dEez nuts
             {
                 Plugin.Log.Error(e);
                 LoadErrorSprite(image);
+            }
+        }
+
+        private static void DownscaleNyaImage()
+        {      
+            var originalImage = Image.FromStream(new MemoryStream(nyaImageBytes));
+            // This is either a great way to get away with just one comparison or completely stupid
+            // Also I simply have no clue how to make this work for gifs, so we'll just leave those be.
+            if ((originalImage.Width + originalImage.Height) <= 1024f || nyaImageURL.EndsWith(".gif") || nyaImageURL.EndsWith(".apng"))
+            {
+                nyaImageBytesCompressed = nyaImageBytes;
+                return;
+            }
+
+            double ratio = (double)originalImage.Width / originalImage.Height;
+            if ((512 * ratio) <= originalImage.Width)
+            {
+                var resizedImage = new Bitmap(originalImage, (int)(512f * ratio), 512);
+                using MemoryStream ms = new MemoryStream();
+                resizedImage.Save(ms, originalImage.RawFormat);
+                nyaImageBytesCompressed = ms.ToArray();
+            }
+            else
+            {
+                var resizedImage = new Bitmap(originalImage, 512, (int)(512 / ratio));
+                using MemoryStream ms = new MemoryStream();
+                resizedImage.Save(ms, originalImage.RawFormat);
+                nyaImageBytesCompressed = ms.ToArray();
+            }
+        }
+
+        public static void LoadNyaImage(ImageView image)
+        {
+            if (nyaImageBytes == null)
+            {
+                GetNewNyaImage(image);
+                return;
+            }
+            if (image.sprite.texture.GetRawTextureData() == nyaImageBytesCompressed) return;
+
+            Plugin.Log.Info($"Loading image from {nyaImageURL}");
+
+            // Below is essentially BSML's SetImage method but adapted "better" for Nya
+            // I didn't like that it would show a yucky loading gif >:(
+            AnimationStateUpdater oldStateUpdater = image.GetComponent<AnimationStateUpdater>();
+            if (oldStateUpdater != null) UnityEngine.Object.DestroyImmediate(oldStateUpdater);
+
+            if (nyaImageURL.EndsWith(".gif") || nyaImageURL.EndsWith(".apng"))
+            {
+                AnimationStateUpdater stateUpdater = image.gameObject.AddComponent<AnimationStateUpdater>();
+                stateUpdater.image = image;
+
+                AnimationLoader.Process(nyaImageURL.EndsWith(".gif") ? AnimationType.GIF : AnimationType.APNG, nyaImageBytes, (Texture2D tex, Rect[] uvs, float[] delays, int width, int height) =>
+                {
+                    AnimationControllerData controllerData = AnimationController.instance.Register(nyaImageURL, tex, uvs, delays);
+                    stateUpdater.controllerData = controllerData;
+                });
+            }
+            else
+            {
+                AnimationStateUpdater stateUpdater = image.gameObject.AddComponent<AnimationStateUpdater>();
+                stateUpdater.image = image;
+                if (stateUpdater != null) 
+                    UnityEngine.Object.DestroyImmediate(stateUpdater);
+                image.sprite = Utilities.LoadSpriteRaw(nyaImageBytesCompressed);
             }
         }
 
