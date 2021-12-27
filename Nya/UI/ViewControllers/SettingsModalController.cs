@@ -10,6 +10,7 @@ using Nya.Utils;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -189,14 +190,14 @@ namespace Nya.UI.ViewControllers
         protected void DownloadNya()
         {
             uiUtils.ButtonUnderlineClick(NyaDownloadButton.gameObject);
-            ImageUtils.DownloadNyaImage();
+            Task.Run(() => ImageUtils.DownloadNyaImage());
         }
 
         [UIAction("nya-copy-clicked")]
         protected void CopyNya()
         {
             uiUtils.ButtonUnderlineClick(NyaCopyButton.gameObject);
-            ImageUtils.CopyNyaImage();
+            Task.Run(() => ImageUtils.CopyNyaImage());
         }
 
         [UIAction("nya-nsfw-changed")]

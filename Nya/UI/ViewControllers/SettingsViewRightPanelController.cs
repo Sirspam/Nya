@@ -1,16 +1,12 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
-using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.ViewControllers;
-using UnityEngine.UI;
-using UnityEngine;
-using UnityEngine.EventSystems;
-using TMPro;
-using IPA.Utilities;
-using Nya.Utils;
 using Nya.Configuration;
-using Zenject;
-using Tweening;
+using Nya.Utils;
 using System.Threading.Tasks;
+using TMPro;
+using Tweening;
+using UnityEngine.EventSystems;
+using Zenject;
 
 namespace Nya.UI.ViewControllers
 {
@@ -20,6 +16,8 @@ namespace Nya.UI.ViewControllers
     {
         private TimeTweeningManager uwuTweenyManager;
         private UIUtils uiUtils;
+
+        private bool visible = false;
 
         [Inject]
         public void Constructor(TimeTweeningManager timeTweeningManager, UIUtils uiUtils)
@@ -36,28 +34,34 @@ namespace Nya.UI.ViewControllers
             if (!PluginConfig.Instance.RainbowBackgroundColor)
             {
                 rainbowText.SetText("<#FF0000>R<#FF7F00>A<#FFFF00>I<#00FF00>N<#0000FF>B<#4B0082>O<#9400D3>W\n<#FFFFFF>Enabled");
-                KindlyAskRainbowTextToShowUpThenHaveItSodOffAfter4Seconds();
+                KindlyAskRainbowTextToShowUpThenHaveItSodOffAfterFourSeconds();
                 uiUtils.RainbowNyaBG(true);
                 PluginConfig.Instance.RainbowBackgroundColor = true;
             }
             else
             {
                 rainbowText.SetText("<#FF0000>R<#FF7F00>A<#FFFF00>I<#00FF00>N<#0000FF>B<#4B0082>O<#9400D3>W\n<#FFFFFF>Disabled");
-                KindlyAskRainbowTextToShowUpThenHaveItSodOffAfter4Seconds();
+                KindlyAskRainbowTextToShowUpThenHaveItSodOffAfterFourSeconds();
                 uiUtils.RainbowNyaBG(false);
                 PluginConfig.Instance.RainbowBackgroundColor = false;
             }
         }
 
-        private void KindlyAskRainbowTextToShowUpThenHaveItSodOffAfter4Seconds()
+        private void KindlyAskRainbowTextToShowUpThenHaveItSodOffAfterFourSeconds() // Code maintainability is important!
         {
+            if (visible) return;
             uwuTweenyManager.KillAllTweens(rainbowText);
             FloatTween tween = new FloatTween(0, 1f, val => rainbowText.alpha = val, 0.5f, EaseType.InOutQuad)
             {
                 onCompleted = async delegate ()
                 {
+                    visible = true;
                     await Task.Delay(4000);
-                    FloatTween tween = new FloatTween(1, 0f, val => rainbowText.alpha = val, 0.5f, EaseType.InOutQuad);
+                    uwuTweenyManager.KillAllTweens(rainbowText);
+                    FloatTween tween = new FloatTween(1, 0f, val => rainbowText.alpha = val, 0.5f, EaseType.InOutQuad)
+                    {
+                        onCompleted = delegate () { visible = false; }
+                    };
                     uwuTweenyManager.AddTween(tween, rainbowText);
                 }
             };
