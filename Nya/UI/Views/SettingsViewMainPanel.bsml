@@ -35,7 +35,7 @@
 		<!-- <text text="Commenting out this in case I forgor" font-color='#00000000'/> -->
 		<text text="Hello! :)" font-color='#00000000'/>
 		<text text="This probably isn't a good method for spacing" font-color='#00000000'/>
-		<image src='Nya.Resources.Chocovani_Greeting.png' preserve-aspect='true' pref-width='38' pref-height='38' hover-hint="Thanks for using Nya~"/>
+		<image src='Nya.Resources.Chocovani_Greeting.png' preserve-aspect='true' pref-width='36' pref-height='36' hover-hint="Thanks for using Nya~"/>
 	</settings-container>
 
 	<text active='~restart-required' text="Applying these settings will require the game to soft restart" anchor-pos-x='55' anchor-pos-y='-47' font-size='5' italics='true' color='red'/>
