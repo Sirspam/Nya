@@ -19,7 +19,8 @@ namespace Nya
         public Plugin(Config conf, Logger logger, Zenjector zenjector)
         {
             Log = logger;
-            Log?.Debug("Logger initialized.");
+
+            zenjector.Install<NyaAppInstaller>(Location.App);
             zenjector.Install<NyaMenuInstaller>(Location.Menu);
             zenjector.Install<NyaGameInstaller>(Location.Singleplayer);
 
@@ -46,7 +47,6 @@ namespace Nya
                     });
                 }
             }
-            Log?.Debug("Config loaded");
         }
     }
 }

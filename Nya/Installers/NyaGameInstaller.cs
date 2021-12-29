@@ -1,6 +1,5 @@
 ﻿using Nya.Configuration;
 using Nya.UI.ViewControllers;
-using Nya.Utils;
 using Zenject;
 
 namespace Nya.Installers
@@ -14,8 +13,6 @@ namespace Nya.Installers
                 Container.BindInterfacesAndSelfTo<NyaViewGameController>().AsSingle();
                 Container.BindInterfacesAndSelfTo<SettingsModalGameController>().AsSingle();
                 Container.BindInterfacesAndSelfTo<NsfwConfirmModalController>().AsSingle();
-
-                Container.BindInterfacesAndSelfTo<UIUtils>().AsSingle();
             }
         }
     }
