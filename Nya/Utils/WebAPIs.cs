@@ -1,5 +1,4 @@
 ﻿using IPA.Utilities;
-using Nya.Configuration;
 using System.Collections.Generic;
 using System.IO;
 
@@ -7,9 +6,10 @@ namespace Nya.Utils
 {
     public class WebAPIs
     {
-        internal static Dictionary<string, APIData> APIs { get; set; } = new Dictionary<string, APIData>() {
+        internal static Dictionary<string, APIData> APIs { get; } = new Dictionary<string, APIData>
+        {
             {
-                "waifu.pics", new APIData()
+                "waifu.pics", new APIData
                 {
                     URL = "https://api.waifu.pics/",
                     json = "url",
@@ -18,7 +18,7 @@ namespace Nya.Utils
                 }
             },
             {
-                "nekos.life", new APIData()
+                "nekos.life", new APIData
                 {
                     URL = "https://nekos.life/api/v2/img/",
                     json = "url",
@@ -27,7 +27,7 @@ namespace Nya.Utils
                 }
             },
             {
-                "Local Files", new APIData()
+                "Local Files", new APIData
                 {
                     URL = Path.Combine(UnityGame.UserDataPath, "Nya"),
                     json = null,
