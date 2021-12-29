@@ -1,20 +1,17 @@
 ﻿using IPA.Config.Stores;
 using IPA.Config.Stores.Attributes;
 using IPA.Config.Stores.Converters;
-using IPA.Utilities;
 using System.Collections.Generic;
-using System.IO;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
 [assembly: InternalsVisibleTo(GeneratedStore.AssemblyVisibilityTarget)]
-
 namespace Nya.Configuration
 {
     internal class PluginConfig
     {
         public static PluginConfig Instance { get; set; }
-        public bool Nsfw { get; set; } = false;
+        public virtual bool Nsfw { get; set; } = false;
         public virtual bool RememberNsfw { get; set; } = false;
         public virtual bool SkipNsfw { get; set; } = false;
         public virtual bool InMenu { get; set; } = false;
@@ -28,7 +25,6 @@ namespace Nya.Configuration
         public virtual bool RainbowBackgroundColor { get; set; } = false;
         public virtual Color BackgroundColor { get; set; } = new Color(0.745f, 0.745f, 0.745f);
         public virtual int AutoNyaWait { get; set; } = 4;
-        // public virtual string LocalFilesPath { get; set; } = Path.Combine(UnityGame.UserDataPath, "Nya");
         public virtual string SelectedAPI { get; set; } = "waifu.pics";
 
         [NonNullable, UseConverter(typeof(DictionaryConverter<EndpointData>))]
@@ -72,14 +68,6 @@ namespace Nya.Configuration
         public virtual void Changed()
         {
             // Do stuff when the config is changed.
-        }
-
-        /// <summary>
-        /// Call this to have BSIPA copy the values from <paramref name="other"/> into this config.
-        /// </summary>
-        public virtual void CopyFrom(PluginConfig other)
-        {
-            // This instance's members populated from other
         }
     }
 }
