@@ -19,12 +19,15 @@ namespace Nya
         public Plugin(Config conf, Logger logger, Zenjector zenjector)
         {
             Log = logger;
+  
+            zenjector.UseLogger(logger);
+            
+            Configuration.PluginConfig.Instance = conf.Generated<Configuration.PluginConfig>();
 
-            zenjector.Install<NyaAppInstaller>(Location.App);
+            zenjector.Install<NyaAppInstaller>(Location.App, Configuration.PluginConfig.Instance);
             zenjector.Install<NyaMenuInstaller>(Location.Menu);
             zenjector.Install<NyaGameInstaller>(Location.Singleplayer);
 
-            Configuration.PluginConfig.Instance = conf.Generated<Configuration.PluginConfig>();
             var folderPath = Path.Combine(UnityGame.UserDataPath, "Nya");
             Directory.CreateDirectory(Path.Combine(folderPath, "sfw"));
             Directory.CreateDirectory(Path.Combine(folderPath, "nsfw"));
