@@ -10,19 +10,23 @@ using UnityEngine;
 
 namespace Nya.Utils
 {
-    public class UIUtils
+    internal class UIUtils
     {
-        private readonly TimeTweeningManager uwuTweenyManager; // Thanks PixelBoom
+        private readonly PluginConfig _config;
+        private readonly TimeTweeningManager _uwuTweenyManager; // Thanks PixelBoom
 
-        public Material NyaBGMaterial = new Material(Resources.FindObjectsOfTypeAll<Material>().First(x => x.name == "UIFogBG")) // UIFogBG, UINoGlow
-        {
-            name = "NyaBG",
-            color = PluginConfig.Instance.BackgroundColor,
-        };
+        public Material NyaBGMaterial { get; }
 
-        public UIUtils(TimeTweeningManager timeTweeningManager)
+        public UIUtils(PluginConfig config, TimeTweeningManager timeTweeningManager)
         {
-            this.uwuTweenyManager = timeTweeningManager;
+            _config = config;
+            _uwuTweenyManager = timeTweeningManager;
+
+            NyaBGMaterial = new Material(Resources.FindObjectsOfTypeAll<Material>().First(x => x.name == "UIFogBG")) // UIFogBG, UINoGlow
+            {
+                name = "NyaBG",
+                color = _config.BackgroundColor,
+            };
         }
 
         public FloatingScreen CreateNyaFloatingScreen(object host, Vector3 position, Quaternion rotation)
@@ -35,8 +39,10 @@ namespace Nya.Utils
             floatingScreen.handle.transform.localScale = new Vector3(floatingScreen.ScreenSize.x * 0.8f, floatingScreen.ScreenSize.y / 15f, floatingScreen.ScreenSize.y / 15f);
             floatingScreen.handle.gameObject.layer = 5;
             floatingScreen.HighlightHandle = true;
-            if (!PluginConfig.Instance.ShowHandle) floatingScreen.handle.gameObject.SetActive(false);
-            if (PluginConfig.Instance.RainbowBackgroundColor) RainbowNyaBG(true);
+            if (!_config.ShowHandle)
+                floatingScreen.handle.gameObject.SetActive(false);
+            if (_config.RainbowBackgroundColor)
+                RainbowNyaBG(true);
             return floatingScreen;
         }
 
@@ -44,24 +50,24 @@ namespace Nya.Utils
         {
             ImageView underline = await Task.Run(() => gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>());
             Color originalColor = underline.color;
-            uwuTweenyManager.KillAllTweens(underline);
+            _uwuTweenyManager.KillAllTweens(underline);
             FloatTween tween = new FloatTween(0f, 1f, val => underline.color = Color.Lerp(new Color(0f, 0.7f, 1f), originalColor, val), 1f, EaseType.InSine);
-            uwuTweenyManager.AddTween(tween, underline);
+            _uwuTweenyManager.AddTween(tween, underline);
         }
 
         public void RainbowNyaBG(bool active)
         {
-            uwuTweenyManager.KillAllTweens(NyaBGMaterial);
+            _uwuTweenyManager.KillAllTweens(NyaBGMaterial);
             if (!active)
             {
-                NyaBGMaterial.color = PluginConfig.Instance.BackgroundColor;
+                NyaBGMaterial.color = _config.BackgroundColor;
                 return;
             }
             FloatTween tween = new FloatTween(0f, 1, val => NyaBGMaterial.color = Color.HSVToRGB(val, 1f, 1f), 5f, EaseType.Linear)
             {
                 loop = true,
             };
-            uwuTweenyManager.AddTween(tween, NyaBGMaterial);
+            _uwuTweenyManager.AddTween(tween, NyaBGMaterial);
         }
     }
 }

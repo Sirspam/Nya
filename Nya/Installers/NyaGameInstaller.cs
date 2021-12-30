@@ -6,9 +6,16 @@ namespace Nya.Installers
 {
     internal class NyaGameInstaller : Installer
     {
+        private readonly PluginConfig _config;
+
+        public NyaGameInstaller(PluginConfig config)
+        {
+            _config = config;
+        }
+
         public override void InstallBindings()
         {
-            if (PluginConfig.Instance.InPause)
+            if (_config.InPause)
             {
                 Container.BindInterfacesAndSelfTo<NyaViewGameController>().AsSingle();
                 Container.BindInterfacesAndSelfTo<SettingsModalGameController>().AsSingle();

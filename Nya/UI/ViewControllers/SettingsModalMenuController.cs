@@ -7,13 +7,14 @@ using UnityEngine;
 
 namespace Nya.UI.ViewControllers
 {
-    public class SettingsModalMenuController : SettingsModalController
+    internal class SettingsModalMenuController : SettingsModalController
     {
         private readonly MainFlowCoordinator mainFlowCoordinator;
         private readonly NyaSettingsFlowCoordinator nyaSettingsFlowCoordinator;
         private readonly SettingsViewMainPanelController settingsViewMainPanelController;
 
-        public SettingsModalMenuController(MainCamera mainCamera, NsfwConfirmModalController nsfwConfirmModalController, UIUtils uiUtils, MainFlowCoordinator mainFlowCoordinator, NyaSettingsFlowCoordinator nyaSettingsFlowCoordinator, SettingsViewMainPanelController settingsViewMainPanelController) : base(mainCamera, nsfwConfirmModalController, uiUtils)
+        public SettingsModalMenuController(PluginConfig config, ImageUtils imageUtils, UIUtils uiUtils, MainCamera mainCamera, NsfwConfirmModalController nsfwConfirmModalController,  MainFlowCoordinator mainFlowCoordinator, NyaSettingsFlowCoordinator nyaSettingsFlowCoordinator, SettingsViewMainPanelController settingsViewMainPanelController)
+            : base(config,imageUtils, uiUtils, nsfwConfirmModalController, mainCamera)
         {
             this.mainFlowCoordinator = mainFlowCoordinator;
             this.nyaSettingsFlowCoordinator = nyaSettingsFlowCoordinator;
@@ -23,7 +24,7 @@ namespace Nya.UI.ViewControllers
         public void ShowModal(Transform parentTransform)
         {
             ShowModal(parentTransform, this);
-            if (!PluginConfig.Instance.InMenu) ScreenTab.IsVisible = false;
+            if (!Config.InMenu) ScreenTab.IsVisible = false;
         }
 
         [UIAction("show-nya-settings")]

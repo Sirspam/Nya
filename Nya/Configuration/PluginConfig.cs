@@ -10,7 +10,6 @@ namespace Nya.Configuration
 {
     internal class PluginConfig
     {
-        public static PluginConfig Instance { get; set; }
         public virtual bool Nsfw { get; set; } = false;
         public virtual bool RememberNsfw { get; set; } = false;
         public virtual bool SkipNsfw { get; set; } = false;

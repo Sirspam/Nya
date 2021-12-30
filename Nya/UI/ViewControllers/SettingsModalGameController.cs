@@ -1,11 +1,13 @@
-﻿using Nya.Utils;
+﻿using Nya.Configuration;
+using Nya.Utils;
 using UnityEngine;
 
 namespace Nya.UI.ViewControllers
 {
-    public class SettingsModalGameController : SettingsModalController
+    internal class SettingsModalGameController : SettingsModalController
     {
-        public SettingsModalGameController(MainCamera mainCamera, NsfwConfirmModalController nsfwConfirmModalController, UIUtils uiUtils) : base(mainCamera, nsfwConfirmModalController, uiUtils)
+        public SettingsModalGameController(PluginConfig config, ImageUtils imageUtils, UIUtils uiUtils, NsfwConfirmModalController nsfwConfirmModalController, MainCamera mainCamera)
+            : base(config, imageUtils, uiUtils, nsfwConfirmModalController, mainCamera)
         {
         }
 

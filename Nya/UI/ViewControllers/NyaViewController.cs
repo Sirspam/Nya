@@ -6,16 +6,25 @@ using System.Threading;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Nya.UI.ViewControllers
 {
-    public abstract class NyaViewController
+    internal abstract class NyaViewController
     {
-        protected static SemaphoreSlim semaphore = new SemaphoreSlim(1);
-        // protected CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        protected readonly PluginConfig Config;
+        protected readonly ImageUtils ImageUtils;
+
+        private static readonly SemaphoreSlim semaphore = new SemaphoreSlim(1);
 
         protected bool autoNyaToggle = false;
         protected bool autoNyaCooldown = false;
+
+        protected NyaViewController(PluginConfig config, ImageUtils imageUtils)
+        {
+            Config = config;
+            ImageUtils = imageUtils;
+        }
 
         #region components
 
@@ -26,16 +35,16 @@ namespace Nya.UI.ViewControllers
         internal readonly ImageView nyaImage;
 
         [UIComponent("nya-button")]
-        internal readonly UnityEngine.UI.Button nyaButton;
+        internal readonly Button nyaButton;
 
         [UIComponent("auto-button")]
-        internal readonly UnityEngine.UI.Button nyaAutoButton;
+        internal readonly Button nyaAutoButton;
 
         [UIComponent("auto-button")]
         internal readonly TextMeshProUGUI nyaAutoText;
 
         [UIComponent("settings-button")]
-        internal readonly UnityEngine.UI.Button nyaSettingsButton;
+        internal readonly Button nyaSettingsButton;
 
         [UIComponent("settings-button")]
         internal readonly RectTransform settingsButtonTransform;
@@ -79,14 +88,14 @@ namespace Nya.UI.ViewControllers
                 {
                     await semaphore.WaitAsync();
                     ImageUtils.GetNewNyaImage(nyaImage);
-                    await Task.Delay(PluginConfig.Instance.AutoNyaWait * 1000);
+                    await Task.Delay(Config.AutoNyaWait * 1000);
                     semaphore.Release();
                 }
                 // This is a neat little thing I wanted to do but couldn't get it to work ):
                 // Might come back to it in the future
                 //await IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew( async () =>
                 //{
-                //    var third = (PluginConfig.Instance.AutoNyaWait * 1000) / 3;
+                //    var third = (_config.AutoNyaWait * 1000) / 3;
                 //    while (autoNyaToggle)
                 //    {
                 //        await semaphore.WaitAsync();

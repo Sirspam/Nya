@@ -10,17 +10,17 @@ using Zenject;
 
 namespace Nya.UI.ViewControllers
 {
-    public class NyaViewGameController : NyaViewController, IInitializable, IDisposable
+    internal class NyaViewGameController : NyaViewController, IInitializable, IDisposable
     {
-        private readonly UIUtils uiUtils;
+        private readonly UIUtils _uiUtils;
         private readonly SettingsModalGameController settingsModalGameController;
         private readonly IGamePause gamePause;
         private readonly TimeTweeningManager timeTweeningManager;
         private FloatingScreen floatingScreen;
 
-        public NyaViewGameController(UIUtils uiUtils, SettingsModalGameController settingsModalGameController, IGamePause gamePause, TimeTweeningManager timeTweeningManager)
+        public NyaViewGameController(PluginConfig config, ImageUtils imageUtils, UIUtils uiUtils, SettingsModalGameController settingsModalGameController, IGamePause gamePause, TimeTweeningManager timeTweeningManager) : base(config, imageUtils)
         {
-            this.uiUtils = uiUtils;
+            _uiUtils = uiUtils;
             this.settingsModalGameController = settingsModalGameController;
             this.gamePause = gamePause;
             this.timeTweeningManager = timeTweeningManager;
@@ -28,16 +28,16 @@ namespace Nya.UI.ViewControllers
 
         public void Initialize()
         {
-            if (PluginConfig.Instance.SeperatePositions)
-                floatingScreen = uiUtils.CreateNyaFloatingScreen(this, PluginConfig.Instance.PausePosition, Quaternion.Euler(PluginConfig.Instance.PauseRotation));
+            if (Config.SeperatePositions)
+                floatingScreen = _uiUtils.CreateNyaFloatingScreen(this, Config.PausePosition, Quaternion.Euler(Config.PauseRotation));
             else
-                floatingScreen = uiUtils.CreateNyaFloatingScreen(this, PluginConfig.Instance.MenuPosition, Quaternion.Euler(PluginConfig.Instance.MenuRotation));
+                floatingScreen = _uiUtils.CreateNyaFloatingScreen(this, Config.MenuPosition, Quaternion.Euler(Config.MenuRotation));
             floatingScreen.gameObject.name = "NyaGameFloatingScreen";
 
             // Wanted to do a wacky easter egg for my beloved shiny happy days map but it prooved to be too much of a hassle
             // Leaving this commented in case I come back to it in the future
             //
-            //if (PluginConfig.Instance.EasterEggs && beatmap.level.levelID == "custom_level_69E494F4A295197BF03720029086FABE6856FBCE") // e970 my beloved
+            //if (Config.EasterEggs && beatmap.level.levelID == "custom_level_69E494F4A295197BF03720029086FABE6856FBCE") // e970 my beloved
             //{
             //    floatingScreen.handle.SetActive(false);
             //    nyaButton.gameObject.SetActive(false);
@@ -88,15 +88,15 @@ namespace Nya.UI.ViewControllers
 
         private void FloatingScreen_HandleReleased(object sender, FloatingScreenHandleEventArgs args)
         {
-            if (PluginConfig.Instance.SeperatePositions)
+            if (Config.SeperatePositions)
             {
-                PluginConfig.Instance.PausePosition = floatingScreen.transform.position;
-                PluginConfig.Instance.PauseRotation = floatingScreen.transform.eulerAngles;
+                Config.PausePosition = floatingScreen.transform.position;
+                Config.PauseRotation = floatingScreen.transform.eulerAngles;
             }
             else
             {
-                PluginConfig.Instance.MenuPosition = floatingScreen.transform.position;
-                PluginConfig.Instance.MenuRotation = floatingScreen.transform.eulerAngles;
+                Config.MenuPosition = floatingScreen.transform.position;
+                Config.MenuRotation = floatingScreen.transform.eulerAngles;
             }
         }
 

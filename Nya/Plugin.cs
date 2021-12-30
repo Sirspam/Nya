@@ -13,18 +13,15 @@ namespace Nya
     [Plugin(RuntimeOptions.DynamicInit)]
     public class Plugin
     {
-        internal static Logger Log { get; private set; }
-
         [Init]
         public Plugin(Config conf, Logger logger, Zenjector zenjector)
         {
-            Log = logger;
-  
             zenjector.UseLogger(logger);
+            zenjector.UseHttpService();
             
-            Configuration.PluginConfig.Instance = conf.Generated<Configuration.PluginConfig>();
+            var config = conf.Generated<Configuration.PluginConfig>();
 
-            zenjector.Install<NyaAppInstaller>(Location.App, Configuration.PluginConfig.Instance);
+            zenjector.Install<NyaAppInstaller>(Location.App, config);
             zenjector.Install<NyaMenuInstaller>(Location.Menu);
             zenjector.Install<NyaGameInstaller>(Location.Singleplayer);
 
@@ -33,17 +30,18 @@ namespace Nya
             Directory.CreateDirectory(Path.Combine(folderPath, "nsfw"));
 
             // TODO: Move logic to config itself
-            if (!Configuration.PluginConfig.Instance.RememberNsfw) Configuration.PluginConfig.Instance.Nsfw = false;
+            if (!config.RememberNsfw)
+                config.Nsfw = false;
 
             // May have to make this check more than just the count in the future but for now this works
             // Let's pray that the user never dare tampers with the config otherwise values in the SelectedEndpoints will never fix themselves
             // enums? I hardly know thems!
-            if (Configuration.PluginConfig.Instance.SelectedEndpoints.Count != WebAPIs.APIs.Count)
+            if (config.SelectedEndpoints.Count != WebAPIs.APIs.Count)
             {
-                Configuration.PluginConfig.Instance.SelectedEndpoints.Clear();
+                config.SelectedEndpoints.Clear();
                 foreach (string key in WebAPIs.APIs.Keys)
                 {
-                    Configuration.PluginConfig.Instance.SelectedEndpoints.Add(key, new Configuration.EndpointData()
+                    config.SelectedEndpoints.Add(key, new Configuration.EndpointData()
                     {
                         SelectedSfwEndpoint = WebAPIs.APIs[key].SfwEndpoints[0],
                         SelectedNsfwEndpoint = WebAPIs.APIs[key].NsfwEndpoints[0]
