@@ -3,6 +3,7 @@ using IPA.Config.Stores.Attributes;
 using IPA.Config.Stores.Converters;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Nya.Utils;
 using UnityEngine;
 
 [assembly: InternalsVisibleTo(GeneratedStore.AssemblyVisibilityTarget)]
@@ -59,6 +60,7 @@ namespace Nya.Configuration
         public virtual void OnReload()
         {
             // Do stuff after config is read from disk.
+            FixConfigIssues();
         }
 
         /// <summary>
@@ -67,6 +69,25 @@ namespace Nya.Configuration
         public virtual void Changed()
         {
             // Do stuff when the config is changed.
+            FixConfigIssues();
+        }
+
+        private void FixConfigIssues()
+        {
+            if (SelectedEndpoints.Count == WebAPIs.APIs.Count)
+            {
+                return;
+            }
+
+            SelectedEndpoints.Clear();
+            foreach (var key in WebAPIs.APIs.Keys)
+            {
+                SelectedEndpoints.Add(key, new EndpointData
+                {
+                    SelectedSfwEndpoint = WebAPIs.APIs[key].SfwEndpoints[0],
+                    SelectedNsfwEndpoint = WebAPIs.APIs[key].NsfwEndpoints[0]
+                });
+            }
         }
     }
 }
