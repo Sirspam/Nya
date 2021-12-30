@@ -171,7 +171,7 @@ namespace Nya.UI.ViewControllers
             parserParams.EmitEvent("close-modal");
             parserParams.EmitEvent("open-modal");
 
-            if (_imageUtils.nyaImageURL.EndsWith(".gif") || _imageUtils.nyaImageURL.EndsWith(".apng"))
+            if (_imageUtils.NyaImageURL.EndsWith(".gif") || _imageUtils.NyaImageURL.EndsWith(".apng"))
             {
                 NyaCopyButton.interactable = false;
             }
