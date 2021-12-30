@@ -19,21 +19,23 @@ namespace Nya.UI.ViewControllers
 {
     internal abstract class SettingsModalController : IInitializable, INotifyPropertyChanged
     {
-        protected readonly PluginConfig Config;
         private readonly ImageUtils _imageUtils;
         private readonly UIUtils _uiUtils;
         private readonly MainCamera _mainCamera;
         private readonly NsfwConfirmModalController _nsfwConfirmModalController;
 
+        protected readonly PluginConfig Config;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected SettingsModalController(PluginConfig config, ImageUtils imageUtils, UIUtils uiUtils, NsfwConfirmModalController nsfwConfirmModalController, MainCamera mainCamera)
         {
-            Config = config;
             _imageUtils = imageUtils;
             _mainCamera = mainCamera;
             _nsfwConfirmModalController = nsfwConfirmModalController;
             _uiUtils = uiUtils;
+
+            Config = config;
         }
 
         #region components
@@ -169,7 +171,7 @@ namespace Nya.UI.ViewControllers
             parserParams.EmitEvent("close-modal");
             parserParams.EmitEvent("open-modal");
 
-            if (ImageUtils.nyaImageURL.EndsWith(".gif") || ImageUtils.nyaImageURL.EndsWith(".apng"))
+            if (_imageUtils.nyaImageURL.EndsWith(".gif") || _imageUtils.nyaImageURL.EndsWith(".apng"))
             {
                 NyaCopyButton.interactable = false;
             }
@@ -201,7 +203,7 @@ namespace Nya.UI.ViewControllers
         protected void CopyNya()
         {
             _uiUtils.ButtonUnderlineClick(NyaCopyButton.gameObject);
-            Task.Run(() => ImageUtils.CopyNyaImage());
+            Task.Run(() => _imageUtils.CopyNyaImage());
         }
 
         [UIAction("nya-nsfw-changed")]

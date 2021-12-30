@@ -41,7 +41,7 @@ namespace Nya.Utils
     internal class APIData
     {
         internal string URL { get; set; }
-        internal string json { get; set; }
+        internal string? json { get; set; }
         internal List<string> SfwEndpoints { get; set; }
         internal List<string> NsfwEndpoints { get; set; }
     }

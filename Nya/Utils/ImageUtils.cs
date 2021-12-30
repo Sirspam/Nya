@@ -14,7 +14,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SiraUtil.Logging;
-using UnityEngine;
 
 namespace Nya.Utils
 {
@@ -24,10 +23,10 @@ namespace Nya.Utils
         private readonly PluginConfig _config;
         private static readonly HttpClient Client = new HttpClient();
 
-        public static byte[] nyaImageBytes = null;
-        public static byte[] nyaImageBytesCompressed;
-        public static string nyaImageEndpoint;
-        public static string nyaImageURL;
+        public byte[] nyaImageBytes = null;
+        public byte[] nyaImageBytesCompressed;
+        public string nyaImageEndpoint;
+        public string nyaImageURL;
 
         public ImageUtils(SiraLog siraLog, PluginConfig config)
         {
@@ -40,7 +39,7 @@ namespace Nya.Utils
             File.WriteAllBytes(Path.Combine(UnityGame.UserDataPath, "Nya", _config.Nsfw ? "nsfw" : "sfw", nyaImageEndpoint), nyaImageBytes);
         }
 
-        public static void CopyNyaImage()
+        public void CopyNyaImage()
         {
             // Converts gifs to pngs because ???
             // Also doesn't seem to like transparency sometimes
@@ -126,7 +125,7 @@ namespace Nya.Utils
             }
         }
 
-        private static void DownscaleNyaImage()
+        private void DownscaleNyaImage()
         {      
             var originalImage = Image.FromStream(new MemoryStream(nyaImageBytes));
             // This is either a great way to get away with just one comparison or completely stupid
@@ -175,7 +174,7 @@ namespace Nya.Utils
                 AnimationStateUpdater stateUpdater = image.gameObject.AddComponent<AnimationStateUpdater>();
                 stateUpdater.image = image;
 
-                AnimationLoader.Process(nyaImageURL.EndsWith(".gif") ? AnimationType.GIF : AnimationType.APNG, nyaImageBytes, (Texture2D tex, Rect[] uvs, float[] delays, int width, int height) =>
+                AnimationLoader.Process(nyaImageURL.EndsWith(".gif") ? AnimationType.GIF : AnimationType.APNG, nyaImageBytes, (tex, uvs, delays, width, height) =>
                 {
                     AnimationControllerData controllerData = AnimationController.instance.Register(nyaImageURL, tex, uvs, delays);
                     stateUpdater.controllerData = controllerData;
