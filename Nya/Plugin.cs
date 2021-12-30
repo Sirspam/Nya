@@ -10,7 +10,7 @@ using SiraUtil.Zenject;
 
 namespace Nya
 {
-    [Plugin(RuntimeOptions.DynamicInit)]
+    [Plugin(RuntimeOptions.DynamicInit), NoEnableDisable]
     public class Plugin
     {
         [Init]
