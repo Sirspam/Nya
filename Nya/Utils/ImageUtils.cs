@@ -97,13 +97,20 @@ namespace Nya.Utils
                 if (_config.SelectedAPI == "Local Files")
                 {
                     var type = "sfw";
-                    if (_config.Nsfw) type = "nsfw";
+                    if (_config.Nsfw)
+                    {
+                        type = "nsfw";
+                    }
+
                     var oldImageURL = NyaImageURL;
                     while (NyaImageURL == oldImageURL)
                     {
                         var files = Directory.GetFiles(Path.Combine(UnityGame.UserDataPath, "Nya", type));
                         if (files.Length == 1 && oldImageURL != null)
+                        {
                             return;
+                        }
+
                         NyaImageURL = files[_random.Next(files.Length)];
                     }
                     Utilities.GetData(NyaImageURL, data => NyaImageBytes = data);
@@ -114,9 +121,14 @@ namespace Nya.Utils
 
                 var selectedEndpoint = _config.SelectedEndpoints[_config.SelectedAPI].SelectedSfwEndpoint;
                 if (_config.Nsfw)
+                {
                     selectedEndpoint = _config.SelectedEndpoints[_config.SelectedAPI].SelectedNsfwEndpoint;
-                if (WebAPIs.APIs[_config.SelectedAPI].json == null) 
+                }
+
+                if (WebAPIs.APIs[_config.SelectedAPI].json == null)
+                {
                     NyaImageURL = WebAPIs.APIs[_config.SelectedAPI].URL;
+                }
                 else
                 {
                     var newUrl = NyaImageURL;
@@ -143,14 +155,14 @@ namespace Nya.Utils
             var originalImage = Image.FromStream(new MemoryStream(NyaImageBytes));
             // This is either a great way to get away with just one comparison or completely stupid
             // Also I simply have no clue how to make this work for gifs, so we'll just leave those be.
-            if ((originalImage.Width + originalImage.Height) <= 1024f || NyaImageURL.EndsWith(".gif") || NyaImageURL.EndsWith(".apng"))
+            if (originalImage.Width + originalImage.Height <= 1024f || NyaImageURL.EndsWith(".gif") || NyaImageURL.EndsWith(".apng"))
             {
                 NyaImageBytesCompressed = NyaImageBytes;
                 return;
             }
 
             double ratio = (double)originalImage.Width / originalImage.Height;
-            if ((512 * ratio) <= originalImage.Width)
+            if (512 * ratio <= originalImage.Width)
             {
                 var resizedImage = new Bitmap(originalImage, (int)(512f * ratio), 512);
                 using MemoryStream ms = new MemoryStream();
@@ -173,7 +185,11 @@ namespace Nya.Utils
                 GetNewNyaImage(image);
                 return;
             }
-            if (image.sprite.texture.GetRawTextureData() == NyaImageBytesCompressed) return;
+
+            if (image.sprite.texture.GetRawTextureData() == NyaImageBytesCompressed)
+            {
+                return;
+            }
 
             _siraLog.Info($"Loading image from {NyaImageURL}");
 
@@ -197,8 +213,11 @@ namespace Nya.Utils
             {
                 AnimationStateUpdater stateUpdater = image.gameObject.AddComponent<AnimationStateUpdater>();
                 stateUpdater.image = image;
-                if (stateUpdater != null) 
+                if (stateUpdater != null)
+                {
                     UnityEngine.Object.DestroyImmediate(stateUpdater);
+                }
+
                 image.sprite = Utilities.LoadSpriteRaw(NyaImageBytesCompressed);
             }
         }

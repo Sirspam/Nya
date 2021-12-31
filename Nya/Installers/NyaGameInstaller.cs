@@ -15,12 +15,14 @@ namespace Nya.Installers
 
         public override void InstallBindings()
         {
-            if (_config.InPause)
+            if (!_config.InPause)
             {
-                Container.BindInterfacesAndSelfTo<NyaViewGameController>().AsSingle();
-                Container.BindInterfacesAndSelfTo<SettingsModalGameController>().AsSingle();
-                Container.BindInterfacesAndSelfTo<NsfwConfirmModalController>().AsSingle();
+                return;
             }
+
+            Container.BindInterfacesAndSelfTo<NyaViewGameController>().AsSingle();
+            Container.BindInterfacesAndSelfTo<SettingsModalGameController>().AsSingle();
+            Container.BindInterfacesAndSelfTo<NsfwConfirmModalController>().AsSingle();
         }
     }
 }
