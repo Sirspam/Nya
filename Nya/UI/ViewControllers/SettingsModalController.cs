@@ -245,16 +245,18 @@ namespace Nya.UI.ViewControllers
         protected void FaceHeadsetClicked()
         {
             _uiUtils.ButtonUnderlineClick(FaceHeadsetButton.gameObject);
-            RootTransform.root.gameObject.transform.LookAt(_mainCamera.camera.transform);
-            RootTransform.root.gameObject.transform.Rotate(0f, 180f, 0, Space.Self); // Nya decides that it's shy and faces away from the user, so we do a little flipping
+            var transform = RootTransform.root.gameObject.transform;
+            transform.LookAt(_mainCamera.camera.transform);
+            transform.Rotate(0f, 180f, 0, Space.Self); // Nya decides that it's shy and faces away from the user, so we do a little flipping
         }
 
         [UIAction("reset-rotation-clicked")]
-        protected void ReseteRotationClicked()
+        protected void ResetRotationClicked()
         {
             _uiUtils.ButtonUnderlineClick(ResetRotationButton.gameObject);
-            Vector3 rotation = RootTransform.root.gameObject.transform.rotation.eulerAngles;
-            RootTransform.root.gameObject.transform.rotation = Quaternion.Euler(0f, rotation.y, 0f);
+            var transform = RootTransform.root.gameObject.transform;
+            Vector3 rotation = transform.rotation.eulerAngles;
+            transform.rotation = Quaternion.Euler(0f, rotation.y, 0f);
         }
 
         [UIAction("reset-position-clicked")]
