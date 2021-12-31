@@ -1,4 +1,5 @@
-﻿using IPA.Config.Stores;
+﻿using System;
+using IPA.Config.Stores;
 using IPA.Config.Stores.Attributes;
 using IPA.Config.Stores.Converters;
 using System.Collections.Generic;
@@ -73,6 +74,11 @@ namespace Nya.Configuration
             FixConfigIssues();
         }
 
+        /// <summary>
+        /// Some magic stuff to save config changes to disk deferred
+        /// </summary>
+        public virtual IDisposable ChangeTransaction => null!;
+
         /// <remark>
         /// May have to make this check more than just the count in the future but for now this works
         /// Let's pray that the user never dare tampers with the config otherwise values in the SelectedEndpoints will never fix themselves
@@ -85,6 +91,7 @@ namespace Nya.Configuration
                 return;
             }
 
+            using var _ = ChangeTransaction;
             SelectedEndpoints.Clear();
             foreach (var key in WebAPIs.APIs.Keys)
             {
