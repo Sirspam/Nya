@@ -73,6 +73,11 @@ namespace Nya.Configuration
             FixConfigIssues();
         }
 
+        /// <remark>
+        /// May have to make this check more than just the count in the future but for now this works
+        /// Let's pray that the user never dare tampers with the config otherwise values in the SelectedEndpoints will never fix themselves
+        /// Enums? I hardly know them!
+        /// </remark>
         private void FixConfigIssues()
         {
             if (SelectedEndpoints.Count == WebAPIs.APIs.Count)
