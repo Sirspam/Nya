@@ -16,7 +16,7 @@ namespace Nya.UI.ViewControllers
         private readonly SettingsModalMenuController _settingsModalMenuController;
         private readonly UIUtils _uiUtils;
 
-        private FloatingScreen floatingScreen;
+        private FloatingScreen _floatingScreen;
 
         public NyaViewMenuController(PluginConfig config, ImageUtils imageUtils, UIUtils uiUtils, GameplaySetupViewController gameplaySetupViewController, SettingsModalMenuController settingsModalMenuController)
             : base(config, imageUtils)
@@ -30,10 +30,9 @@ namespace Nya.UI.ViewControllers
         {
             if (Config.InMenu)
             {
-                floatingScreen =
-                    _uiUtils.CreateNyaFloatingScreen(this, Config.MenuPosition, Quaternion.Euler(Config.MenuRotation));
-                floatingScreen.gameObject.name = "NyaMenuFloatingScreen";
-                floatingScreen.HandleReleased += FloatingScreen_HandleReleased;
+                _floatingScreen = _uiUtils.CreateNyaFloatingScreen(this, Config.MenuPosition, Quaternion.Euler(Config.MenuRotation));
+                _floatingScreen.gameObject.name = "NyaMenuFloatingScreen";
+                _floatingScreen.HandleReleased += FloatingScreen_HandleReleased;
             }
             else
             {
@@ -47,9 +46,15 @@ namespace Nya.UI.ViewControllers
         public void Dispose()
         {
             if (GameplaySetup.IsSingletonAvailable)
+            {
                 GameplaySetup.instance.RemoveTab("Nya");
+            }
+
             if (Config.InMenu)
-                floatingScreen.HandleReleased -= FloatingScreen_HandleReleased;
+            {
+                _floatingScreen.HandleReleased -= FloatingScreen_HandleReleased;
+            }
+
             _gameplaySetupViewController.didActivateEvent -= GameplaySetupViewController_didActivateEvent;
             _gameplaySetupViewController.didDeactivateEvent -= GameplaySetupViewController_didDeactivateEvent;
         }
@@ -57,29 +62,28 @@ namespace Nya.UI.ViewControllers
         private void GameplaySetupViewController_didActivateEvent(bool firstActivation, bool addedToHierarchy,
             bool screenSystemEnabling)
         {
-            if (!firstActivation)
+            if (firstActivation)
             {
-                if (Config.InMenu && (floatingScreen.transform.position != Config.MenuPosition ||
-                                      floatingScreen.transform.rotation.eulerAngles !=
-                                      Config.MenuRotation)) // in case game floatingscreen got moved
-                {
-                    floatingScreen.transform.position = Config.MenuPosition;
-                    floatingScreen.transform.rotation = Quaternion.Euler(Config.MenuRotation);
-                }
-
-                nyaButton.interactable = false;
-                ImageUtils.LoadNyaImage(nyaImage);
-                nyaButton.interactable = true;
+                return;
             }
+
+            if (Config.InMenu && (_floatingScreen.transform.position != Config.MenuPosition || _floatingScreen.transform.rotation.eulerAngles != Config.MenuRotation)) // in case game floatingscreen got moved
+            {
+                _floatingScreen.transform.position = Config.MenuPosition;
+                _floatingScreen.transform.rotation = Quaternion.Euler(Config.MenuRotation);
+            }
+
+            nyaButton.interactable = false;
+            ImageUtils.LoadNyaImage(nyaImage);
+            nyaButton.interactable = true;
         }
 
         private void GameplaySetupViewController_didDeactivateEvent(bool firstActivation, bool addedToHierarchy)
         {
-            if (autoNyaToggle)
+            if (AutoNyaToggle)
             {
-                autoNyaToggle = false;
-                nyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color =
-                    new Color(1f, 1f, 1f, 0.502f);
+                AutoNyaToggle = false;
+                nyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = new Color(1f, 1f, 1f, 0.502f);
                 nyaButton.interactable = true;
             }
 
@@ -88,14 +92,14 @@ namespace Nya.UI.ViewControllers
 
         private void FloatingScreen_HandleReleased(object sender, FloatingScreenHandleEventArgs args)
         {
-            var transform = floatingScreen.transform;
+            var transform = _floatingScreen.transform;
             Config.MenuPosition = transform.position;
             Config.MenuRotation = transform.eulerAngles;
         }
 
         public void ReloadFloatingScreenPosition()
         {
-            var transform = floatingScreen.transform;
+            var transform = _floatingScreen.transform;
             transform.position = Config.MenuPosition;
             transform.eulerAngles = Config.MenuRotation;
         }
@@ -103,7 +107,7 @@ namespace Nya.UI.ViewControllers
         [UIAction("settings-button-clicked")]
         protected void SettingsButtonClicked()
         {
-            if (autoNyaToggle)
+            if (AutoNyaToggle)
             {
                 AutoNya();
             }

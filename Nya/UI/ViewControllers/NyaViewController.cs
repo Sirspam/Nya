@@ -15,10 +15,10 @@ namespace Nya.UI.ViewControllers
         protected readonly PluginConfig Config;
         protected readonly ImageUtils ImageUtils;
 
-        private static readonly SemaphoreSlim semaphore = new SemaphoreSlim(1);
+        private static readonly SemaphoreSlim Semaphore = new SemaphoreSlim(1);
 
-        protected bool autoNyaToggle = false;
-        protected bool autoNyaCooldown = false;
+        protected bool AutoNyaToggle = false;
+        protected bool AutoNyaCooldown = false;
 
         protected NyaViewController(PluginConfig config, ImageUtils imageUtils)
         {
@@ -72,24 +72,25 @@ namespace Nya.UI.ViewControllers
         [UIAction("nya-auto-clicked")]
         protected async void AutoNya()
         {
-            if (autoNyaCooldown)
+            if (AutoNyaCooldown)
             {
                 return;
             }
-            autoNyaCooldown = true;
 
-            autoNyaToggle = !autoNyaToggle;
-            if (autoNyaToggle) // On
+            AutoNyaCooldown = true;
+
+            AutoNyaToggle = !AutoNyaToggle;
+            if (AutoNyaToggle) // On
             {
                 AutoNyaCooldownHandler(); // This isn't suppoed to be awaited I swear, please Mr green swiggly line go away you're scaring me
                 nyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = Color.green;
                 nyaButton.interactable = false;
-                while (autoNyaToggle)
+                while (AutoNyaToggle)
                 {
-                    await semaphore.WaitAsync();
+                    await Semaphore.WaitAsync();
                     ImageUtils.GetNewNyaImage(nyaImage);
                     await Task.Delay(Config.AutoNyaWait * 1000);
-                    semaphore.Release();
+                    Semaphore.Release();
                 }
                 // This is a neat little thing I wanted to do but couldn't get it to work ):
                 // Might come back to it in the future
@@ -117,14 +118,14 @@ namespace Nya.UI.ViewControllers
                 nyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = new Color(1f, 1f, 1f, 0.502f); // Beatgames why 0.502
                 nyaAutoText.text = "Auto Nya";
                 nyaButton.interactable = true;
-                autoNyaCooldown = false;
+                AutoNyaCooldown = false;
             }
         }
 
         private async void AutoNyaCooldownHandler()
         {
             await Task.Delay(1000);
-            autoNyaCooldown = false;
+            AutoNyaCooldown = false;
         }
 
         #endregion actions

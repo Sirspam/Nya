@@ -13,26 +13,24 @@ namespace Nya.UI.ViewControllers
     internal class NyaViewGameController : NyaViewController, IInitializable, IDisposable
     {
         private readonly UIUtils _uiUtils;
-        private readonly SettingsModalGameController settingsModalGameController;
-        private readonly IGamePause gamePause;
-        private readonly TimeTweeningManager timeTweeningManager;
-        private FloatingScreen floatingScreen;
+        private readonly SettingsModalGameController _settingsModalGameController;
+        private readonly IGamePause _gamePause;
+        private readonly TimeTweeningManager _timeTweeningManager;
+        private FloatingScreen _floatingScreen;
 
-        public NyaViewGameController(PluginConfig config, ImageUtils imageUtils, UIUtils uiUtils, SettingsModalGameController settingsModalGameController, IGamePause gamePause, TimeTweeningManager timeTweeningManager) : base(config, imageUtils)
+        public NyaViewGameController(PluginConfig config, ImageUtils imageUtils, UIUtils uiUtils, SettingsModalGameController settingsModalGameController, IGamePause gamePause, TimeTweeningManager timeTweeningManager)
+            : base(config, imageUtils)
         {
             _uiUtils = uiUtils;
-            this.settingsModalGameController = settingsModalGameController;
-            this.gamePause = gamePause;
-            this.timeTweeningManager = timeTweeningManager;
+            _settingsModalGameController = settingsModalGameController;
+            _gamePause = gamePause;
+            _timeTweeningManager = timeTweeningManager;
         }
 
         public void Initialize()
         {
-            if (Config.SeperatePositions)
-                floatingScreen = _uiUtils.CreateNyaFloatingScreen(this, Config.PausePosition, Quaternion.Euler(Config.PauseRotation));
-            else
-                floatingScreen = _uiUtils.CreateNyaFloatingScreen(this, Config.MenuPosition, Quaternion.Euler(Config.MenuRotation));
-            floatingScreen.gameObject.name = "NyaGameFloatingScreen";
+            _floatingScreen = _uiUtils.CreateNyaFloatingScreen(this, Config.SeperatePositions ? Config.PausePosition : Config.MenuPosition, Quaternion.Euler(Config.PauseRotation));
+            _floatingScreen.gameObject.name = "NyaGameFloatingScreen";
 
             // Wanted to do a wacky easter egg for my beloved shiny happy days map but it prooved to be too much of a hassle
             // Leaving this commented in case I come back to it in the future
@@ -56,39 +54,39 @@ namespace Nya.UI.ViewControllers
             //    timeTweeningManager.AddTween(colorTween, floatingScreen);
             //    return;
             //}
-            floatingScreen.gameObject.SetActive(false);
-            floatingScreen.HandleReleased += FloatingScreen_HandleReleased;
-            gamePause.didPauseEvent += GamePause_didPauseEvent;
-            gamePause.willResumeEvent += GamePause_didResumeEvent;
+            _floatingScreen.gameObject.SetActive(false);
+            _floatingScreen.HandleReleased += FloatingScreen_HandleReleased;
+            _gamePause.didPauseEvent += GamePause_didPauseEvent;
+            _gamePause.willResumeEvent += GamePause_didResumeEvent;
         }
 
         public void Dispose()
         {
-            gamePause.didPauseEvent -= GamePause_didPauseEvent;
-            gamePause.willResumeEvent -= GamePause_didResumeEvent;
-            floatingScreen.HandleReleased -= FloatingScreen_HandleReleased;
-            settingsModalGameController.HideModal();
-            floatingScreen.gameObject.SetActive(false);
-            timeTweeningManager.KillAllTweens(floatingScreen);
+            _gamePause.didPauseEvent -= GamePause_didPauseEvent;
+            _gamePause.willResumeEvent -= GamePause_didResumeEvent;
+            _floatingScreen.HandleReleased -= FloatingScreen_HandleReleased;
+            _settingsModalGameController.HideModal();
+            _floatingScreen.gameObject.SetActive(false);
+            _timeTweeningManager.KillAllTweens(_floatingScreen);
         }
 
-        private void GamePause_didPauseEvent() => floatingScreen.gameObject.SetActive(true);
+        private void GamePause_didPauseEvent() => _floatingScreen.gameObject.SetActive(true);
 
         private void GamePause_didResumeEvent()
         {
-            if (autoNyaToggle)
+            if (AutoNyaToggle)
             {
-                autoNyaToggle = false;
+                AutoNyaToggle = false;
                 nyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = new Color(1f, 1f, 1f, 0.502f);
                 nyaButton.interactable = true;
             }
-            settingsModalGameController.HideModal();
-            floatingScreen.gameObject.SetActive(false);
+            _settingsModalGameController.HideModal();
+            _floatingScreen.gameObject.SetActive(false);
         }
 
         private void FloatingScreen_HandleReleased(object sender, FloatingScreenHandleEventArgs args)
         {
-            var transform = floatingScreen.transform;
+            var transform = _floatingScreen.transform;
 
             if (Config.SeperatePositions)
             {
@@ -105,11 +103,11 @@ namespace Nya.UI.ViewControllers
         [UIAction("settings-button-clicked")]
         protected void SettingsButtonClicked()
         {
-            if (autoNyaToggle)
+            if (AutoNyaToggle)
             {
                 AutoNya();
             }
-            settingsModalGameController.ShowModal(settingsButtonTransform);
+            _settingsModalGameController.ShowModal(settingsButtonTransform);
         }
     }
 }

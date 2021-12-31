@@ -42,7 +42,7 @@ namespace Nya.Utils
     {
         internal string URL { get; set; }
         internal string? json { get; set; }
-        internal List<string> SfwEndpoints { get; set; }
-        internal List<string> NsfwEndpoints { get; set; }
+        internal List<string> SfwEndpoints { get; set; } = new List<string>();
+        internal List<string> NsfwEndpoints { get; set; } = new List<string>();
     }
 }
