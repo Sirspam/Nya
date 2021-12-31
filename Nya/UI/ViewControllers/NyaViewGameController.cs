@@ -88,15 +88,17 @@ namespace Nya.UI.ViewControllers
 
         private void FloatingScreen_HandleReleased(object sender, FloatingScreenHandleEventArgs args)
         {
+            var transform = floatingScreen.transform;
+
             if (Config.SeperatePositions)
             {
-                Config.PausePosition = floatingScreen.transform.position;
-                Config.PauseRotation = floatingScreen.transform.eulerAngles;
+                Config.PausePosition = transform.position;
+                Config.PauseRotation = transform.eulerAngles;
             }
             else
             {
-                Config.MenuPosition = floatingScreen.transform.position;
-                Config.MenuRotation = floatingScreen.transform.eulerAngles;
+                Config.MenuPosition = transform.position;
+                Config.MenuRotation = transform.eulerAngles;
             }
         }
 

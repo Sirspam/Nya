@@ -261,17 +261,18 @@ namespace Nya.UI.ViewControllers
         protected void ResetPositionClicked()
         {
             _uiUtils.ButtonUnderlineClick(ResetPositionButton.gameObject);
-            RootTransform.root.gameObject.transform.position = new Vector3(0f, 3.65f, 4f);
-            RootTransform.root.gameObject.transform.rotation = Quaternion.Euler(new Vector3(335f, 0f, 0f));
+            var gameObjectTransform = RootTransform.root.gameObject.transform;
+            gameObjectTransform.position = new Vector3(0f, 3.65f, 4f);
+            gameObjectTransform.rotation = Quaternion.Euler(new Vector3(335f, 0f, 0f));
             if (RootTransform.root.name == "NyaGameFloatingScreen" && Config.SeperatePositions)
             {
-                Config.PausePosition = RootTransform.root.gameObject.transform.position;
-                Config.PauseRotation = RootTransform.root.gameObject.transform.eulerAngles;
+                Config.PausePosition = gameObjectTransform.position;
+                Config.PauseRotation = gameObjectTransform.eulerAngles;
             }
             else
             {
-                Config.MenuPosition = RootTransform.root.gameObject.transform.position;
-                Config.MenuRotation = RootTransform.root.gameObject.transform.eulerAngles;
+                Config.MenuPosition = gameObjectTransform.position;
+                Config.MenuRotation = gameObjectTransform.eulerAngles;
             }
         }
 
