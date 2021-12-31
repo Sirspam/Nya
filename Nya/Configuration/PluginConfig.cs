@@ -2,6 +2,7 @@
 using IPA.Config.Stores.Attributes;
 using IPA.Config.Stores.Converters;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Nya.Utils;
 using UnityEngine;
@@ -11,7 +12,7 @@ namespace Nya.Configuration
 {
     internal class PluginConfig
     {
-        public virtual bool Nsfw { get; set; } = false;
+        public bool Nsfw { get; set; } = false;
         public virtual bool RememberNsfw { get; set; } = false;
         public virtual bool SkipNsfw { get; set; } = false;
         public virtual bool InMenu { get; set; } = false;
@@ -25,7 +26,7 @@ namespace Nya.Configuration
         public virtual bool RainbowBackgroundColor { get; set; } = false;
         public virtual Color BackgroundColor { get; set; } = new Color(0.745f, 0.745f, 0.745f);
         public virtual int AutoNyaWait { get; set; } = 4;
-        public virtual string SelectedAPI { get; set; } = "waifu.pics";
+        public virtual string SelectedAPI { get; set; } = WebAPIs.APIs.Keys.First();
 
         [NonNullable, UseConverter(typeof(DictionaryConverter<EndpointData>))]
         public virtual Dictionary<string, EndpointData> SelectedEndpoints { get; set; } = new Dictionary<string, EndpointData>();
