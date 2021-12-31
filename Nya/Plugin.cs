@@ -22,7 +22,7 @@ namespace Nya
 
             zenjector.Install<NyaAppInstaller>(Location.App, config);
             zenjector.Install<NyaMenuInstaller>(Location.Menu);
-            zenjector.Install<NyaGameInstaller>(Location.Tutorial | Location.Player);
+            zenjector.Install<NyaGameInstaller>(Location.Singleplayer);
 
             var folderPath = Path.Combine(UnityGame.UserDataPath, "Nya");
             Directory.CreateDirectory(Path.Combine(folderPath, "sfw"));
