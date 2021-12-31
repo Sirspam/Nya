@@ -35,7 +35,7 @@ namespace Nya.Utils
             _siraLog = siraLog;
             _config = config;
             _httpService = httpService;
-            
+
             _random = new Random();
         }
 
@@ -79,7 +79,12 @@ namespace Nya.Utils
             try
             {
                 _siraLog.Info($"Attempting to get image url from {_config.SelectedAPI}, {endpoint}");
-                var response = await GetWebDataToBytesAsync(WebAPIs.APIs[_config.SelectedAPI].URL + endpoint);
+                var response = await GetWebDataToBytesAsync(WebAPIs.APIs[_config.SelectedAPI].BaseEndpoint + endpoint);
+                if (response == null)
+                {
+                    return null;
+                }
+
                 var endpointResult = JsonConvert.DeserializeObject<WebAPIEntries>(Encoding.UTF8.GetString(response));
                 NyaImageEndpoint = endpointResult.Url.Split('/').Last();
                 return endpointResult.Url;
@@ -94,18 +99,19 @@ namespace Nya.Utils
         {
             try
             {
-                if (_config.SelectedAPI == "Local Files")
+                if (WebAPIs.APIs[_config.SelectedAPI].Mode == DataMode.Local)
                 {
-                    var type = "sfw";
-                    if (_config.Nsfw)
-                    {
-                        type = "nsfw";
-                    }
-
+                    var type = _config.Nsfw ? "nsfw" : "sfw";
                     var oldImageURL = NyaImageURL;
                     while (NyaImageURL == oldImageURL)
                     {
-                        var files = Directory.GetFiles(Path.Combine(UnityGame.UserDataPath, "Nya", type));
+                        var files = Directory.GetFiles(Path.Combine(WebAPIs.APIs[_config.SelectedAPI].BaseEndpoint, type));
+                        if (files.Length == 0)
+                        {
+                            _siraLog.Warn($"No local files for type: {type}");
+                            return;
+                        }
+
                         if (files.Length == 1 && oldImageURL != null)
                         {
                             return;
@@ -113,32 +119,35 @@ namespace Nya.Utils
 
                         NyaImageURL = files[_random.Next(files.Length)];
                     }
-                    Utilities.GetData(NyaImageURL, data => NyaImageBytes = data);
+
+                    NyaImageBytes = File.ReadAllBytes(NyaImageURL!);
                     await Task.Run(() => DownscaleNyaImage());
                     LoadNyaImage(image);
                     return;
                 }
 
-                var selectedEndpoint = _config.SelectedEndpoints[_config.SelectedAPI].SelectedSfwEndpoint;
-                if (_config.Nsfw)
+                var selectedEndpoint = _config.Nsfw
+                    ? _config.SelectedEndpoints[_config.SelectedAPI].SelectedNsfwEndpoint
+                    : _config.SelectedEndpoints[_config.SelectedAPI].SelectedSfwEndpoint;
+
+                switch (WebAPIs.APIs[_config.SelectedAPI].Mode)
                 {
-                    selectedEndpoint = _config.SelectedEndpoints[_config.SelectedAPI].SelectedNsfwEndpoint;
+                    case DataMode.Json:
+                        var newUrl = NyaImageURL;
+                        NyaImageURL = await GetImageURL(selectedEndpoint);
+                        while (NyaImageURL == newUrl || NyaImageURL == null)
+                        {
+                            await Task.Delay(1000);
+                            NyaImageURL = await GetImageURL(selectedEndpoint);
+                        }
+
+                        break;
+                    case DataMode.Unsupported:
+                    default:
+                        _siraLog.Warn($"Unsupported data mode for endpoint: {_config.SelectedAPI}");
+                        return;
                 }
 
-                if (WebAPIs.APIs[_config.SelectedAPI].json == null)
-                {
-                    NyaImageURL = WebAPIs.APIs[_config.SelectedAPI].URL;
-                }
-                else
-                {
-                    var newUrl = NyaImageURL;
-                    NyaImageURL = await GetImageURL(selectedEndpoint);
-                    while (NyaImageURL == newUrl || NyaImageURL == null)
-                    {
-                        await Task.Delay(1000);
-                        NyaImageURL = await GetImageURL(selectedEndpoint);
-                    }
-                }
                 NyaImageBytes = await GetWebDataToBytesAsync(NyaImageURL);
                 await Task.Run(() => DownscaleNyaImage());
                 LoadNyaImage(image);
@@ -151,7 +160,7 @@ namespace Nya.Utils
         }
 
         private void DownscaleNyaImage()
-        {      
+        {
             var originalImage = Image.FromStream(new MemoryStream(NyaImageBytes));
             // This is either a great way to get away with just one comparison or completely stupid
             // Also I simply have no clue how to make this work for gifs, so we'll just leave those be.

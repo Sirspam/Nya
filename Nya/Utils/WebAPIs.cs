@@ -11,8 +11,8 @@ namespace Nya.Utils
             {
                 "waifu.pics", new APIData
                 {
-                    URL = "https://api.waifu.pics/",
-                    json = "url",
+                    BaseEndpoint = "https://api.waifu.pics/",
+                    Mode = DataMode.Json,
                     SfwEndpoints = new List<string> { "sfw/neko", "sfw/waifu", "sfw/awoo", "sfw/shinobu", "sfw/megumin", "sfw/cuddle", "sfw/cry", "sfw/hug", "sfw/kiss", "sfw/lick", "sfw/pat", "sfw/smug", "sfw/bonk", "sfw/yeet", "sfw/blush", "sfw/smile", "sfw/wave", "sfw/highfive", "sfw/nom", "sfw/bite", "sfw/glomp", "sfw/slap", "sfw/kick", "sfw/happy", "sfw/wink", "sfw/poke", "sfw/dance" }, // No 'kill' endpoint because I don't like it :(
                     NsfwEndpoints = new List<string> { "nsfw/neko", "nsfw/waifu", "nsfw/trap", "nsfw/blowjob" }
                 }
@@ -20,8 +20,8 @@ namespace Nya.Utils
             {
                 "nekos.life", new APIData
                 {
-                    URL = "https://nekos.life/api/v2/img/",
-                    json = "url",
+                    BaseEndpoint = "https://nekos.life/api/v2/img/",
+                    Mode = DataMode.Json,
                     SfwEndpoints = new List<string> { "neko", "ngif", "waifu", "smug", "gecg", "meow" },
                     NsfwEndpoints = new List<string> { "lewd", "lewd_gif", "yuri", "futa", "femdom", "boobs", "cum"} // Not all API endpoints because nekos.life has so many nsfw endpoints it's ludicrous
                 }
@@ -29,8 +29,8 @@ namespace Nya.Utils
             {
                 "Local Files", new APIData
                 {
-                    URL = Path.Combine(UnityGame.UserDataPath, "Nya"),
-                    json = null,
+                    BaseEndpoint = Path.Combine(UnityGame.UserDataPath, "Nya"),
+                    Mode = DataMode.Local,
                     SfwEndpoints = new List<string> { "/sfw" },
                     NsfwEndpoints = new List<string> { "/nsfw" }
                 }
@@ -40,9 +40,16 @@ namespace Nya.Utils
 
     internal class APIData
     {
-        internal string URL { get; set; }
-        internal string? json { get; set; }
+        internal string BaseEndpoint { get; set; } = string.Empty;
+        internal DataMode Mode { get; set; }
         internal List<string> SfwEndpoints { get; set; } = new List<string>();
         internal List<string> NsfwEndpoints { get; set; } = new List<string>();
+    }
+
+    internal enum DataMode
+    {
+        Unsupported,
+        Json,
+        Local,
     }
 }
