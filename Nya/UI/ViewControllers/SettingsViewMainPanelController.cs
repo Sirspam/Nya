@@ -29,7 +29,7 @@ namespace Nya.UI.ViewControllers
         protected bool _rememberNsfw;
         protected bool _skipNsfw;
         protected int _autoNyaWait;
-        protected bool _seperatePositions;
+        protected bool _separatePositions;
         protected Vector3 _menuPosition;
         protected Vector3 _menuRotation;
         protected Vector3 _pausePosition;
@@ -55,7 +55,7 @@ namespace Nya.UI.ViewControllers
             RememberNsfw = _config.RememberNsfw;
             SkipNsfw = _config.SkipNsfw;
             AutoNyaWait = _config.AutoNyaWait;
-            SeperatePositions = _config.SeperatePositions;
+            SeparatePositions = _config.SeperatePositions;
             _menuPosition = _config.MenuPosition;
             _menuRotation = _config.MenuRotation;
             _pausePosition = _config.PausePosition;
@@ -146,22 +146,22 @@ namespace Nya.UI.ViewControllers
             }
         }
 
-        [UIValue("seperate-positions")]
-        private bool SeperatePositions
+        [UIValue("separate-positions")]
+        private bool SeparatePositions
         {
-            get => _seperatePositions;
+            get => _separatePositions;
             set
             {
-                _seperatePositions = value;
-                SeperatePositionsButOpposite = !value;
+                _separatePositions = value;
+                SeparatePositionsButOpposite = !value;
                 NotifyPropertyChanged();
             }
         }
 
-        [UIValue("seperate-positions-but-opposite")] // Might be a better way to do this 💀
-        private bool SeperatePositionsButOpposite
+        [UIValue("separate-positions-but-opposite")] // Might be a better way to do this 💀
+        private bool SeparatePositionsButOpposite
         {
-            get => !SeperatePositions;
+            get => !SeparatePositions;
             set => NotifyPropertyChanged();
         }
 
@@ -221,7 +221,7 @@ namespace Nya.UI.ViewControllers
             _config.RememberNsfw = RememberNsfw;
             _config.SkipNsfw = SkipNsfw;
             _config.AutoNyaWait = AutoNyaWait;
-            _config.SeperatePositions = SeperatePositions;
+            _config.SeperatePositions = SeparatePositions;
             _config.MenuPosition = _menuPosition;
             _config.MenuRotation = _menuRotation;
             _config.PausePosition = _pausePosition;
@@ -255,7 +255,7 @@ namespace Nya.UI.ViewControllers
             RememberNsfw = _config.RememberNsfw;
             SkipNsfw = _config.SkipNsfw;
             AutoNyaWait = _config.AutoNyaWait;
-            SeperatePositions = _config.SeperatePositions;
+            SeparatePositions = _config.SeperatePositions;
             _menuPosition = _config.MenuPosition;
             _menuRotation = _config.MenuRotation;
             _pausePosition = _config.PausePosition;
@@ -271,7 +271,7 @@ namespace Nya.UI.ViewControllers
             _config.RememberNsfw = RememberNsfw;
             _config.SkipNsfw = SkipNsfw;
             _config.AutoNyaWait = AutoNyaWait;
-            _config.SeperatePositions = SeperatePositions;
+            _config.SeperatePositions = SeparatePositions;
             _config.MenuPosition = _menuPosition;
             _config.MenuRotation = _menuRotation;
             _config.PausePosition = _pausePosition;
