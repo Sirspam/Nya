@@ -43,9 +43,10 @@ namespace Nya.Utils
         public async void ButtonUnderlineClick(GameObject gameObject)
         {
             ImageView underline = await Task.Run(() => gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>());
-            Color originalColor = underline.color;
+
             uwuTweenyManager.KillAllTweens(underline);
-            FloatTween tween = new FloatTween(0f, 1f, val => underline.color = Color.Lerp(new Color(0f, 0.7f, 1f), originalColor, val), 1f, EaseType.InSine);
+
+            FloatTween tween = new FloatTween(0f, 1f, val => underline.color = Color.Lerp(new Color(0f, 0.7f, 1f), new Color(1f, 1f, 1f, 0.502f), val), 1f, EaseType.InSine);
             uwuTweenyManager.AddTween(tween, underline);
         }
 
