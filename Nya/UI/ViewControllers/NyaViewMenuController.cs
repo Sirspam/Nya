@@ -43,7 +43,7 @@ namespace Nya.UI.ViewControllers
         public void Dispose()
         {
             if (GameplaySetup.IsSingletonAvailable) GameplaySetup.instance.RemoveTab("Nya");
-            if (PluginConfig.Instance.InMenu) floatingScreen.HandleReleased -= FloatingScreen_HandleReleased;
+            if (floatingScreen != null) floatingScreen.HandleReleased -= FloatingScreen_HandleReleased;
             gameplaySetupViewController.didActivateEvent -= GameplaySetupViewController_didActivateEvent;
             gameplaySetupViewController.didDeactivateEvent -= GameplaySetupViewController_didDeactivateEvent;
         }
