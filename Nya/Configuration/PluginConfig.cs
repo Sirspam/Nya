@@ -1,19 +1,18 @@
-﻿using IPA.Config.Stores;
+﻿using System;
+using IPA.Config.Stores;
 using IPA.Config.Stores.Attributes;
 using IPA.Config.Stores.Converters;
-using IPA.Utilities;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using Nya.Utils;
 using UnityEngine;
 
 [assembly: InternalsVisibleTo(GeneratedStore.AssemblyVisibilityTarget)]
-
 namespace Nya.Configuration
 {
     internal class PluginConfig
     {
-        public static PluginConfig Instance { get; set; }
         public bool Nsfw { get; set; } = false;
         public virtual bool RememberNsfw { get; set; } = false;
         public virtual bool SkipNsfw { get; set; } = false;
@@ -28,8 +27,7 @@ namespace Nya.Configuration
         public virtual bool RainbowBackgroundColor { get; set; } = false;
         public virtual Color BackgroundColor { get; set; } = new Color(0.745f, 0.745f, 0.745f);
         public virtual int AutoNyaWait { get; set; } = 4;
-        // public virtual string LocalFilesPath { get; set; } = Path.Combine(UnityGame.UserDataPath, "Nya");
-        public virtual string SelectedAPI { get; set; } = "waifu.pics";
+        public virtual string SelectedAPI { get; set; } = WebAPIs.APIs.Keys.First();
 
         [NonNullable, UseConverter(typeof(DictionaryConverter<EndpointData>))]
         public virtual Dictionary<string, EndpointData> SelectedEndpoints { get; set; } = new Dictionary<string, EndpointData>();
@@ -64,6 +62,7 @@ namespace Nya.Configuration
         public virtual void OnReload()
         {
             // Do stuff after config is read from disk.
+            FixConfigIssues();
         }
 
         /// <summary>
@@ -72,14 +71,36 @@ namespace Nya.Configuration
         public virtual void Changed()
         {
             // Do stuff when the config is changed.
+            FixConfigIssues();
         }
 
         /// <summary>
-        /// Call this to have BSIPA copy the values from <paramref name="other"/> into this config.
+        /// Some magic stuff to save config changes to disk deferred
         /// </summary>
-        public virtual void CopyFrom(PluginConfig other)
+        public virtual IDisposable ChangeTransaction => null!;
+
+        /// <remark>
+        /// May have to make this check more than just the count in the future but for now this works
+        /// Let's pray that the user never dare tampers with the config otherwise values in the SelectedEndpoints will never fix themselves
+        /// Enums? I hardly know them!
+        /// </remark>
+        private void FixConfigIssues()
         {
-            // This instance's members populated from other
+            if (SelectedEndpoints.Count == WebAPIs.APIs.Count)
+            {
+                return;
+            }
+
+            using var _ = ChangeTransaction;
+            SelectedEndpoints.Clear();
+            foreach (var key in WebAPIs.APIs.Keys)
+            {
+                SelectedEndpoints.Add(key, new EndpointData
+                {
+                    SelectedSfwEndpoint = WebAPIs.APIs[key].SfwEndpoints[0],
+                    SelectedNsfwEndpoint = WebAPIs.APIs[key].NsfwEndpoints[0]
+                });
+            }
         }
     }
 }

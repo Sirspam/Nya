@@ -7,71 +7,86 @@ using Nya.Configuration;
 using Nya.Entries;
 using System;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using UnityEngine;
-using Graphics = System.Drawing.Graphics;
+using SiraUtil.Logging;
+using SiraUtil.Web;
 
 namespace Nya.Utils
 {
-    public class ImageUtils
+    internal class ImageUtils
     {
-        private static readonly HttpClient Client = new HttpClient();
+        private readonly SiraLog _siraLog;
+        private readonly PluginConfig _config;
+        private readonly IHttpService _httpService;
+        private readonly Random _random;
 
-        public static byte[] nyaImageBytes = null;
-        public static byte[] nyaImageBytesCompressed;
-        public static string nyaImageEndpoint;
-        public static string nyaImageURL;
+        public byte[]? NyaImageBytes;
+        public byte[]? NyaImageBytesCompressed;
+        public string? NyaImageEndpoint;
+        public string? NyaImageURL;
 
-        public static void DownloadNyaImage()
+        public ImageUtils(SiraLog siraLog, PluginConfig config, IHttpService httpService)
         {
-            if (PluginConfig.Instance.Nsfw) 
-                File.WriteAllBytes($"{Path.Combine(UnityGame.UserDataPath, "Nya")}/nsfw/{nyaImageEndpoint}", nyaImageBytes);
-            else 
-                File.WriteAllBytes($"{Path.Combine(UnityGame.UserDataPath, "Nya")}/sfw/{nyaImageEndpoint}", nyaImageBytes);
+            _siraLog = siraLog;
+            _config = config;
+            _httpService = httpService;
+
+            _random = new Random();
         }
 
-        public static void CopyNyaImage()
+        public void DownloadNyaImage()
+        {
+            File.WriteAllBytes(Path.Combine(UnityGame.UserDataPath, "Nya", _config.Nsfw ? "nsfw" : "sfw", NyaImageEndpoint), NyaImageBytes);
+        }
+
+        public void CopyNyaImage()
         {
             // Converts gifs to pngs because ???
             // Also doesn't seem to like transparency sometimes
             // Might just remove this feature at some point lmao
-            using (MemoryStream memoryStream = new MemoryStream(nyaImageBytes))
-            {
-                Bitmap bitmap = new Bitmap(memoryStream);
-                Clipboard.SetImage(bitmap);
-            }
+            using MemoryStream memoryStream = new MemoryStream(NyaImageBytes);
+            Bitmap bitmap = new Bitmap(memoryStream);
+            Clipboard.SetImage(bitmap);
         }
 
-#nullable enable
-
-        private static async Task<byte[]?> GetWebDataToBytesAsync(string url)
+        private async Task<byte[]?> GetWebDataToBytesAsync(string url)
         {
             try
             {
-                HttpResponseMessage response = await Client.GetAsync(url);
-                return await response.Content.ReadAsByteArrayAsync();
+                IHttpResponse response = await _httpService.GetAsync(url);
+                if (!response.Successful)
+                {
+                    _siraLog.Error($"{url} returned an unsuccessful status code ({response.Code.ToString()})");
+                    return null;
+                }
+
+                return await response.ReadAsByteArrayAsync();
             }
             catch (HttpRequestException error)
             {
-                Plugin.Log.Error($"Error getting data from {url}, Message: {error}");
+                _siraLog.Error($"Error getting data from {url}, Message: {error}");
                 return null;
             }
         }
 
-        private static async Task<string?> GetImageURL(string endpoint)
+        private async Task<string?> GetImageURL(string endpoint)
         {
             try
             {
-                Plugin.Log.Info($"Attempting to get image url from {PluginConfig.Instance.SelectedAPI}, {endpoint}");
-                var response = await GetWebDataToBytesAsync(WebAPIs.APIs[PluginConfig.Instance.SelectedAPI].URL + endpoint);
+                _siraLog.Info($"Attempting to get image url from {_config.SelectedAPI}, {endpoint}");
+                var response = await GetWebDataToBytesAsync(WebAPIs.APIs[_config.SelectedAPI].BaseEndpoint + endpoint);
+                if (response == null)
+                {
+                    return null;
+                }
+
                 var endpointResult = JsonConvert.DeserializeObject<WebAPIEntries>(Encoding.UTF8.GetString(response));
-                nyaImageEndpoint = endpointResult.Url.Split('/').Last();
+                NyaImageEndpoint = endpointResult.Url.Split('/').Last();
                 return endpointResult.Url;
             }
             catch (Exception)
@@ -80,106 +95,126 @@ namespace Nya.Utils
             }
         }
 
-#nullable disable
-
-        public static async void GetNewNyaImage(ImageView image)
+        public async void GetNewNyaImage(ImageView image)
         {
             try
             {
-                if (PluginConfig.Instance.SelectedAPI == "Local Files")
+                if (WebAPIs.APIs[_config.SelectedAPI].Mode == DataMode.Local)
                 {
-                    var type = "sfw";
-                    if (PluginConfig.Instance.Nsfw) type = "nsfw";
-                    var oldImageURL = nyaImageURL;
-                    while (nyaImageURL == oldImageURL)
+                    var type = _config.Nsfw ? "nsfw" : "sfw";
+                    var oldImageURL = NyaImageURL;
+                    while (NyaImageURL == oldImageURL)
                     {
-                        var files = Directory.GetFiles($"{Path.Combine(UnityGame.UserDataPath, "Nya")}/{type}");
-                        if (files.Length == 1 && oldImageURL != null) return;
-                        var rand = new System.Random();
-                        nyaImageURL = files[rand.Next(files.Length)];
+                        var files = Directory.GetFiles(Path.Combine(WebAPIs.APIs[_config.SelectedAPI].BaseEndpoint, type));
+                        if (files.Length == 0)
+                        {
+                            _siraLog.Warn($"No local files for type: {type}");
+                            return;
+                        }
+
+                        if (files.Length == 1 && oldImageURL != null)
+                        {
+                            return;
+                        }
+
+                        NyaImageURL = files[_random.Next(files.Length)];
                     }
-                    Utilities.GetData(nyaImageURL, (byte[] data) => nyaImageBytes = data);
+
+                    NyaImageBytes = File.ReadAllBytes(NyaImageURL!);
                     await Task.Run(() => DownscaleNyaImage());
                     LoadNyaImage(image);
                     return;
                 }
 
-                var selectedEndpoint = PluginConfig.Instance.SelectedEndpoints[PluginConfig.Instance.SelectedAPI].SelectedSfwEndpoint;
-                if (PluginConfig.Instance.Nsfw) selectedEndpoint = PluginConfig.Instance.SelectedEndpoints[PluginConfig.Instance.SelectedAPI].SelectedNsfwEndpoint;
-                if (WebAPIs.APIs[PluginConfig.Instance.SelectedAPI].json == null) nyaImageURL = WebAPIs.APIs[PluginConfig.Instance.SelectedAPI].URL;
-                else
+                var selectedEndpoint = _config.Nsfw
+                    ? _config.SelectedEndpoints[_config.SelectedAPI].SelectedNsfwEndpoint
+                    : _config.SelectedEndpoints[_config.SelectedAPI].SelectedSfwEndpoint;
+
+                switch (WebAPIs.APIs[_config.SelectedAPI].Mode)
                 {
-                    var newUrl = nyaImageURL;
-                    nyaImageURL = await GetImageURL(selectedEndpoint);
-                    while (nyaImageURL == newUrl || nyaImageURL == null)
-                    {
-                        await Task.Delay(1000);
-                        nyaImageURL = await GetImageURL(selectedEndpoint);
-                    }
+                    case DataMode.Json:
+                        var newUrl = NyaImageURL;
+                        NyaImageURL = await GetImageURL(selectedEndpoint);
+                        while (NyaImageURL == newUrl || NyaImageURL == null)
+                        {
+                            await Task.Delay(1000);
+                            NyaImageURL = await GetImageURL(selectedEndpoint);
+                        }
+
+                        break;
+                    case DataMode.Unsupported:
+                    default:
+                        _siraLog.Warn($"Unsupported data mode for endpoint: {_config.SelectedAPI}");
+                        return;
                 }
-                nyaImageBytes = await GetWebDataToBytesAsync(nyaImageURL);
+
+                NyaImageBytes = await GetWebDataToBytesAsync(NyaImageURL);
                 await Task.Run(() => DownscaleNyaImage());
                 LoadNyaImage(image);
             }
             catch (Exception e) // e for dEez nuts
             {
-                Plugin.Log.Error(e);
+                _siraLog.Error(e);
                 LoadErrorSprite(image);
             }
         }
 
-        private static void DownscaleNyaImage()
-        {      
-            var originalImage = Image.FromStream(new MemoryStream(nyaImageBytes));
+        private void DownscaleNyaImage()
+        {
+            var originalImage = Image.FromStream(new MemoryStream(NyaImageBytes));
             // This is either a great way to get away with just one comparison or completely stupid
             // Also I simply have no clue how to make this work for gifs, so we'll just leave those be.
-            if ((originalImage.Width + originalImage.Height) <= 1024f || nyaImageURL.EndsWith(".gif") || nyaImageURL.EndsWith(".apng"))
+            if (originalImage.Width + originalImage.Height <= 1024f || NyaImageURL.EndsWith(".gif") || NyaImageURL.EndsWith(".apng"))
             {
-                nyaImageBytesCompressed = nyaImageBytes;
+                NyaImageBytesCompressed = NyaImageBytes;
                 return;
             }
 
             double ratio = (double)originalImage.Width / originalImage.Height;
-            if ((512 * ratio) <= originalImage.Width)
+            if (512 * ratio <= originalImage.Width)
             {
                 var resizedImage = new Bitmap(originalImage, (int)(512f * ratio), 512);
                 using MemoryStream ms = new MemoryStream();
                 resizedImage.Save(ms, originalImage.RawFormat);
-                nyaImageBytesCompressed = ms.ToArray();
+                NyaImageBytesCompressed = ms.ToArray();
             }
             else
             {
                 var resizedImage = new Bitmap(originalImage, 512, (int)(512 / ratio));
                 using MemoryStream ms = new MemoryStream();
                 resizedImage.Save(ms, originalImage.RawFormat);
-                nyaImageBytesCompressed = ms.ToArray();
+                NyaImageBytesCompressed = ms.ToArray();
             }
         }
 
-        public static void LoadNyaImage(ImageView image)
+        public void LoadNyaImage(ImageView image)
         {
-            if (nyaImageBytes == null)
+            if (NyaImageBytes == null)
             {
                 GetNewNyaImage(image);
                 return;
             }
-            if (image.sprite.texture.GetRawTextureData() == nyaImageBytesCompressed) return;
 
-            Plugin.Log.Info($"Loading image from {nyaImageURL}");
+            if (image.sprite.texture.GetRawTextureData() == NyaImageBytesCompressed)
+            {
+                return;
+            }
+
+            _siraLog.Info($"Loading image from {NyaImageURL}");
 
             // Below is essentially BSML's SetImage method but adapted "better" for Nya
             // I didn't like that it would show a yucky loading gif >:(
             AnimationStateUpdater oldStateUpdater = image.GetComponent<AnimationStateUpdater>();
             if (oldStateUpdater != null) UnityEngine.Object.DestroyImmediate(oldStateUpdater);
 
-            if (nyaImageURL.EndsWith(".gif") || nyaImageURL.EndsWith(".apng"))
+            if (NyaImageURL.EndsWith(".gif") || NyaImageURL.EndsWith(".apng"))
             {
                 AnimationStateUpdater stateUpdater = image.gameObject.AddComponent<AnimationStateUpdater>();
                 stateUpdater.image = image;
 
-                AnimationLoader.Process(nyaImageURL.EndsWith(".gif") ? AnimationType.GIF : AnimationType.APNG, nyaImageBytes, (Texture2D tex, Rect[] uvs, float[] delays, int width, int height) =>
+                AnimationLoader.Process(NyaImageURL.EndsWith(".gif") ? AnimationType.GIF : AnimationType.APNG, NyaImageBytes, (tex, uvs, delays, width, height) =>
                 {
-                    AnimationControllerData controllerData = AnimationController.instance.Register(nyaImageURL, tex, uvs, delays);
+                    AnimationControllerData controllerData = AnimationController.instance.Register(NyaImageURL, tex, uvs, delays);
                     stateUpdater.controllerData = controllerData;
                 });
             }
@@ -187,21 +222,24 @@ namespace Nya.Utils
             {
                 AnimationStateUpdater stateUpdater = image.gameObject.AddComponent<AnimationStateUpdater>();
                 stateUpdater.image = image;
-                if (stateUpdater != null) 
+                if (stateUpdater != null)
+                {
                     UnityEngine.Object.DestroyImmediate(stateUpdater);
-                image.sprite = Utilities.LoadSpriteRaw(nyaImageBytesCompressed);
+                }
+
+                image.sprite = Utilities.LoadSpriteRaw(NyaImageBytesCompressed);
             }
         }
 
-        private static void LoadErrorSprite(ImageView image)
+        private void LoadErrorSprite(ImageView image)
         {
-            Utilities.GetData("Nya.Resources.Chocola_Dead.png", (byte[] data) =>
+            Utilities.GetData("Nya.Resources.Chocola_Dead.png", data =>
             {
-                nyaImageBytes = data;
-                nyaImageURL = "Error Sprite";
+                NyaImageBytes = data;
+                NyaImageURL = "Error Sprite";
                 image.sprite = Utilities.LoadSpriteRaw(data);
             });
-            Plugin.Log.Warn("Any errors which occur after this was likely caused by the error above this warning");
+            _siraLog.Warn("Any errors which occur after this was likely caused by the error above this warning");
         }
     }
 }

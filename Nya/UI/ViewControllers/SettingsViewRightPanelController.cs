@@ -12,18 +12,20 @@ namespace Nya.UI.ViewControllers
 {
     [HotReload(RelativePathToLayout = @"..\Views\SettingsViewRightPanel.bsml")]
     [ViewDefinition("Nya.UI.Views.SettingsViewRightPanel.bsml")]
-    public class SettingsViewRightPanelController : BSMLAutomaticViewController, IPointerClickHandler
+    internal class SettingsViewRightPanelController : BSMLAutomaticViewController, IPointerClickHandler
     {
-        private TimeTweeningManager uwuTweenyManager;
-        private UIUtils uiUtils;
+        private PluginConfig _config;
+        private TimeTweeningManager _uwuTweenyManager;
+        private UIUtils _uiUtils;
 
         private bool visible = false;
 
         [Inject]
-        public void Constructor(TimeTweeningManager timeTweeningManager, UIUtils uiUtils)
+        public void Constructor(PluginConfig config, UIUtils uiUtils, TimeTweeningManager timeTweeningManager)
         {
-            this.uwuTweenyManager = timeTweeningManager;
-            this.uiUtils = uiUtils;
+            _config = config;
+            _uiUtils = uiUtils;
+            _uwuTweenyManager = timeTweeningManager;
         }
 
         [UIComponent("rainbow-text")]
@@ -31,41 +33,41 @@ namespace Nya.UI.ViewControllers
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (!PluginConfig.Instance.RainbowBackgroundColor)
+            if (!_config.RainbowBackgroundColor)
             {
                 rainbowText.SetText("<#FF0000>R<#FF7F00>A<#FFFF00>I<#00FF00>N<#0000FF>B<#4B0082>O<#9400D3>W\n<#FFFFFF>Enabled");
                 KindlyAskRainbowTextToShowUpThenHaveItSodOffAfterFourSeconds();
-                uiUtils.RainbowNyaBG(true);
-                PluginConfig.Instance.RainbowBackgroundColor = true;
+                _uiUtils.RainbowNyaBG(true);
+                _config.RainbowBackgroundColor = true;
             }
             else
             {
                 rainbowText.SetText("<#FF0000>R<#FF7F00>A<#FFFF00>I<#00FF00>N<#0000FF>B<#4B0082>O<#9400D3>W\n<#FFFFFF>Disabled");
                 KindlyAskRainbowTextToShowUpThenHaveItSodOffAfterFourSeconds();
-                uiUtils.RainbowNyaBG(false);
-                PluginConfig.Instance.RainbowBackgroundColor = false;
+                _uiUtils.RainbowNyaBG(false);
+                _config.RainbowBackgroundColor = false;
             }
         }
 
         private void KindlyAskRainbowTextToShowUpThenHaveItSodOffAfterFourSeconds() // Code maintainability is important!
         {
             if (visible) return;
-            uwuTweenyManager.KillAllTweens(rainbowText);
+            _uwuTweenyManager.KillAllTweens(rainbowText);
             FloatTween tween = new FloatTween(0, 1f, val => rainbowText.alpha = val, 0.5f, EaseType.InOutQuad)
             {
-                onCompleted = async delegate ()
+                onCompleted = async delegate
                 {
                     visible = true;
                     await Task.Delay(4000);
-                    uwuTweenyManager.KillAllTweens(rainbowText);
+                    _uwuTweenyManager.KillAllTweens(rainbowText);
                     FloatTween tween = new FloatTween(1, 0f, val => rainbowText.alpha = val, 0.5f, EaseType.InOutQuad)
                     {
-                        onCompleted = delegate () { visible = false; }
+                        onCompleted = delegate { visible = false; }
                     };
-                    uwuTweenyManager.AddTween(tween, rainbowText);
+                    _uwuTweenyManager.AddTween(tween, rainbowText);
                 }
             };
-            uwuTweenyManager.AddTween(tween, rainbowText);
+            _uwuTweenyManager.AddTween(tween, rainbowText);
         }
     }
 }

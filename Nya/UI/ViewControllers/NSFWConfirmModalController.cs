@@ -49,7 +49,7 @@ namespace Nya.UI.ViewControllers
         {
             if (!modalView)
             {
-                BSMLParser.instance.Parse(BeatSaberMarkupLanguage.Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.NSFWConfirmModal.bsml"), parentTransform.gameObject, this);
+                BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.NSFWConfirmModal.bsml"), parentTransform.gameObject, this);
                 modalView.SetField("_animateParentCanvas", false);
                 modalView.name = "NyaNSFWConfirmaModal";
             }

@@ -6,16 +6,25 @@ using System.Threading;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Nya.UI.ViewControllers
 {
-    public abstract class NyaViewController
+    internal abstract class NyaViewController
     {
-        protected static SemaphoreSlim semaphore = new SemaphoreSlim(1);
-        // protected CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        protected readonly PluginConfig Config;
+        protected readonly ImageUtils ImageUtils;
 
-        protected bool autoNyaToggle = false;
-        protected bool autoNyaCooldown = false;
+        private static readonly SemaphoreSlim Semaphore = new SemaphoreSlim(1);
+
+        protected bool AutoNyaToggle = false;
+        protected bool AutoNyaCooldown = false;
+
+        protected NyaViewController(PluginConfig config, ImageUtils imageUtils)
+        {
+            Config = config;
+            ImageUtils = imageUtils;
+        }
 
         #region components
 
@@ -26,16 +35,16 @@ namespace Nya.UI.ViewControllers
         internal readonly ImageView nyaImage;
 
         [UIComponent("nya-button")]
-        internal readonly UnityEngine.UI.Button nyaButton;
+        internal readonly Button nyaButton;
 
         [UIComponent("auto-button")]
-        internal readonly UnityEngine.UI.Button nyaAutoButton;
+        internal readonly Button nyaAutoButton;
 
         [UIComponent("auto-button")]
         internal readonly TextMeshProUGUI nyaAutoText;
 
         [UIComponent("settings-button")]
-        internal readonly UnityEngine.UI.Button nyaSettingsButton;
+        internal readonly Button nyaSettingsButton;
 
         [UIComponent("settings-button")]
         internal readonly RectTransform settingsButtonTransform;
@@ -63,30 +72,31 @@ namespace Nya.UI.ViewControllers
         [UIAction("nya-auto-clicked")]
         protected async void AutoNya()
         {
-            if (autoNyaCooldown)
+            if (AutoNyaCooldown)
             {
                 return;
             }
-            autoNyaCooldown = true;
 
-            autoNyaToggle = !autoNyaToggle;
-            if (autoNyaToggle) // On
+            AutoNyaCooldown = true;
+
+            AutoNyaToggle = !AutoNyaToggle;
+            if (AutoNyaToggle) // On
             {
                 AutoNyaCooldownHandler(); // This isn't suppoed to be awaited I swear, please Mr green swiggly line go away you're scaring me
                 nyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = Color.green;
                 nyaButton.interactable = false;
-                while (autoNyaToggle)
+                while (AutoNyaToggle)
                 {
-                    await semaphore.WaitAsync();
+                    await Semaphore.WaitAsync();
                     ImageUtils.GetNewNyaImage(nyaImage);
-                    await Task.Delay(PluginConfig.Instance.AutoNyaWait * 1000);
-                    semaphore.Release();
+                    await Task.Delay(Config.AutoNyaWait * 1000);
+                    Semaphore.Release();
                 }
                 // This is a neat little thing I wanted to do but couldn't get it to work ):
                 // Might come back to it in the future
                 //await IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew( async () =>
                 //{
-                //    var third = (PluginConfig.Instance.AutoNyaWait * 1000) / 3;
+                //    var third = (_config.AutoNyaWait * 1000) / 3;
                 //    while (autoNyaToggle)
                 //    {
                 //        await semaphore.WaitAsync();
@@ -108,14 +118,14 @@ namespace Nya.UI.ViewControllers
                 nyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = new Color(1f, 1f, 1f, 0.502f); // Beatgames why 0.502
                 nyaAutoText.text = "Auto Nya";
                 nyaButton.interactable = true;
-                autoNyaCooldown = false;
+                AutoNyaCooldown = false;
             }
         }
 
         private async void AutoNyaCooldownHandler()
         {
             await Task.Delay(1000);
-            autoNyaCooldown = false;
+            AutoNyaCooldown = false;
         }
 
         #endregion actions

@@ -7,7 +7,7 @@
   "description": "BeatSaber mod for displaying nya-tastic images from various anime themed web APIs",
   "gameVersion": "1.19.0",
   "dependsOn": {
-    "BSIPA": "^4.2.0",
+    "BSIPA": "^4.2.1",
     "BeatSaberMarkupLanguage": "^1.6.0",
     "SiraUtil": "^3.0.0"
   }

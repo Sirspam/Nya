@@ -14,8 +14,9 @@ namespace Nya.UI.ViewControllers
 {
     [HotReload(RelativePathToLayout = @"..\Views\SettingsViewMainPanel.bsml")]
     [ViewDefinition("Nya.UI.Views.SettingsViewMainPanel.bsml")]
-    public class SettingsViewMainPanelController : BSMLAutomaticViewController, IInitializable, IDisposable
+    internal class SettingsViewMainPanelController : BSMLAutomaticViewController, IInitializable, IDisposable
     {
+        private PluginConfig _config;
         private MainFlowCoordinator mainFlowCoordinator;
         private MenuTransitionsHelper menuTransitionsHelper;
         private SettingsViewRightPanelController settingsViewRightPanelController;
@@ -28,15 +29,16 @@ namespace Nya.UI.ViewControllers
         protected bool _rememberNsfw;
         protected bool _skipNsfw;
         protected int _autoNyaWait;
-        protected bool _seperatePositions;
+        protected bool _separatePositions;
         protected Vector3 _menuPosition;
         protected Vector3 _menuRotation;
         protected Vector3 _pausePosition;
         protected Vector3 _pauseRotation;
 
         [Inject]
-        public void Constructor(MainFlowCoordinator mainFlowCoordinator, MenuTransitionsHelper menuTransitionsHelper, SettingsViewRightPanelController settingsViewRightPanelController, UIUtils uiUtils)
+        public void Constructor(PluginConfig config, UIUtils uiUtils, MainFlowCoordinator mainFlowCoordinator, MenuTransitionsHelper menuTransitionsHelper, SettingsViewRightPanelController settingsViewRightPanelController)
         {
+            _config = config;
             this.mainFlowCoordinator = mainFlowCoordinator;
             this.menuTransitionsHelper = menuTransitionsHelper;
             this.settingsViewRightPanelController = settingsViewRightPanelController;
@@ -47,17 +49,17 @@ namespace Nya.UI.ViewControllers
         {
             base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
 
-            InMenu = PluginConfig.Instance.InMenu;
-            InPause = PluginConfig.Instance.InPause;
-            BgColour = PluginConfig.Instance.BackgroundColor;
-            RememberNsfw = PluginConfig.Instance.RememberNsfw;
-            SkipNsfw = PluginConfig.Instance.SkipNsfw;
-            AutoNyaWait = PluginConfig.Instance.AutoNyaWait;
-            SeperatePositions = PluginConfig.Instance.SeperatePositions;
-            _menuPosition = PluginConfig.Instance.MenuPosition;
-            _menuRotation = PluginConfig.Instance.MenuRotation;
-            _pausePosition = PluginConfig.Instance.PausePosition;
-            _pauseRotation = PluginConfig.Instance.PauseRotation;
+            InMenu = _config.InMenu;
+            InPause = _config.InPause;
+            BgColour = _config.BackgroundColor;
+            RememberNsfw = _config.RememberNsfw;
+            SkipNsfw = _config.SkipNsfw;
+            AutoNyaWait = _config.AutoNyaWait;
+            SeparatePositions = _config.SeperatePositions;
+            _menuPosition = _config.MenuPosition;
+            _menuRotation = _config.MenuRotation;
+            _pausePosition = _config.PausePosition;
+            _pauseRotation = _config.PauseRotation;
         }
 
         [UIValue("view-controller-active")]
@@ -74,7 +76,7 @@ namespace Nya.UI.ViewControllers
         }
 
         [UIValue("restart-required")]
-        private bool RestartRequired => InMenu != PluginConfig.Instance.InMenu && isActiveAndEnabled;
+        private bool RestartRequired => InMenu != _config.InMenu && isActiveAndEnabled;
 
         [UIValue("in-menu")]
         protected bool InMenu
@@ -144,22 +146,22 @@ namespace Nya.UI.ViewControllers
             }
         }
 
-        [UIValue("seperate-positions")]
-        private bool SeperatePositions
+        [UIValue("separate-positions")]
+        private bool SeparatePositions
         {
-            get => _seperatePositions;
+            get => _separatePositions;
             set
             {
-                _seperatePositions = value;
-                SeperatePositionsButOpposite = !value;
+                _separatePositions = value;
+                SeparatePositionsButOpposite = !value;
                 NotifyPropertyChanged();
             }
         }
 
-        [UIValue("seperate-positions-but-opposite")] // Might be a better way to do this 💀
-        private bool SeperatePositionsButOpposite
+        [UIValue("separate-positions-but-opposite")] // Might be a better way to do this 💀
+        private bool SeparatePositionsButOpposite
         {
-            get => !SeperatePositions;
+            get => !SeparatePositions;
             set => NotifyPropertyChanged();
         }
 
@@ -193,7 +195,7 @@ namespace Nya.UI.ViewControllers
             uiUtils.ButtonUnderlineClick(resetMenuPositionButton.gameObject);
             _menuPosition = new Vector3(0f, 3.65f, 4f);
             _menuRotation = new Vector3(335f, 0f, 0f);
-            if (PluginConfig.Instance.InMenu)
+            if (_config.InMenu)
             {
                 var floatingScreen = GameObject.Find("NyaMenuFloatingScreen");
                 floatingScreen.transform.position = new Vector3(0f, 3.65f, 4f);
@@ -213,17 +215,17 @@ namespace Nya.UI.ViewControllers
         private void OkClicked()
         {
             bool restartRequired = RestartRequired;
-            PluginConfig.Instance.InMenu = InMenu;
-            PluginConfig.Instance.InPause = InPause;
-            PluginConfig.Instance.BackgroundColor = BgColour;
-            PluginConfig.Instance.RememberNsfw = RememberNsfw;
-            PluginConfig.Instance.SkipNsfw = SkipNsfw;
-            PluginConfig.Instance.AutoNyaWait = AutoNyaWait;
-            PluginConfig.Instance.SeperatePositions = SeperatePositions;
-            PluginConfig.Instance.MenuPosition = _menuPosition;
-            PluginConfig.Instance.MenuRotation = _menuRotation;
-            PluginConfig.Instance.PausePosition = _pausePosition;
-            PluginConfig.Instance.PauseRotation = _pauseRotation;
+            _config.InMenu = InMenu;
+            _config.InPause = InPause;
+            _config.BackgroundColor = BgColour;
+            _config.RememberNsfw = RememberNsfw;
+            _config.SkipNsfw = SkipNsfw;
+            _config.AutoNyaWait = AutoNyaWait;
+            _config.SeperatePositions = SeparatePositions;
+            _config.MenuPosition = _menuPosition;
+            _config.MenuRotation = _menuRotation;
+            _config.PausePosition = _pausePosition;
+            _config.PauseRotation = _pauseRotation;
 
             if (restartRequired) menuTransitionsHelper.RestartGame();
             else parentFlowCoordinator.DismissFlowCoordinator(mainFlowCoordinator.YoungestChildFlowCoordinatorOrSelf(), animationDirection: AnimationDirection.Vertical);
@@ -232,8 +234,8 @@ namespace Nya.UI.ViewControllers
         [UIAction("cancel-clicked")]
         private void CancelClicked()
         {
-            uiUtils.NyaBGMaterial.color = PluginConfig.Instance.BackgroundColor;
-            if (PluginConfig.Instance.InMenu)
+            uiUtils.NyaBGMaterial.color = _config.BackgroundColor;
+            if (_config.InMenu)
             {
                 var floatingScreen = GameObject.Find("NyaMenuFloatingScreen");
                 floatingScreen.transform.position = _menuPosition;
@@ -247,40 +249,40 @@ namespace Nya.UI.ViewControllers
         private void ModSettingsParse()
         {
             if (isActiveAndEnabled) return;
-            InMenu = PluginConfig.Instance.InMenu;
-            InPause = PluginConfig.Instance.InPause;
-            BgColour = PluginConfig.Instance.BackgroundColor;
-            RememberNsfw = PluginConfig.Instance.RememberNsfw;
-            SkipNsfw = PluginConfig.Instance.SkipNsfw;
-            AutoNyaWait = PluginConfig.Instance.AutoNyaWait;
-            SeperatePositions = PluginConfig.Instance.SeperatePositions;
-            _menuPosition = PluginConfig.Instance.MenuPosition;
-            _menuRotation = PluginConfig.Instance.MenuRotation;
-            _pausePosition = PluginConfig.Instance.PausePosition;
-            _pauseRotation = PluginConfig.Instance.PauseRotation;
+            InMenu = _config.InMenu;
+            InPause = _config.InPause;
+            BgColour = _config.BackgroundColor;
+            RememberNsfw = _config.RememberNsfw;
+            SkipNsfw = _config.SkipNsfw;
+            AutoNyaWait = _config.AutoNyaWait;
+            SeparatePositions = _config.SeperatePositions;
+            _menuPosition = _config.MenuPosition;
+            _menuRotation = _config.MenuRotation;
+            _pausePosition = _config.PausePosition;
+            _pauseRotation = _config.PauseRotation;
         }
 
         [UIAction("#apply")]
         private void ModSettingsApply()
         {
-            PluginConfig.Instance.InMenu = InMenu;
-            PluginConfig.Instance.InPause = InPause;
-            PluginConfig.Instance.BackgroundColor = BgColour;
-            PluginConfig.Instance.RememberNsfw = RememberNsfw;
-            PluginConfig.Instance.SkipNsfw = SkipNsfw;
-            PluginConfig.Instance.AutoNyaWait = AutoNyaWait;
-            PluginConfig.Instance.SeperatePositions = SeperatePositions;
-            PluginConfig.Instance.MenuPosition = _menuPosition;
-            PluginConfig.Instance.MenuRotation = _menuRotation;
-            PluginConfig.Instance.PausePosition = _pausePosition;
-            PluginConfig.Instance.PauseRotation = _pauseRotation;
+            _config.InMenu = InMenu;
+            _config.InPause = InPause;
+            _config.BackgroundColor = BgColour;
+            _config.RememberNsfw = RememberNsfw;
+            _config.SkipNsfw = SkipNsfw;
+            _config.AutoNyaWait = AutoNyaWait;
+            _config.SeperatePositions = SeparatePositions;
+            _config.MenuPosition = _menuPosition;
+            _config.MenuRotation = _menuRotation;
+            _config.PausePosition = _pausePosition;
+            _config.PauseRotation = _pauseRotation;
         }
 
         [UIAction("#cancel")]
         private void ModSettingsCancel()
         {
-            uiUtils.NyaBGMaterial.color = PluginConfig.Instance.BackgroundColor;
-            if (PluginConfig.Instance.InMenu)
+            uiUtils.NyaBGMaterial.color = _config.BackgroundColor;
+            if (_config.InMenu)
             {
                 var floatingScreen = GameObject.Find("NyaMenuFloatingScreen");
                 floatingScreen.transform.position = _menuPosition;
@@ -290,6 +292,12 @@ namespace Nya.UI.ViewControllers
 
         public void Initialize() => BSMLSettings.instance.AddSettingsMenu("Nya", "Nya.UI.Views.SettingsViewMainPanel.bsml", this);
 
-        public void Dispose() => BSMLSettings.instance?.RemoveSettingsMenu(this);
+        public void Dispose()
+        {
+            if (BSMLSettings.instance != null)
+            {
+                BSMLSettings.instance.RemoveSettingsMenu(this);
+            }
+        }
     }
 }

@@ -3,7 +3,7 @@ using Zenject;
 
 namespace Nya.UI.ViewControllers
 {
-    public class NyaSettingsFlowCoordinator : FlowCoordinator
+    internal class NyaSettingsFlowCoordinator : FlowCoordinator
     {
         private SettingsViewMainPanelController settingsViewMainPanelController;
         private SettingsViewRightPanelController settingsViewRightPanelController;

@@ -1,5 +1,4 @@
 ﻿using IPA.Utilities;
-using Nya.Configuration;
 using System.Collections.Generic;
 using System.IO;
 
@@ -7,30 +6,31 @@ namespace Nya.Utils
 {
     public class WebAPIs
     {
-        internal static Dictionary<string, APIData> APIs { get; set; } = new Dictionary<string, APIData>() {
+        internal static Dictionary<string, APIData> APIs { get; } = new Dictionary<string, APIData>
+        {
             {
-                "waifu.pics", new APIData()
+                "waifu.pics", new APIData
                 {
-                    URL = "https://api.waifu.pics/",
-                    json = "url",
+                    BaseEndpoint = "https://api.waifu.pics/",
+                    Mode = DataMode.Json,
                     SfwEndpoints = new List<string> { "sfw/neko", "sfw/waifu", "sfw/awoo", "sfw/shinobu", "sfw/megumin", "sfw/cuddle", "sfw/cry", "sfw/hug", "sfw/kiss", "sfw/lick", "sfw/pat", "sfw/smug", "sfw/bonk", "sfw/yeet", "sfw/blush", "sfw/smile", "sfw/wave", "sfw/highfive", "sfw/nom", "sfw/bite", "sfw/glomp", "sfw/slap", "sfw/kick", "sfw/happy", "sfw/wink", "sfw/poke", "sfw/dance" }, // No 'kill' endpoint because I don't like it :(
                     NsfwEndpoints = new List<string> { "nsfw/neko", "nsfw/waifu", "nsfw/trap", "nsfw/blowjob" }
                 }
             },
             {
-                "nekos.life", new APIData()
+                "nekos.life", new APIData
                 {
-                    URL = "https://nekos.life/api/v2/img/",
-                    json = "url",
+                    BaseEndpoint = "https://nekos.life/api/v2/img/",
+                    Mode = DataMode.Json,
                     SfwEndpoints = new List<string> { "neko", "ngif", "waifu", "smug", "gecg", "meow" },
                     NsfwEndpoints = new List<string> { "lewd", "lewd_gif", "yuri", "futa", "femdom", "boobs", "cum"} // Not all API endpoints because nekos.life has so many nsfw endpoints it's ludicrous
                 }
             },
             {
-                "Local Files", new APIData()
+                "Local Files", new APIData
                 {
-                    URL = Path.Combine(UnityGame.UserDataPath, "Nya"),
-                    json = null,
+                    BaseEndpoint = Path.Combine(UnityGame.UserDataPath, "Nya"),
+                    Mode = DataMode.Local,
                     SfwEndpoints = new List<string> { "/sfw" },
                     NsfwEndpoints = new List<string> { "/nsfw" }
                 }
@@ -40,9 +40,16 @@ namespace Nya.Utils
 
     internal class APIData
     {
-        internal string URL { get; set; }
-        internal string json { get; set; }
-        internal List<string> SfwEndpoints { get; set; }
-        internal List<string> NsfwEndpoints { get; set; }
+        internal string BaseEndpoint { get; set; } = string.Empty;
+        internal DataMode Mode { get; set; }
+        internal List<string> SfwEndpoints { get; set; } = new List<string>();
+        internal List<string> NsfwEndpoints { get; set; } = new List<string>();
+    }
+
+    internal enum DataMode
+    {
+        Unsupported,
+        Json,
+        Local,
     }
 }

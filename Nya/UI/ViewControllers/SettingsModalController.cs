@@ -17,19 +17,25 @@ using Zenject;
 
 namespace Nya.UI.ViewControllers
 {
-    public abstract class SettingsModalController : IInitializable, INotifyPropertyChanged
+    internal abstract class SettingsModalController : IInitializable, INotifyPropertyChanged
     {
-        protected MainCamera mainCamera;
-        protected readonly NsfwConfirmModalController nsfwConfirmModalController;
-        protected readonly UIUtils uiUtils;
+        private readonly ImageUtils _imageUtils;
+        private readonly UIUtils _uiUtils;
+        private readonly MainCamera _mainCamera;
+        private readonly NsfwConfirmModalController _nsfwConfirmModalController;
+
+        protected readonly PluginConfig Config;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public SettingsModalController(MainCamera mainCamera, NsfwConfirmModalController nsfwConfirmModalController, UIUtils uiUtils)
+        protected SettingsModalController(PluginConfig config, ImageUtils imageUtils, UIUtils uiUtils, NsfwConfirmModalController nsfwConfirmModalController, MainCamera mainCamera)
         {
-            this.mainCamera = mainCamera;
-            this.nsfwConfirmModalController = nsfwConfirmModalController;
-            this.uiUtils = uiUtils;
+            _imageUtils = imageUtils;
+            _mainCamera = mainCamera;
+            _nsfwConfirmModalController = nsfwConfirmModalController;
+            _uiUtils = uiUtils;
+
+            Config = config;
         }
 
         #region components
@@ -92,10 +98,10 @@ namespace Nya.UI.ViewControllers
         [UIValue("nya-nsfw-check")]
         protected bool NsfwCheck
         {
-            get => PluginConfig.Instance.Nsfw;
+            get => Config.Nsfw;
             set
             {
-                PluginConfig.Instance.Nsfw = value;
+                Config.Nsfw = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NsfwCheck)));
             }
         }
@@ -106,8 +112,8 @@ namespace Nya.UI.ViewControllers
         [UIValue("api-value")]
         protected string APIValue
         {
-            get => PluginConfig.Instance.SelectedAPI;
-            set => PluginConfig.Instance.SelectedAPI = value;
+            get => Config.SelectedAPI;
+            set => Config.SelectedAPI = value;
         }
 
         [UIValue("sfw-list")]
@@ -116,8 +122,8 @@ namespace Nya.UI.ViewControllers
         [UIValue("sfw-value")]
         protected string SfwValue
         {
-            get => PluginConfig.Instance.SelectedEndpoints[APIValue].SelectedSfwEndpoint;
-            set => PluginConfig.Instance.SelectedEndpoints[APIValue].SelectedSfwEndpoint = value;
+            get => Config.SelectedEndpoints[APIValue].SelectedSfwEndpoint;
+            set => Config.SelectedEndpoints[APIValue].SelectedSfwEndpoint = value;
         }
 
         [UIValue("nsfw-list")]
@@ -126,15 +132,15 @@ namespace Nya.UI.ViewControllers
         [UIValue("nsfw-value")]
         protected string NsfwValue
         {
-            get => PluginConfig.Instance.SelectedEndpoints[APIValue].SelectedNsfwEndpoint;
-            set => PluginConfig.Instance.SelectedEndpoints[APIValue].SelectedNsfwEndpoint = value;
+            get => Config.SelectedEndpoints[APIValue].SelectedNsfwEndpoint;
+            set => Config.SelectedEndpoints[APIValue].SelectedNsfwEndpoint = value;
         }
 
         [UIValue("show-handle")]
         protected bool PauseHandle
         {
-            get => PluginConfig.Instance.ShowHandle;
-            set => PluginConfig.Instance.ShowHandle = value;
+            get => Config.ShowHandle;
+            set => Config.ShowHandle = value;
         }
 
         #endregion values
@@ -165,7 +171,7 @@ namespace Nya.UI.ViewControllers
             parserParams.EmitEvent("close-modal");
             parserParams.EmitEvent("open-modal");
 
-            if (ImageUtils.nyaImageURL.EndsWith(".gif") || ImageUtils.nyaImageURL.EndsWith(".apng"))
+            if (_imageUtils.NyaImageURL.EndsWith(".gif") || _imageUtils.NyaImageURL.EndsWith(".apng"))
             {
                 NyaCopyButton.interactable = false;
             }
@@ -180,7 +186,7 @@ namespace Nya.UI.ViewControllers
             if (ModalTransform != null)
             {
                 ModalTransform.GetComponent<ModalView>().Hide(false);
-                nsfwConfirmModalController.HideModal();
+                _nsfwConfirmModalController.HideModal();
             }
         }
 
@@ -189,23 +195,23 @@ namespace Nya.UI.ViewControllers
         [UIAction("nya-download-clicked")]
         protected void DownloadNya()
         {
-            uiUtils.ButtonUnderlineClick(NyaDownloadButton.gameObject);
-            Task.Run(() => ImageUtils.DownloadNyaImage());
+            _uiUtils.ButtonUnderlineClick(NyaDownloadButton.gameObject);
+            Task.Run(() => _imageUtils.DownloadNyaImage());
         }
 
         [UIAction("nya-copy-clicked")]
         protected void CopyNya()
         {
-            uiUtils.ButtonUnderlineClick(NyaCopyButton.gameObject);
-            Task.Run(() => ImageUtils.CopyNyaImage());
+            _uiUtils.ButtonUnderlineClick(NyaCopyButton.gameObject);
+            Task.Run(() => _imageUtils.CopyNyaImage());
         }
 
         [UIAction("nya-nsfw-changed")]
         protected void NsfwToggle(bool value)
         {
-            if (value && !PluginConfig.Instance.SkipNsfw)
+            if (value && !Config.SkipNsfw)
             {
-                nsfwConfirmModalController.ShowModal(NsfwCheckbox, NsfwConfirmYes, NsfwConfirmNo);
+                _nsfwConfirmModalController.ShowModal(NsfwCheckbox, NsfwConfirmYes, NsfwConfirmNo);
             }
             else
             {
@@ -224,48 +230,51 @@ namespace Nya.UI.ViewControllers
         protected void SfwChange(string value)
         {
             SfwValue = value;
-            PluginConfig.Instance.SelectedEndpoints[APIValue].SelectedSfwEndpoint = value;
-            PluginConfig.Instance.Changed();
+            Config.SelectedEndpoints[APIValue].SelectedSfwEndpoint = value;
+            Config.Changed();
         }
 
         [UIAction("nsfw-change")]
         protected void NsfwChange(string value)
         {
             NsfwValue = value;
-            PluginConfig.Instance.Changed();
+            Config.Changed();
         }
 
         [UIAction("face-headset-clicked")]
         protected void FaceHeadsetClicked()
         {
-            uiUtils.ButtonUnderlineClick(FaceHeadsetButton.gameObject);
-            RootTransform.root.gameObject.transform.LookAt(mainCamera.camera.transform);
-            RootTransform.root.gameObject.transform.Rotate(0f, 180f, 0, Space.Self); // Nya decides that it's shy and faces away from the user, so we do a little flipping
+            _uiUtils.ButtonUnderlineClick(FaceHeadsetButton.gameObject);
+            var transform = RootTransform.root.gameObject.transform;
+            transform.LookAt(_mainCamera.camera.transform);
+            transform.Rotate(0f, 180f, 0, Space.Self); // Nya decides that it's shy and faces away from the user, so we do a little flipping
         }
 
         [UIAction("reset-rotation-clicked")]
-        protected void ReseteRotationClicked()
+        protected void ResetRotationClicked()
         {
-            uiUtils.ButtonUnderlineClick(ResetRotationButton.gameObject);
-            Vector3 rotation = RootTransform.root.gameObject.transform.rotation.eulerAngles;
-            RootTransform.root.gameObject.transform.rotation = Quaternion.Euler(0f, rotation.y, 0f);
+            _uiUtils.ButtonUnderlineClick(ResetRotationButton.gameObject);
+            var transform = RootTransform.root.gameObject.transform;
+            Vector3 rotation = transform.rotation.eulerAngles;
+            transform.rotation = Quaternion.Euler(0f, rotation.y, 0f);
         }
 
         [UIAction("reset-position-clicked")]
         protected void ResetPositionClicked()
         {
-            uiUtils.ButtonUnderlineClick(ResetPositionButton.gameObject);
-            RootTransform.root.gameObject.transform.position = new Vector3(0f, 3.65f, 4f);
-            RootTransform.root.gameObject.transform.rotation = Quaternion.Euler(new Vector3(335f, 0f, 0f));
-            if (RootTransform.root.name == "NyaGameFloatingScreen" && PluginConfig.Instance.SeperatePositions)
+            _uiUtils.ButtonUnderlineClick(ResetPositionButton.gameObject);
+            var gameObjectTransform = RootTransform.root.gameObject.transform;
+            gameObjectTransform.position = new Vector3(0f, 3.65f, 4f);
+            gameObjectTransform.rotation = Quaternion.Euler(new Vector3(335f, 0f, 0f));
+            if (RootTransform.root.name == "NyaGameFloatingScreen" && Config.SeperatePositions)
             {
-                PluginConfig.Instance.PausePosition = RootTransform.root.gameObject.transform.position;
-                PluginConfig.Instance.PauseRotation = RootTransform.root.gameObject.transform.eulerAngles;
+                Config.PausePosition = gameObjectTransform.position;
+                Config.PauseRotation = gameObjectTransform.eulerAngles;
             }
             else
             {
-                PluginConfig.Instance.MenuPosition = RootTransform.root.gameObject.transform.position;
-                PluginConfig.Instance.MenuRotation = RootTransform.root.gameObject.transform.eulerAngles;
+                Config.MenuPosition = gameObjectTransform.position;
+                Config.MenuRotation = gameObjectTransform.eulerAngles;
             }
         }
 
@@ -280,7 +289,7 @@ namespace Nya.UI.ViewControllers
         protected void NsfwConfirmYes()
         {
             NsfwCheck = true;
-            PluginConfig.Instance.Changed();
+            Config.Changed();
         }
 
         protected void NsfwConfirmNo()
@@ -288,7 +297,7 @@ namespace Nya.UI.ViewControllers
             if (NsfwCheck) // Stops from editing the config if the nsfw value is already false
             {
                 NsfwCheck = false;
-                PluginConfig.Instance.Changed();
+                Config.Changed();
             }
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NsfwCheck)));
         }
