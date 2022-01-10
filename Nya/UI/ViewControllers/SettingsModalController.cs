@@ -76,8 +76,8 @@ namespace Nya.UI.ViewControllers
         [UIComponent("face-headset-button")]
         protected readonly Button FaceHeadsetButton;
 
-        [UIComponent("reset-rotation-button")]
-        protected readonly Button ResetRotationButton;
+        [UIComponent("face-forwards-button")]
+        protected readonly Button FaceForwardsButton;
 
         [UIComponent("reset-position-button")]
         protected readonly Button ResetPositionButton;
@@ -243,10 +243,10 @@ namespace Nya.UI.ViewControllers
             RootTransform.root.gameObject.transform.Rotate(0f, 180f, 0, Space.Self); // Nya decides that it's shy and faces away from the user, so we do a little flipping
         }
 
-        [UIAction("reset-rotation-clicked")]
+        [UIAction("face-forwards-clicked")]
         protected void ReseteRotationClicked()
         {
-            uiUtils.ButtonUnderlineClick(ResetRotationButton.gameObject);
+            uiUtils.ButtonUnderlineClick(FaceForwardsButton.gameObject);
             Vector3 rotation = RootTransform.root.gameObject.transform.rotation.eulerAngles;
             RootTransform.root.gameObject.transform.rotation = Quaternion.Euler(0f, rotation.y, 0f);
         }

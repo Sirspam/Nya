@@ -24,7 +24,7 @@
 				<vertical horizontal-fit='PreferredSize' vertical-fit='PreferredSize' preferred-width='60' preferred-height='42' spacing='-3'>
 					<checkbox-setting id='show-handle-checkbox' text="Show Nya's movement handle" value='show-handle' on-change='show-handle-changed' apply-on-change='true'/>
 					<button id='face-headset-button' text='Face Headset' on-click='face-headset-clicked' min-height='10' min-width='28'/>
-					<button id='reset-rotation-button' text='Reset Rotation' on-click='reset-rotation-clicked' min-height='10' min-width='28'/>
+					<button id='face-forwards-button' text='Face Forwards' on-click='face-forwards-clicked' min-height='10' min-width='28'/>
 					<button id='reset-position-button' text='Reset Position' on-click='reset-position-clicked' min-height='10' min-width='28'/>
 				</vertical>
 			</tab>
