@@ -239,7 +239,6 @@ namespace Nya.UI.ViewControllers
                 floatingScreen.transform.position = _menuPosition;
                 floatingScreen.transform.rotation = Quaternion.Euler(_menuRotation);
             }
-            settingsViewRightPanelController.gameObject.SetActive(false); // Thank you leaderboard panel for kidnapping my right panel
             parentFlowCoordinator.DismissFlowCoordinator(mainFlowCoordinator.YoungestChildFlowCoordinatorOrSelf(), animationDirection: AnimationDirection.Vertical);
         }
 

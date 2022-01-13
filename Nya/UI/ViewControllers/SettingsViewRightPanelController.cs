@@ -67,5 +67,13 @@ namespace Nya.UI.ViewControllers
             };
             uwuTweenyManager.AddTween(tween, rainbowText);
         }
+
+        protected override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
+        {
+            base.DidDeactivate(removedFromHierarchy, screenSystemDisabling);
+
+            // Thank you leaderboard panel for kidnapping my right panel
+            gameObject.SetActive(false);
+        }
     }
 }
