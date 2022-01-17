@@ -1,12 +1,12 @@
-﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
 	<horizontal active='~view-controller-active' background='panel-top' anchor-min-y='1' pad-left='5' pad-right='5' pad-top='1' pad-bottom='1' horizontal-fit='PreferredSize' spacing='5'>
 		<!-- These images are an requirement, I will fight you if you remove them. -->
 		<image src='Nya.Resources.Chocola_Mini_Sitting.png' preserve-aspect='true' pref-width='12' pref-height='12'/>
-		<text text='Nya' align='Center' font-size='8' italics='true' spacing='10'/>
+		<text text='Nya' align='Center' font-size='8' italics='true'/>
 		<image src='Nya.Resources.Vanilla_Mini_Sitting.png' preserve-aspect='true' pref-width='12' pref-height='12'/>
 	</horizontal>
 	
-	<settings-container vertical-fit='PreferredSize' child-control-height='true' size-delta-x='~size-delta-view-controller'>
+	<settings-container child-control-height='true' size-delta-x='~size-delta-view-controller'>
 		<text text='Floating Screens' italics='true' align='Left' font-size='5'/>
 		<vertical background="round-rect-panel" background-color="white" pad="2">
 			<horizontal>
