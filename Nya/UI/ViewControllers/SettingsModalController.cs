@@ -42,7 +42,13 @@ namespace Nya.UI.ViewControllers
 
         [UIComponent("modal")]
         protected readonly RectTransform ModalTransform;
-
+        
+        [UIComponent("nya-tab")]
+        protected readonly Tab NyaTab;
+        
+        [UIComponent("api-tab")]
+        protected readonly Tab ApiTab;
+        
         [UIComponent("screen-tab")]
         protected readonly Tab ScreenTab;
 
@@ -164,6 +170,11 @@ namespace Nya.UI.ViewControllers
             BaseParse(parentTransform, host);
             parserParams.EmitEvent("close-modal");
             parserParams.EmitEvent("open-modal");
+            
+            NyaTab.gameObject.SetActive(true);
+            ApiTab.gameObject.SetActive(false);
+            ScreenTab.gameObject.SetActive(false);
+            MoreSettingsTab.gameObject.SetActive(false);
 
             if (ImageUtils.nyaImageURL.EndsWith(".gif") || ImageUtils.nyaImageURL.EndsWith(".apng"))
             {
