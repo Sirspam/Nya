@@ -1,7 +1,7 @@
 # Nya <img src="Nya\Resources\Vanilla_Mini_Sitting.png" align="right" width="150">
 Beat Saber mod for displaying nya-tastic images from various anime themed web APIs
 ## Installation
-Download the latest version of Nya from [releases](https://github.com/[username]/[reponame]/releases) and slap it into your BeatSaber's plugin folder.
+Download the latest version of Nya from [releases](https://github.com/Sirspam/Nya/releases) and slap it into your BeatSaber's plugin folder.
 
 Nya requires BSML and SiraUtil, which can both be found in ModAssistant.
 ## Supported web APIs
