@@ -27,6 +27,15 @@ namespace Nya.Utils
                 }
             },
             {
+              "", new APIData
+              {
+                  BaseEndpoint = "https://api.xsky.dev/",
+                  Mode = DataMode.Json,
+                  SfwEndpoints = new List<string> { "/neko", "/catboy", "/furry", "/ff" },
+                  NsfwEndpoints = new List<string> { "/hentai", "/bsdm", "/feet", "/trap", "/gif", "/futa" }
+              }
+            },
+            {
                 "Local Files", new APIData
                 {
                     BaseEndpoint = Path.Combine(UnityGame.UserDataPath, "Nya"),
