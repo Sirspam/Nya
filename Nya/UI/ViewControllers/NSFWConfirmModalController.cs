@@ -1,9 +1,9 @@
-﻿using BeatSaberMarkupLanguage;
+﻿using System.Reflection;
+using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Parser;
 using HMUI;
 using IPA.Utilities;
-using System.Reflection;
 using UnityEngine;
 
 namespace Nya.UI.ViewControllers
@@ -12,8 +12,8 @@ namespace Nya.UI.ViewControllers
     {
         public delegate void ButtonPressed();
 
-        private ButtonPressed yesButtonPressed;
-        private ButtonPressed noButtonPressed;
+        private ButtonPressed _yesButtonPressed = null!;
+        private ButtonPressed _noButtonPressed = null!;
 
         #region components
 
@@ -31,21 +31,21 @@ namespace Nya.UI.ViewControllers
         [UIAction("yes-click")]
         private void YesNsfw()
         {
-            yesButtonPressed?.Invoke();
+            _yesButtonPressed.Invoke();
             parserParams.EmitEvent("close-modal");
         }
 
         [UIAction("no-click")]
         private void NoNsfw()
         {
-            noButtonPressed?.Invoke();
+            _noButtonPressed.Invoke();
             parserParams.EmitEvent("close-modal");
         }
 
         [UIParams]
         private readonly BSMLParserParams parserParams;
 
-        private void Parse(Transform parentTransform)
+        private void Parse(Component parentTransform)
         {
             if (!modalView)
             {
@@ -60,8 +60,8 @@ namespace Nya.UI.ViewControllers
             Parse(parentTransform);
             parserParams.EmitEvent("close-modal");
             parserParams.EmitEvent("open-modal");
-            yesButtonPressed = yesButtonPressedCallback;
-            noButtonPressed = noButtonPressedCallback;
+            _yesButtonPressed = yesButtonPressedCallback;
+            _noButtonPressed = noButtonPressedCallback;
         }
 
         internal void HideModal()

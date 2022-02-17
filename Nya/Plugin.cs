@@ -4,12 +4,13 @@ using IPA.Config;
 using IPA.Config.Stores;
 using IPA.Logging;
 using IPA.Utilities;
+using Nya.Configuration;
 using Nya.Installers;
 using SiraUtil.Zenject;
 
 namespace Nya
 {
-    [Plugin(RuntimeOptions.DynamicInit), NoEnableDisable]
+    [Plugin(RuntimeOptions.DynamicInit)][NoEnableDisable]
     public class Plugin
     {
         [Init]
@@ -18,7 +19,7 @@ namespace Nya
             zenjector.UseLogger(logger);
             zenjector.UseHttpService();
             
-            var config = conf.Generated<Configuration.PluginConfig>();
+            var config = conf.Generated<PluginConfig>();
 
             zenjector.Install<NyaAppInstaller>(Location.App, config);
             zenjector.Install<NyaMenuInstaller>(Location.Menu);
@@ -27,8 +28,7 @@ namespace Nya
             var folderPath = Path.Combine(UnityGame.UserDataPath, "Nya");
             Directory.CreateDirectory(Path.Combine(folderPath, "sfw"));
             Directory.CreateDirectory(Path.Combine(folderPath, "nsfw"));
-
-            // TODO: Move logic to config itself
+            
             if (!config.RememberNsfw)
                 config.Nsfw = false;
         }

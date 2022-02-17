@@ -1,9 +1,9 @@
-﻿using BeatSaberMarkupLanguage.Attributes;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using BeatSaberMarkupLanguage.Attributes;
 using HMUI;
 using Nya.Configuration;
 using Nya.Utils;
-using System.Threading;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,8 +17,8 @@ namespace Nya.UI.ViewControllers
 
         private static readonly SemaphoreSlim Semaphore = new SemaphoreSlim(1);
 
-        protected bool AutoNyaToggle = false;
-        protected bool AutoNyaCooldown = false;
+        protected bool AutoNyaToggle;
+        protected bool AutoNyaCooldown;
 
         protected NyaViewController(PluginConfig config, ImageUtils imageUtils)
         {

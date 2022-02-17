@@ -1,4 +1,8 @@
-﻿using BeatSaberMarkupLanguage;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Reflection;
+using System.Threading.Tasks;
+using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Components.Settings;
@@ -7,10 +11,6 @@ using HMUI;
 using IPA.Utilities;
 using Nya.Configuration;
 using Nya.Utils;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Reflection;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -26,7 +26,7 @@ namespace Nya.UI.ViewControllers
 
         protected readonly PluginConfig Config;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged = null!;
 
         protected SettingsModalController(PluginConfig config, ImageUtils imageUtils, UIUtils uiUtils, NsfwConfirmModalController nsfwConfirmModalController, MainCamera mainCamera)
         {
@@ -41,55 +41,55 @@ namespace Nya.UI.ViewControllers
         #region components
 
         [UIComponent("root")]
-        protected readonly RectTransform RootTransform;
+        protected readonly RectTransform RootTransform = null!;
 
         [UIComponent("modal")]
-        protected readonly ModalView ModalView;
+        protected readonly ModalView ModalView = null!;
 
         [UIComponent("modal")]
-        protected readonly RectTransform ModalTransform;
+        protected readonly RectTransform ModalTransform = null!;
 
         [UIComponent("screen-tab")]
-        protected readonly Tab ScreenTab;
+        protected readonly Tab ScreenTab = null!;
 
         [UIComponent("more-settings-tab")]
-        protected readonly Tab MoreSettingsTab;
+        protected readonly Tab MoreSettingsTab = null!;
 
         [UIComponent("nya-download-button")]
-        protected readonly Button NyaDownloadButton;
+        protected readonly Button NyaDownloadButton = null!;
 
         [UIComponent("nya-copy-button")]
-        protected readonly Button NyaCopyButton;
+        protected readonly Button NyaCopyButton = null!;
 
         [UIComponent("nsfw-checkbox")]
-        protected readonly RectTransform NsfwCheckbox;
+        protected readonly RectTransform NsfwCheckbox = null!;
 
         [UIComponent("sfw-dropdown")]
-        protected readonly DropDownListSetting SfwDropDownListSetting;
+        protected readonly DropDownListSetting SfwDropDownListSetting = null!;
 
         [UIComponent("nsfw-dropdown")]
-        protected readonly DropDownListSetting NsfwDropDownListSetting;
+        protected readonly DropDownListSetting NsfwDropDownListSetting = null!;
 
         [UIComponent("api-dropdown")]
-        protected readonly Transform ApiDropDownTransform;
+        protected readonly Transform ApiDropDownTransform = null!;
 
         [UIComponent("sfw-dropdown")]
-        protected readonly Transform SfwDropDownTransform;
+        protected readonly Transform SfwDropDownTransform = null!;
 
         [UIComponent("nsfw-dropdown")]
-        protected readonly Transform NsfwDropDownTransform;
+        protected readonly Transform NsfwDropDownTransform = null!;
 
         [UIComponent("face-headset-button")]
-        protected readonly Button FaceHeadsetButton;
+        protected readonly Button FaceHeadsetButton = null!;
 
         [UIComponent("reset-rotation-button")]
-        protected readonly Button ResetRotationButton;
+        protected readonly Button ResetRotationButton = null!;
 
         [UIComponent("reset-position-button")]
-        protected readonly Button ResetPositionButton;
+        protected readonly Button ResetPositionButton = null!;
 
         [UIComponent("show-handle-checkbox")]
-        protected readonly GenericInteractableSetting ShowHandleCheckbox;
+        protected readonly GenericInteractableSetting ShowHandleCheckbox = null!;
 
         #endregion components
 
@@ -102,12 +102,12 @@ namespace Nya.UI.ViewControllers
             set
             {
                 Config.Nsfw = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NsfwCheck)));
+                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(NsfwCheck)));
             }
         }
 
         [UIValue("api-list")]
-        protected List<object> apiList = new List<object>();
+        protected List<object> APIList = new List<object>();
 
         [UIValue("api-value")]
         protected string APIValue
@@ -117,7 +117,7 @@ namespace Nya.UI.ViewControllers
         }
 
         [UIValue("sfw-list")]
-        protected List<object> sfwList = new List<object>();
+        protected List<object> SfwList = new List<object>();
 
         [UIValue("sfw-value")]
         protected string SfwValue
@@ -127,7 +127,7 @@ namespace Nya.UI.ViewControllers
         }
 
         [UIValue("nsfw-list")]
-        protected List<object> nsfwList = new List<object>();
+        protected List<object> NsfwList = new List<object>();
 
         [UIValue("nsfw-value")]
         protected string NsfwValue
@@ -146,7 +146,7 @@ namespace Nya.UI.ViewControllers
         #endregion values
 
         [UIParams]
-        protected readonly BSMLParserParams parserParams;
+        protected readonly BSMLParserParams ParserParams = null!;
 
         public void Initialize()
         {
@@ -168,10 +168,10 @@ namespace Nya.UI.ViewControllers
         public void ShowModal(Transform parentTransform, object host)
         {
             BaseParse(parentTransform, host);
-            parserParams.EmitEvent("close-modal");
-            parserParams.EmitEvent("open-modal");
+            ParserParams.EmitEvent("close-modal");
+            ParserParams.EmitEvent("open-modal");
 
-            if (_imageUtils.NyaImageURL.EndsWith(".gif") || _imageUtils.NyaImageURL.EndsWith(".apng"))
+            if (_imageUtils.NyaImageURL == null || _imageUtils.NyaImageURL.EndsWith(".gif") || _imageUtils.NyaImageURL.EndsWith(".apng"))
             {
                 NyaCopyButton.interactable = false;
             }
@@ -255,7 +255,7 @@ namespace Nya.UI.ViewControllers
         {
             _uiUtils.ButtonUnderlineClick(ResetRotationButton.gameObject);
             var transform = RootTransform.root.gameObject.transform;
-            Vector3 rotation = transform.rotation.eulerAngles;
+            var rotation = transform.rotation.eulerAngles;
             transform.rotation = Quaternion.Euler(0f, rotation.y, 0f);
         }
 
@@ -299,22 +299,22 @@ namespace Nya.UI.ViewControllers
                 NsfwCheck = false;
                 Config.Changed();
             }
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NsfwCheck)));
+            PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(NsfwCheck)));
         }
 
         protected void SetupLists()
         {
             foreach (var api in WebAPIs.APIs.Keys)
             {
-                apiList.Add(api);
+                APIList.Add(api);
             }
             foreach (var endpoint in WebAPIs.APIs[APIValue].SfwEndpoints)
             {
-                sfwList.Add(endpoint);
+                SfwList.Add(endpoint);
             }
             foreach (var endpoint in WebAPIs.APIs[APIValue].NsfwEndpoints)
             {
-                nsfwList.Add(endpoint);
+                NsfwList.Add(endpoint);
             }
         }
 

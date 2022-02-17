@@ -1,4 +1,5 @@
-﻿using BeatSaberMarkupLanguage;
+﻿using System;
+using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Settings;
@@ -6,8 +7,8 @@ using BeatSaberMarkupLanguage.ViewControllers;
 using HMUI;
 using Nya.Configuration;
 using Nya.Utils;
-using System;
 using UnityEngine;
+using UnityEngine.UI;
 using Zenject;
 
 namespace Nya.UI.ViewControllers
@@ -16,33 +17,33 @@ namespace Nya.UI.ViewControllers
     [ViewDefinition("Nya.UI.Views.SettingsViewMainPanel.bsml")]
     internal class SettingsViewMainPanelController : BSMLAutomaticViewController, IInitializable, IDisposable
     {
-        private PluginConfig _config;
-        private MainFlowCoordinator mainFlowCoordinator;
-        private MenuTransitionsHelper menuTransitionsHelper;
-        private SettingsViewRightPanelController settingsViewRightPanelController;
-        private UIUtils uiUtils;
-        public FlowCoordinator parentFlowCoordinator;
+        private PluginConfig _config = null!;
+        private MainFlowCoordinator _mainFlowCoordinator = null!;
+        private MenuTransitionsHelper _menuTransitionsHelper = null!;
+        private SettingsViewRightPanelController _settingsViewRightPanelController = null!;
+        private UIUtils _uiUtils = null!;
+        public FlowCoordinator parentFlowCoordinator = null!;
 
-        protected bool _inMenu;
-        protected bool _inPause;
-        protected Color _bgColor;
-        protected bool _rememberNsfw;
-        protected bool _skipNsfw;
-        protected int _autoNyaWait;
-        protected bool _separatePositions;
-        protected Vector3 _menuPosition;
-        protected Vector3 _menuRotation;
-        protected Vector3 _pausePosition;
-        protected Vector3 _pauseRotation;
+        private bool _inMenu;
+        private bool _inPause;
+        private Color _bgColor;
+        private bool _rememberNsfw;
+        private bool _skipNsfw;
+        private int _autoNyaWait;
+        private bool _separatePositions;
+        private Vector3 _menuPosition;
+        private Vector3 _menuRotation;
+        private Vector3 _pausePosition;
+        private Vector3 _pauseRotation;
 
         [Inject]
         public void Constructor(PluginConfig config, UIUtils uiUtils, MainFlowCoordinator mainFlowCoordinator, MenuTransitionsHelper menuTransitionsHelper, SettingsViewRightPanelController settingsViewRightPanelController)
         {
             _config = config;
-            this.mainFlowCoordinator = mainFlowCoordinator;
-            this.menuTransitionsHelper = menuTransitionsHelper;
-            this.settingsViewRightPanelController = settingsViewRightPanelController;
-            this.uiUtils = uiUtils;
+            _mainFlowCoordinator = mainFlowCoordinator;
+            _menuTransitionsHelper = menuTransitionsHelper;
+            _settingsViewRightPanelController = settingsViewRightPanelController;
+            _uiUtils = uiUtils;
         }
 
         protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
@@ -79,7 +80,7 @@ namespace Nya.UI.ViewControllers
         private bool RestartRequired => InMenu != _config.InMenu && isActiveAndEnabled;
 
         [UIValue("in-menu")]
-        protected bool InMenu
+        private bool InMenu
         {
             get => _inMenu;
             set
@@ -91,7 +92,7 @@ namespace Nya.UI.ViewControllers
         }
 
         [UIValue("in-pause")]
-        protected bool InPause
+        private bool InPause
         {
             get => _inPause;
             set
@@ -108,7 +109,7 @@ namespace Nya.UI.ViewControllers
             set
             {
                 _bgColor = value;
-                uiUtils.NyaBGMaterial.color = value;
+                _uiUtils.NyaBgMaterial.color = value;
                 NotifyPropertyChanged();
             }
         }
@@ -166,25 +167,25 @@ namespace Nya.UI.ViewControllers
         }
 
         [UIComponent("bg-colour-setting")]
-        private readonly Transform bgColourSettingTransform;
+        private readonly Transform _bgColourSettingTransform = null!;
 
         [UIComponent("bg-colour-default")]
-        private readonly UnityEngine.UI.Button bgColourDefaultButton;
+        private readonly Button _bgColourDefaultButton = null!;
 
         [UIComponent("reset-nya-position")]
-        private readonly UnityEngine.UI.Button resetNyaPositionButton;
+        private readonly Button _resetNyaPositionButton = null!;
 
         [UIComponent("reset-menu-position")]
-        private readonly UnityEngine.UI.Button resetMenuPositionButton;
+        private readonly Button _resetMenuPositionButton = null!;
 
         [UIComponent("reset-pause-position")]
-        private readonly UnityEngine.UI.Button resetPausePositionButton;
+        private readonly Button _resetPausePositionButton = null!;
 
         [UIAction("bg-colour-default-clicked")]
         private void BgColourDefaultClicked()
         {
-            uiUtils.ButtonUnderlineClick(bgColourDefaultButton.gameObject);
-            var modalColourPicker = bgColourSettingTransform.GetChild(2).GetComponent<ModalColorPicker>();
+            _uiUtils.ButtonUnderlineClick(_bgColourDefaultButton.gameObject);
+            var modalColourPicker = _bgColourSettingTransform.GetChild(2).GetComponent<ModalColorPicker>();
             modalColourPicker.CurrentColor = new Color(0.745f, 0.745f, 0.745f);
             modalColourPicker.DonePressed(); // Thank you DonePressed for making everything magically work
         }
@@ -192,7 +193,7 @@ namespace Nya.UI.ViewControllers
         [UIAction("reset-menu-clicked")]
         private void ResetMenuPosition()
         {
-            uiUtils.ButtonUnderlineClick(resetMenuPositionButton.gameObject);
+            _uiUtils.ButtonUnderlineClick(_resetMenuPositionButton.gameObject);
             _menuPosition = new Vector3(0f, 3.65f, 4f);
             _menuRotation = new Vector3(335f, 0f, 0f);
             if (_config.InMenu)
@@ -206,7 +207,7 @@ namespace Nya.UI.ViewControllers
         [UIAction("reset-pause-clicked")]
         private void ResetPausePosition()
         {
-            uiUtils.ButtonUnderlineClick(resetPausePositionButton.gameObject);
+            _uiUtils.ButtonUnderlineClick(_resetPausePositionButton.gameObject);
             _pausePosition = new Vector3(-2f, 1.5f, 0f);
             _pauseRotation = new Vector3(0f, 270f, 0f);
         }
@@ -214,7 +215,7 @@ namespace Nya.UI.ViewControllers
         [UIAction("ok-clicked")]
         private void OkClicked()
         {
-            bool restartRequired = RestartRequired;
+            var restartRequired = RestartRequired;
             _config.InMenu = InMenu;
             _config.InPause = InPause;
             _config.BackgroundColor = BgColour;
@@ -227,22 +228,22 @@ namespace Nya.UI.ViewControllers
             _config.PausePosition = _pausePosition;
             _config.PauseRotation = _pauseRotation;
 
-            if (restartRequired) menuTransitionsHelper.RestartGame();
-            else parentFlowCoordinator.DismissFlowCoordinator(mainFlowCoordinator.YoungestChildFlowCoordinatorOrSelf(), animationDirection: AnimationDirection.Vertical);
+            if (restartRequired) _menuTransitionsHelper.RestartGame();
+            else parentFlowCoordinator.DismissFlowCoordinator(_mainFlowCoordinator.YoungestChildFlowCoordinatorOrSelf(), animationDirection: AnimationDirection.Vertical);
         }
 
         [UIAction("cancel-clicked")]
         private void CancelClicked()
         {
-            uiUtils.NyaBGMaterial.color = _config.BackgroundColor;
+            _uiUtils.NyaBgMaterial.color = _config.BackgroundColor;
             if (_config.InMenu)
             {
                 var floatingScreen = GameObject.Find("NyaMenuFloatingScreen");
                 floatingScreen.transform.position = _menuPosition;
                 floatingScreen.transform.rotation = Quaternion.Euler(_menuRotation);
             }
-            settingsViewRightPanelController.gameObject.SetActive(false); // Thank you leaderboard panel for kidnapping my right panel
-            parentFlowCoordinator.DismissFlowCoordinator(mainFlowCoordinator.YoungestChildFlowCoordinatorOrSelf(), animationDirection: AnimationDirection.Vertical);
+            _settingsViewRightPanelController.gameObject.SetActive(false); // Thank you leaderboard panel for kidnapping my right panel
+            parentFlowCoordinator.DismissFlowCoordinator(_mainFlowCoordinator.YoungestChildFlowCoordinatorOrSelf(), animationDirection: AnimationDirection.Vertical);
         }
 
         [UIAction("#post-parse")]
@@ -281,7 +282,7 @@ namespace Nya.UI.ViewControllers
         [UIAction("#cancel")]
         private void ModSettingsCancel()
         {
-            uiUtils.NyaBGMaterial.color = _config.BackgroundColor;
+            _uiUtils.NyaBgMaterial.color = _config.BackgroundColor;
             if (_config.InMenu)
             {
                 var floatingScreen = GameObject.Find("NyaMenuFloatingScreen");
@@ -290,7 +291,10 @@ namespace Nya.UI.ViewControllers
             }
         }
 
-        public void Initialize() => BSMLSettings.instance.AddSettingsMenu("Nya", "Nya.UI.Views.SettingsViewMainPanel.bsml", this);
+        public void Initialize()
+        {
+            BSMLSettings.instance.AddSettingsMenu("Nya", "Nya.UI.Views.SettingsViewMainPanel.bsml", this);
+        }
 
         public void Dispose()
         {

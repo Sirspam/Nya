@@ -1,10 +1,10 @@
-﻿using BeatSaberMarkupLanguage;
+﻿using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.FloatingScreen;
 using HMUI;
 using Nya.Configuration;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
 using Tweening;
 using UnityEngine;
 
@@ -15,26 +15,26 @@ namespace Nya.Utils
         private readonly PluginConfig _config;
         private readonly TimeTweeningManager _uwuTweenyManager; // Thanks PixelBoom
 
-        public Material NyaBGMaterial { get; }
+        public Material NyaBgMaterial { get; }
 
         public UIUtils(PluginConfig config, TimeTweeningManager timeTweeningManager)
         {
             _config = config;
             _uwuTweenyManager = timeTweeningManager;
 
-            NyaBGMaterial = new Material(Resources.FindObjectsOfTypeAll<Material>().First(x => x.name == "UIFogBG")) // UIFogBG, UINoGlow
+            NyaBgMaterial = new Material(Resources.FindObjectsOfTypeAll<Material>().First(x => x.name == "UIFogBG")) // UIFogBG, UINoGlow
             {
                 name = "NyaBG",
-                color = _config.BackgroundColor,
+                color = _config.BackgroundColor
             };
         }
 
         public FloatingScreen CreateNyaFloatingScreen(object host, Vector3 position, Quaternion rotation)
         {
-            FloatingScreen floatingScreen = FloatingScreen.CreateFloatingScreen(new Vector2(100f, 80f), true, position, rotation, curvatureRadius: 220, true);
+            var floatingScreen = FloatingScreen.CreateFloatingScreen(new Vector2(100f, 80f), true, position, rotation, 220, true);
             BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.NyaView.bsml"), floatingScreen.gameObject, host);
             floatingScreen.gameObject.layer = 5;
-            floatingScreen.gameObject.transform.GetChild(0).GetComponent<ImageView>().material = NyaBGMaterial;
+            floatingScreen.gameObject.transform.GetChild(0).GetComponent<ImageView>().material = NyaBgMaterial;
             floatingScreen.handle.transform.localPosition = new Vector3(0f, -floatingScreen.ScreenSize.y / 1.8f, -5f);
             floatingScreen.handle.transform.localScale = new Vector3(floatingScreen.ScreenSize.x * 0.8f, floatingScreen.ScreenSize.y / 15f, floatingScreen.ScreenSize.y / 15f);
             floatingScreen.handle.gameObject.layer = 5;
@@ -42,32 +42,32 @@ namespace Nya.Utils
             if (!_config.ShowHandle)
                 floatingScreen.handle.gameObject.SetActive(false);
             if (_config.RainbowBackgroundColor)
-                RainbowNyaBG(true);
+                RainbowNyaBg(true);
             return floatingScreen;
         }
 
         public async void ButtonUnderlineClick(GameObject gameObject)
         {
-            ImageView underline = await Task.Run(() => gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>());
-            Color originalColor = underline.color;
+            var underline = await Task.Run(() => gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>());
+            var originalColor = underline.color;
             _uwuTweenyManager.KillAllTweens(underline);
-            FloatTween tween = new FloatTween(0f, 1f, val => underline.color = Color.Lerp(new Color(0f, 0.7f, 1f), originalColor, val), 1f, EaseType.InSine);
+            var tween = new FloatTween(0f, 1f, val => underline.color = Color.Lerp(new Color(0f, 0.7f, 1f), originalColor, val), 1f, EaseType.InSine);
             _uwuTweenyManager.AddTween(tween, underline);
         }
 
-        public void RainbowNyaBG(bool active)
+        public void RainbowNyaBg(bool active)
         {
-            _uwuTweenyManager.KillAllTweens(NyaBGMaterial);
+            _uwuTweenyManager.KillAllTweens(NyaBgMaterial);
             if (!active)
             {
-                NyaBGMaterial.color = _config.BackgroundColor;
+                NyaBgMaterial.color = _config.BackgroundColor;
                 return;
             }
-            FloatTween tween = new FloatTween(0f, 1, val => NyaBGMaterial.color = Color.HSVToRGB(val, 1f, 1f), 5f, EaseType.Linear)
+            var tween = new FloatTween(0f, 1, val => NyaBgMaterial.color = Color.HSVToRGB(val, 1f, 1f), 5f, EaseType.Linear)
             {
-                loop = true,
+                loop = true
             };
-            _uwuTweenyManager.AddTween(tween, NyaBGMaterial);
+            _uwuTweenyManager.AddTween(tween, NyaBgMaterial);
         }
     }
 }

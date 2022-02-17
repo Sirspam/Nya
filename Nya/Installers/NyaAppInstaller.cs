@@ -1,4 +1,5 @@
-﻿using Nya.Configuration;
+﻿using Nya.AffinityPatches;
+using Nya.Configuration;
 using Nya.Utils;
 using Zenject;
 
@@ -6,16 +7,16 @@ namespace Nya.Installers
 {
     internal class NyaAppInstaller : Installer
     {
-        private readonly PluginConfig config;
+        private readonly PluginConfig _config;
 
         public NyaAppInstaller(PluginConfig config)
         {
-            this.config = config;
+            _config = config;
         }
 
         public override void InstallBindings()
         {
-            Container.BindInstance(config).AsSingle();
+            Container.BindInstance(_config).AsSingle();
             Container.Bind<ImageUtils>().AsSingle();
             Container.Bind<UIUtils>().AsSingle();
         }

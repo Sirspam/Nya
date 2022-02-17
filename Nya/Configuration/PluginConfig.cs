@@ -1,10 +1,10 @@
 ﻿using System;
-using IPA.Config.Stores;
-using IPA.Config.Stores.Attributes;
-using IPA.Config.Stores.Converters;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using IPA.Config.Stores;
+using IPA.Config.Stores.Attributes;
+using IPA.Config.Stores.Converters;
 using Nya.Utils;
 using UnityEngine;
 
@@ -29,33 +29,9 @@ namespace Nya.Configuration
         public virtual int AutoNyaWait { get; set; } = 4;
         public virtual string SelectedAPI { get; set; } = WebAPIs.APIs.Keys.First();
 
-        [NonNullable, UseConverter(typeof(DictionaryConverter<EndpointData>))]
+        [NonNullable][UseConverter(typeof(DictionaryConverter<EndpointData>))]
         public virtual Dictionary<string, EndpointData> SelectedEndpoints { get; set; } = new Dictionary<string, EndpointData>();
-
-        //{
-        //    {
-        //        "waifu.pics", new EndpointData
-        //        {
-        //            SelectedSfwEndpoint = "sfw/neko",
-        //            SelectedNsfwEndpoint = "nsfw/neko"
-        //        }
-        //    },
-        //    {
-        //        "nekos.life", new EndpointData
-        //        {
-        //            SelectedSfwEndpoint = "neko",
-        //            SelectedNsfwEndpoint = "lewd",
-        //        }
-        //    },
-        //    {
-        //        "Local Files", new EndpointData
-        //        {
-        //            SelectedSfwEndpoint = "/sfw",
-        //            SelectedNsfwEndpoint = "/nsfw",
-        //        }
-        //    }
-        //};
-
+        
         /// <summary>
         /// This is called whenever BSIPA reads the config from disk (including when file changes are detected).
         /// </summary>

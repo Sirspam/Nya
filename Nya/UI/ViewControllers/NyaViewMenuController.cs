@@ -1,10 +1,10 @@
-﻿using BeatSaberMarkupLanguage.Attributes;
+﻿using System;
+using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.FloatingScreen;
 using BeatSaberMarkupLanguage.GameplaySetup;
 using HMUI;
 using Nya.Configuration;
 using Nya.Utils;
-using System;
 using UnityEngine;
 using Zenject;
 
@@ -16,7 +16,7 @@ namespace Nya.UI.ViewControllers
         private readonly SettingsModalMenuController _settingsModalMenuController;
         private readonly UIUtils _uiUtils;
 
-        private FloatingScreen _floatingScreen;
+        private FloatingScreen? _floatingScreen;
 
         public NyaViewMenuController(PluginConfig config, ImageUtils imageUtils, UIUtils uiUtils, GameplaySetupViewController gameplaySetupViewController, SettingsModalMenuController settingsModalMenuController)
             : base(config, imageUtils)
@@ -52,7 +52,7 @@ namespace Nya.UI.ViewControllers
 
             if (Config.InMenu)
             {
-                _floatingScreen.HandleReleased -= FloatingScreen_HandleReleased;
+                _floatingScreen!.HandleReleased -= FloatingScreen_HandleReleased;
             }
 
             _gameplaySetupViewController.didActivateEvent -= GameplaySetupViewController_didActivateEvent;
@@ -67,7 +67,7 @@ namespace Nya.UI.ViewControllers
                 return;
             }
 
-            if (Config.InMenu && (_floatingScreen.transform.position != Config.MenuPosition || _floatingScreen.transform.rotation.eulerAngles != Config.MenuRotation)) // in case game floatingscreen got moved
+            if (Config.InMenu && (_floatingScreen!.transform.position != Config.MenuPosition || _floatingScreen.transform.rotation.eulerAngles != Config.MenuRotation)) // in case game floatingscreen got moved
             {
                 _floatingScreen.transform.position = Config.MenuPosition;
                 _floatingScreen.transform.rotation = Quaternion.Euler(Config.MenuRotation);
@@ -92,14 +92,14 @@ namespace Nya.UI.ViewControllers
 
         private void FloatingScreen_HandleReleased(object sender, FloatingScreenHandleEventArgs args)
         {
-            var transform = _floatingScreen.transform;
+            var transform = _floatingScreen!.transform;
             Config.MenuPosition = transform.position;
             Config.MenuRotation = transform.eulerAngles;
         }
 
         public void ReloadFloatingScreenPosition()
         {
-            var transform = _floatingScreen.transform;
+            var transform = _floatingScreen!.transform;
             transform.position = Config.MenuPosition;
             transform.eulerAngles = Config.MenuRotation;
         }

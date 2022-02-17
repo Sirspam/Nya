@@ -1,9 +1,9 @@
-﻿using BeatSaberMarkupLanguage.Attributes;
+﻿using System;
+using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.FloatingScreen;
 using HMUI;
 using Nya.Configuration;
 using Nya.Utils;
-using System;
 using Tweening;
 using UnityEngine;
 using Zenject;
@@ -16,7 +16,8 @@ namespace Nya.UI.ViewControllers
         private readonly SettingsModalGameController _settingsModalGameController;
         private readonly IGamePause _gamePause;
         private readonly TimeTweeningManager _timeTweeningManager;
-        private FloatingScreen _floatingScreen;
+        
+        private FloatingScreen? _floatingScreen;
 
         public NyaViewGameController(PluginConfig config, ImageUtils imageUtils, UIUtils uiUtils, SettingsModalGameController settingsModalGameController, IGamePause gamePause, TimeTweeningManager timeTweeningManager)
             : base(config, imageUtils)
@@ -70,7 +71,10 @@ namespace Nya.UI.ViewControllers
             _timeTweeningManager.KillAllTweens(_floatingScreen);
         }
 
-        private void GamePause_didPauseEvent() => _floatingScreen.gameObject.SetActive(true);
+        private void GamePause_didPauseEvent()
+        {
+            _floatingScreen!.gameObject.SetActive(true);
+        }
 
         private void GamePause_didResumeEvent()
         {
@@ -81,12 +85,12 @@ namespace Nya.UI.ViewControllers
                 nyaButton.interactable = true;
             }
             _settingsModalGameController.HideModal();
-            _floatingScreen.gameObject.SetActive(false);
+            _floatingScreen!.gameObject.SetActive(false);
         }
 
         private void FloatingScreen_HandleReleased(object sender, FloatingScreenHandleEventArgs args)
         {
-            var transform = _floatingScreen.transform;
+            var transform = _floatingScreen!.transform;
 
             if (Config.SeperatePositions)
             {

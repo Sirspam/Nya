@@ -1,8 +1,8 @@
-﻿using BeatSaberMarkupLanguage.Attributes;
+﻿using System.Threading.Tasks;
+using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.ViewControllers;
 using Nya.Configuration;
 using Nya.Utils;
-using System.Threading.Tasks;
 using TMPro;
 using Tweening;
 using UnityEngine.EventSystems;
@@ -14,11 +14,11 @@ namespace Nya.UI.ViewControllers
     [ViewDefinition("Nya.UI.Views.SettingsViewRightPanel.bsml")]
     internal class SettingsViewRightPanelController : BSMLAutomaticViewController, IPointerClickHandler
     {
-        private PluginConfig _config;
-        private TimeTweeningManager _uwuTweenyManager;
-        private UIUtils _uiUtils;
+        private PluginConfig _config = null!;
+        private TimeTweeningManager _uwuTweenyManager = null!;
+        private UIUtils _uiUtils = null!;
 
-        private bool visible = false;
+        private bool _visible;
 
         [Inject]
         public void Constructor(PluginConfig config, UIUtils uiUtils, TimeTweeningManager timeTweeningManager)
@@ -29,45 +29,45 @@ namespace Nya.UI.ViewControllers
         }
 
         [UIComponent("rainbow-text")]
-        private readonly TMP_Text rainbowText;
+        private readonly TMP_Text _rainbowText = null!;
 
         public void OnPointerClick(PointerEventData eventData)
         {
             if (!_config.RainbowBackgroundColor)
             {
-                rainbowText.SetText("<#FF0000>R<#FF7F00>A<#FFFF00>I<#00FF00>N<#0000FF>B<#4B0082>O<#9400D3>W\n<#FFFFFF>Enabled");
+                _rainbowText.SetText("<#FF0000>R<#FF7F00>A<#FFFF00>I<#00FF00>N<#0000FF>B<#4B0082>O<#9400D3>W\n<#FFFFFF>Enabled");
                 KindlyAskRainbowTextToShowUpThenHaveItSodOffAfterFourSeconds();
-                _uiUtils.RainbowNyaBG(true);
+                _uiUtils.RainbowNyaBg(true);
                 _config.RainbowBackgroundColor = true;
             }
             else
             {
-                rainbowText.SetText("<#FF0000>R<#FF7F00>A<#FFFF00>I<#00FF00>N<#0000FF>B<#4B0082>O<#9400D3>W\n<#FFFFFF>Disabled");
+                _rainbowText.SetText("<#FF0000>R<#FF7F00>A<#FFFF00>I<#00FF00>N<#0000FF>B<#4B0082>O<#9400D3>W\n<#FFFFFF>Disabled");
                 KindlyAskRainbowTextToShowUpThenHaveItSodOffAfterFourSeconds();
-                _uiUtils.RainbowNyaBG(false);
+                _uiUtils.RainbowNyaBg(false);
                 _config.RainbowBackgroundColor = false;
             }
         }
 
         private void KindlyAskRainbowTextToShowUpThenHaveItSodOffAfterFourSeconds() // Code maintainability is important!
         {
-            if (visible) return;
-            _uwuTweenyManager.KillAllTweens(rainbowText);
-            FloatTween tween = new FloatTween(0, 1f, val => rainbowText.alpha = val, 0.5f, EaseType.InOutQuad)
+            if (_visible) return;
+            _uwuTweenyManager.KillAllTweens(_rainbowText);
+            var tween = new FloatTween(0, 1f, val => _rainbowText.alpha = val, 0.5f, EaseType.InOutQuad)
             {
-                onCompleted = async delegate
+                onCompleted = delegate
                 {
-                    visible = true;
-                    await Task.Delay(4000);
-                    _uwuTweenyManager.KillAllTweens(rainbowText);
-                    FloatTween tween = new FloatTween(1, 0f, val => rainbowText.alpha = val, 0.5f, EaseType.InOutQuad)
+                    _visible = true;
+                    Task.Delay(4000);
+                    _uwuTweenyManager.KillAllTweens(_rainbowText);
+                    var tween = new FloatTween(1, 0f, val => _rainbowText.alpha = val, 0.5f, EaseType.InOutQuad)
                     {
-                        onCompleted = delegate { visible = false; }
+                        onCompleted = delegate { _visible = false; }
                     };
-                    _uwuTweenyManager.AddTween(tween, rainbowText);
+                    _uwuTweenyManager.AddTween(tween, _rainbowText);
                 }
             };
-            _uwuTweenyManager.AddTween(tween, rainbowText);
+            _uwuTweenyManager.AddTween(tween, _rainbowText);
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿using IPA.Utilities;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
+using IPA.Utilities;
 
 namespace Nya.Utils
 {
@@ -59,6 +59,6 @@ namespace Nya.Utils
     {
         Unsupported,
         Json,
-        Local,
+        Local
     }
 }
