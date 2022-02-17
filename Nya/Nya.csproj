@@ -12,6 +12,11 @@
 		<DebugType>portable</DebugType>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<Nullable>enable</Nullable>
+		<LangVersion>8.0</LangVersion>
+	</PropertyGroup>
+	
 	<PropertyGroup Condition="$(DefineConstants.Contains('CIBuild')) OR '$(NCrunch)' == '1'">
 		<DisableCopyToPlugins>True</DisableCopyToPlugins>
 	</PropertyGroup>
