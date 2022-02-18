@@ -17,7 +17,7 @@
 			<checkbox-setting id='in-pause-checkbox' text='Show Nya in the pause menu' value='in-pause' apply-on-change='true' bind-value='true'/>
 			<checkbox-setting id='separate-positions-checkbox' text="Separate menu Nya's and pause Nya's positions" value="separate-positions" apply-on-change='true' bind-value='true'/>
 			<horizontal>
-				<button id='reset-nya-position' active='~separate-positions-but-opposite' text="Reset Nya's position" hover-hint="Resets Nya's screen to it's default position" on-click='reset-menu-clicked'/>
+				<button active='~separate-positions-but-opposite' text="Reset Nya's position" hover-hint="Resets Nya's screen to it's default position" on-click='reset-menu-clicked'/>
 				<button id='reset-menu-position' active='~separate-positions' text="Reset menu Nya's position" hover-hint="Resets the menu Nya screen to it's default position" on-click='reset-menu-clicked'/>
 				<button id='reset-pause-position' active='~separate-positions' text="Reset pause Nya's position" hover-hint="Resets the pause Nya screen to it's default position" on-click='reset-pause-clicked'/>
 			</horizontal>

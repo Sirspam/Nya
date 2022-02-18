@@ -172,9 +172,6 @@ namespace Nya.UI.ViewControllers
         [UIComponent("bg-colour-default")]
         private readonly Button _bgColourDefaultButton = null!;
 
-        [UIComponent("reset-nya-position")]
-        private readonly Button _resetNyaPositionButton = null!;
-
         [UIComponent("reset-menu-position")]
         private readonly Button _resetMenuPositionButton = null!;
 

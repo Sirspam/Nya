@@ -29,25 +29,25 @@ namespace Nya.UI.ViewControllers
         #region components
 
         [UIComponent("root")]
-        internal readonly RectTransform rootTransform;
+        internal readonly RectTransform rootTransform = null!;
 
         [UIComponent("nya-image")]
-        internal readonly ImageView nyaImage;
+        internal readonly ImageView nyaImage = null!;
 
         [UIComponent("nya-button")]
-        internal readonly Button nyaButton;
+        internal readonly Button nyaButton = null!;
 
         [UIComponent("auto-button")]
-        internal readonly Button nyaAutoButton;
+        internal readonly Button nyaAutoButton = null!;
 
         [UIComponent("auto-button")]
-        internal readonly TextMeshProUGUI nyaAutoText;
+        internal readonly TextMeshProUGUI nyaAutoText = null!;
 
         [UIComponent("settings-button")]
-        internal readonly Button nyaSettingsButton;
+        internal readonly Button nyaSettingsButton = null!;
 
         [UIComponent("settings-button")]
-        internal readonly RectTransform settingsButtonTransform;
+        internal readonly RectTransform settingsButtonTransform = null!;
 
         #endregion components
 

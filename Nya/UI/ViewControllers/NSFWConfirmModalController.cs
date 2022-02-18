@@ -16,15 +16,12 @@ namespace Nya.UI.ViewControllers
         private ButtonPressed _noButtonPressed = null!;
 
         #region components
-
-        [UIComponent("root")]
-        private readonly RectTransform rootTransform;
+        
+        [UIComponent("modal")]
+        private ModalView modalView = null!;
 
         [UIComponent("modal")]
-        private ModalView modalView;
-
-        [UIComponent("modal")]
-        private readonly RectTransform modalTransform;
+        private readonly RectTransform modalTransform = null!;
 
         #endregion components
 
@@ -43,7 +40,7 @@ namespace Nya.UI.ViewControllers
         }
 
         [UIParams]
-        private readonly BSMLParserParams parserParams;
+        private readonly BSMLParserParams parserParams = null!;
 
         private void Parse(Component parentTransform)
         {

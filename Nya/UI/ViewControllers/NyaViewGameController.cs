@@ -65,7 +65,7 @@ namespace Nya.UI.ViewControllers
         {
             _gamePause.didPauseEvent -= GamePause_didPauseEvent;
             _gamePause.willResumeEvent -= GamePause_didResumeEvent;
-            _floatingScreen.HandleReleased -= FloatingScreen_HandleReleased;
+            _floatingScreen!.HandleReleased -= FloatingScreen_HandleReleased;
             _settingsModalGameController.HideModal();
             _floatingScreen.gameObject.SetActive(false);
             _timeTweeningManager.KillAllTweens(_floatingScreen);
