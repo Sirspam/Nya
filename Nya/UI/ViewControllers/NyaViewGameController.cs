@@ -30,7 +30,7 @@ namespace Nya.UI.ViewControllers
 
         public void Initialize()
         {
-            _floatingScreen = _uiUtils.CreateNyaFloatingScreen(this, Config.SeperatePositions ? Config.PausePosition : Config.MenuPosition, Quaternion.Euler(Config.PauseRotation));
+            _floatingScreen = _uiUtils.CreateNyaFloatingScreen(this, Config.SeparatePositions ? Config.PausePosition : Config.MenuPosition, Quaternion.Euler(Config.PauseRotation));
             _floatingScreen.gameObject.name = "NyaGameFloatingScreen";
 
             // Wanted to do a wacky easter egg for my beloved shiny happy days map but it prooved to be too much of a hassle
@@ -92,7 +92,7 @@ namespace Nya.UI.ViewControllers
         {
             var transform = _floatingScreen!.transform;
 
-            if (Config.SeperatePositions)
+            if (Config.SeparatePositions)
             {
                 Config.PausePosition = transform.position;
                 Config.PauseRotation = transform.eulerAngles;

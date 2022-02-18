@@ -266,7 +266,7 @@ namespace Nya.UI.ViewControllers
             var gameObjectTransform = RootTransform.root.gameObject.transform;
             gameObjectTransform.position = new Vector3(0f, 3.65f, 4f);
             gameObjectTransform.rotation = Quaternion.Euler(new Vector3(335f, 0f, 0f));
-            if (RootTransform.root.name == "NyaGameFloatingScreen" && Config.SeperatePositions)
+            if (RootTransform.root.name == "NyaGameFloatingScreen" && Config.SeparatePositions)
             {
                 Config.PausePosition = gameObjectTransform.position;
                 Config.PauseRotation = gameObjectTransform.eulerAngles;
