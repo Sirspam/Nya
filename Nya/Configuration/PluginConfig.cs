@@ -27,6 +27,7 @@ namespace Nya.Configuration
         public virtual bool RainbowBackgroundColor { get; set; } = false;
         public virtual Color BackgroundColor { get; set; } = new Color(0.745f, 0.745f, 0.745f);
         public virtual int AutoNyaWait { get; set; } = 4;
+        public virtual bool EasterEggs { get; set; } = true;
         public virtual string SelectedAPI { get; set; } = WebAPIs.APIs.Keys.First();
 
         [NonNullable][UseConverter(typeof(DictionaryConverter<EndpointData>))]
