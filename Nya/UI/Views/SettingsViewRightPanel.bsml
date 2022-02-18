@@ -1,4 +1,4 @@
-﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
+﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
 	<horizontal spacing='-80' anchor-pos-x='30' anchor-pos-y='-20'>
 		<text id='rainbow-text' text='RAINBOW' color='#FFFFFF00' rich-text='true' align='Center'/>
 		<image src='Nya.Resources.Vanilla_Stare.png' preserve-aspect='true' pref-width='20' pref-height='20'/>

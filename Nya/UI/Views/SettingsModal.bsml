@@ -1,5 +1,5 @@
-﻿<bg id="root" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
-	<modal id='modal' show-event='open-modal' hide-event='close-modal' clickerino-offerino-closerino='true' size-delta-x='65' size-delta-y='50' move-to-center='true' horizontal-fit='PreferredSize' vertical-fit='PreferredSize'>
+﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
+	<modal id='modal' show-event='open-modal' hide-event='close-modal' clickerino-offerino-closerino='true' size-delta-x='65' size-delta-y='50' move-to-center='true'>
 		<vertical anchor-pos-y='10'>
 			
 			<horizontal vertical-fit='PreferredSize' horizontal-fit='PreferredSize' pref-height='7' pref-width='60'>
@@ -28,7 +28,7 @@
 					<button id='reset-position-button' text='Reset Position' on-click='reset-position-clicked' min-height='10' min-width='28'/>
 				</vertical>
 			</tab>
-			<tab id='more-settings-tab' tab-name="+" tags='settings-modal-tab' pref-width='10'>
+			<tab id='more-settings-tab' tab-name="+" tags='settings-modal-tab'>
 				<vertical horizontal-fit='PreferredSize' vertical-fit='PreferredSize' preferred-width='50' preferred-height='45'>
 					<text text='More settings for Nya can be found in Mod Settings' word-wrapping='true' align='Center' font-size='5'/>
 					<primary-button text='Take me there!' on-click='show-nya-settings' min-height='10' min-width='25'/>
