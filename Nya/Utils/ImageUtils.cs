@@ -49,23 +49,7 @@ namespace Nya.Utils
             
             File.WriteAllBytes(Path.Combine(UnityGame.UserDataPath, "Nya", _config.Nsfw ? "nsfw" : "sfw", _nyaImageEndpoint), _nyaImageBytes);
         }
-
-        public void CopyNyaImage()
-        {
-            if (_nyaImageBytes == null)
-            {
-                _siraLog.Error("Failed to copy image");
-                return;
-            }
-            
-            // Converts gifs to pngs because ???
-            // Also doesn't seem to like transparency sometimes
-            // Might just remove this feature at some point lmao
-            using var memoryStream = new MemoryStream(_nyaImageBytes);
-            var bitmap = new Bitmap(memoryStream);
-            Clipboard.SetImage(bitmap);
-        }
-
+        
         private async Task<byte[]?> GetWebDataToBytesAsync(string url)
         {
             try

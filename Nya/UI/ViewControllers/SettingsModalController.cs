@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using BeatSaberMarkupLanguage;
@@ -58,8 +60,8 @@ namespace Nya.UI.ViewControllers
         [UIComponent("nya-download-button")]
         protected readonly Button NyaDownloadButton = null!;
 
-        [UIComponent("nya-copy-button")]
-        protected readonly Button NyaCopyButton = null!;
+        [UIComponent("nya-open-button")]
+        protected readonly Button NyaOpenButton = null!;
 
         [UIComponent("nsfw-checkbox")]
         protected readonly RectTransform NsfwCheckbox = null!;
@@ -170,15 +172,6 @@ namespace Nya.UI.ViewControllers
             BaseParse(parentTransform, host);
             ParserParams.EmitEvent("close-modal");
             ParserParams.EmitEvent("open-modal");
-
-            if (_imageUtils.NyaImageURL == null || _imageUtils.NyaImageURL.EndsWith(".gif") || _imageUtils.NyaImageURL.EndsWith(".apng"))
-            {
-                NyaCopyButton.interactable = false;
-            }
-            else
-            {
-                NyaCopyButton.interactable = true;
-            }
         }
 
         public void HideModal()
@@ -199,11 +192,11 @@ namespace Nya.UI.ViewControllers
             Task.Run(() => _imageUtils.DownloadNyaImage());
         }
 
-        [UIAction("nya-copy-clicked")]
-        protected void CopyNya()
+        [UIAction("nya-open-clicked")]
+        protected void OpenNya()
         {
-            _uiUtils.ButtonUnderlineClick(NyaCopyButton.gameObject);
-            Task.Run(() => _imageUtils.CopyNyaImage());
+            _uiUtils.ButtonUnderlineClick(NyaOpenButton.gameObject);
+            Process.Start(Path.Combine(UnityGame.UserDataPath, nameof(Nya)));
         }
 
         [UIAction("nya-nsfw-changed")]
