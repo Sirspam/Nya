@@ -4,24 +4,29 @@ using BeatSaberMarkupLanguage.FloatingScreen;
 using BeatSaberMarkupLanguage.GameplaySetup;
 using HMUI;
 using Nya.Configuration;
+using Nya.CatCore;
 using Nya.Utils;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Zenject;
+using Object = UnityEngine.Object;
 
 namespace Nya.UI.ViewControllers
 {
     internal class NyaViewMenuController : NyaViewController, IInitializable, IDisposable
     {
+        private readonly UIUtils _uiUtils;
+        private readonly CatCoreInfo _catCoreInfo;
         private readonly GameplaySetupViewController _gameplaySetupViewController;
         private readonly SettingsModalMenuController _settingsModalMenuController;
-        private readonly UIUtils _uiUtils;
 
         private FloatingScreen? _floatingScreen;
 
-        public NyaViewMenuController(PluginConfig config, ImageUtils imageUtils, UIUtils uiUtils, GameplaySetupViewController gameplaySetupViewController, SettingsModalMenuController settingsModalMenuController)
+        public NyaViewMenuController(PluginConfig config, ImageUtils imageUtils, UIUtils uiUtils, CatCoreInfo catCoreInfo, GameplaySetupViewController gameplaySetupViewController, SettingsModalMenuController settingsModalMenuController)
             : base(config, imageUtils)
         {
             _uiUtils = uiUtils;
+            _catCoreInfo = catCoreInfo;
             _gameplaySetupViewController = gameplaySetupViewController;
             _settingsModalMenuController = settingsModalMenuController;
         }
@@ -39,8 +44,13 @@ namespace Nya.UI.ViewControllers
                 GameplaySetup.instance.AddTab("Nya", "Nya.UI.Views.NyaView.bsml", this);
             }
 
-            _gameplaySetupViewController.didActivateEvent += GameplaySetupViewController_didActivateEvent;
-            _gameplaySetupViewController.didDeactivateEvent += GameplaySetupViewController_didDeactivateEvent;
+            _catCoreInfo.CurrentImageView = NyaImage;
+            // SceneManager.sceneLoaded += SceneManagerOnsceneLoaded;
+        }
+
+        private void SceneManagerOnsceneLoaded(Scene arg0, LoadSceneMode arg1)
+        {
+            
         }
 
         public void Dispose()
@@ -53,14 +63,14 @@ namespace Nya.UI.ViewControllers
             if (Config.InMenu)
             {
                 _floatingScreen!.HandleReleased -= FloatingScreen_HandleReleased;
+                Object.Destroy(_floatingScreen);
             }
 
             _gameplaySetupViewController.didActivateEvent -= GameplaySetupViewController_didActivateEvent;
             _gameplaySetupViewController.didDeactivateEvent -= GameplaySetupViewController_didDeactivateEvent;
         }
 
-        private void GameplaySetupViewController_didActivateEvent(bool firstActivation, bool addedToHierarchy,
-            bool screenSystemEnabling)
+        private void GameplaySetupViewController_didActivateEvent(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
         {
             if (firstActivation)
             {
@@ -73,9 +83,10 @@ namespace Nya.UI.ViewControllers
                 _floatingScreen.transform.rotation = Quaternion.Euler(Config.MenuRotation);
             }
 
-            nyaButton.interactable = false;
-            ImageUtils.LoadNyaImage(nyaImage);
-            nyaButton.interactable = true;
+            _catCoreInfo.CurrentImageView = NyaImage;
+            NyaButton.interactable = false;
+            ImageUtils.LoadNyaImage(NyaImage);
+            NyaButton.interactable = true;
         }
 
         private void GameplaySetupViewController_didDeactivateEvent(bool firstActivation, bool addedToHierarchy)
@@ -83,10 +94,11 @@ namespace Nya.UI.ViewControllers
             if (AutoNyaToggle)
             {
                 AutoNyaToggle = false;
-                nyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = new Color(1f, 1f, 1f, 0.502f);
-                nyaButton.interactable = true;
+                NyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = new Color(1f, 1f, 1f, 0.502f);
+                NyaButton.interactable = true;
             }
 
+            _catCoreInfo.CurrentImageView = null;
             _settingsModalMenuController.HideModal();
         }
 
@@ -112,7 +124,7 @@ namespace Nya.UI.ViewControllers
                 AutoNya();
             }
 
-            _settingsModalMenuController.ShowModal(settingsButtonTransform);
+            _settingsModalMenuController.ShowModal(SettingsButtonTransform);
         }
     }
 }

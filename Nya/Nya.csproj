@@ -27,6 +27,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<Reference Include="CatCore, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null">
+		  <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Beat Saber\Libs\CatCore.dll</HintPath>
+		</Reference>
 		<Reference Include="HMRendering">
 		  <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\HMRendering.dll</HintPath>
 		  <Private>False</Private>

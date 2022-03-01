@@ -28,6 +28,11 @@ namespace Nya.Configuration
         public virtual Color BackgroundColor { get; set; } = new Color(0.745f, 0.745f, 0.745f);
         public virtual int AutoNyaWait { get; set; } = 4;
         public virtual bool EasterEggs { get; set; } = true;
+        public virtual bool CatCoreEnabled { get; set; } = false;
+        public virtual bool NyaCommandEnabled { get; set; } = false;
+        public virtual int NyaCommandCooldown { get; set; } = 10;
+        public virtual bool CurrentNyaCommandEnabled { get; set; } = false;
+
         public virtual string SelectedAPI { get; set; } = WebAPIs.APIs.Keys.First();
 
         [NonNullable][UseConverter(typeof(DictionaryConverter<EndpointData>))]

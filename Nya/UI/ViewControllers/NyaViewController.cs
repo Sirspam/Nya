@@ -29,25 +29,25 @@ namespace Nya.UI.ViewControllers
         #region components
 
         [UIComponent("root")]
-        internal readonly RectTransform rootTransform = null!;
+        internal readonly RectTransform RootTransform = null!;
 
         [UIComponent("nya-image")]
-        internal readonly ImageView nyaImage = null!;
+        internal readonly ImageView NyaImage = null!;
 
         [UIComponent("nya-button")]
-        internal readonly Button nyaButton = null!;
+        internal readonly Button NyaButton = null!;
 
         [UIComponent("auto-button")]
-        internal readonly Button nyaAutoButton = null!;
+        internal readonly Button NyaAutoButton = null!;
 
         [UIComponent("auto-button")]
-        internal readonly TextMeshProUGUI nyaAutoText = null!;
+        internal readonly TextMeshProUGUI NyaAutoText = null!;
 
         [UIComponent("settings-button")]
-        internal readonly Button nyaSettingsButton = null!;
+        internal readonly Button NyaSettingsButton = null!;
 
         [UIComponent("settings-button")]
-        internal readonly RectTransform settingsButtonTransform = null!;
+        internal readonly RectTransform SettingsButtonTransform = null!;
 
         #endregion components
 
@@ -56,17 +56,17 @@ namespace Nya.UI.ViewControllers
         [UIAction("#post-parse")]
         protected void NyaPostParse()
         {
-            nyaButton.interactable = false;
-            ImageUtils.LoadNyaImage(nyaImage);
-            nyaButton.interactable = true;
+            NyaButton.interactable = false;
+            ImageUtils.LoadNyaImage(NyaImage);
+            NyaButton.interactable = true;
         }
 
         [UIAction("nya-click")]
         protected void NyaClicked()
         {
-            nyaButton.interactable = false;
-            ImageUtils.GetNewNyaImage(nyaImage);
-            nyaButton.interactable = true;
+            NyaButton.interactable = false;
+            ImageUtils.GetNewNyaImage(NyaImage);
+            NyaButton.interactable = true;
         }
 
         [UIAction("nya-auto-clicked")]
@@ -83,12 +83,12 @@ namespace Nya.UI.ViewControllers
             if (AutoNyaToggle) // On
             {
                 AutoNyaCooldownHandler(); // This isn't suppoed to be awaited I swear, please Mr green swiggly line go away you're scaring me
-                nyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = Color.green;
-                nyaButton.interactable = false;
+                NyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = Color.green;
+                NyaButton.interactable = false;
                 while (AutoNyaToggle)
                 {
                     await Semaphore.WaitAsync();
-                    ImageUtils.GetNewNyaImage(nyaImage);
+                    ImageUtils.GetNewNyaImage(NyaImage);
                     await Task.Delay(Config.AutoNyaWait * 1000);
                     Semaphore.Release();
                 }
@@ -115,9 +115,9 @@ namespace Nya.UI.ViewControllers
             else // Off
             {
                 // cancellationTokenSource.Cancel();
-                nyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = new Color(1f, 1f, 1f, 0.502f); // Beatgames why 0.502
-                nyaAutoText.text = "Auto Nya";
-                nyaButton.interactable = true;
+                NyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = new Color(1f, 1f, 1f, 0.502f); // Beatgames why 0.502
+                NyaAutoText.text = "Auto Nya";
+                NyaButton.interactable = true;
                 AutoNyaCooldown = false;
             }
         }

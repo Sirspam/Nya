@@ -5,8 +5,11 @@ using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Settings;
 using BeatSaberMarkupLanguage.ViewControllers;
 using HMUI;
+using IPA.Loader;
+using Nya.CatCore;
 using Nya.Configuration;
 using Nya.Utils;
+using SiraUtil.Logging;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -17,11 +20,6 @@ namespace Nya.UI.ViewControllers
     [ViewDefinition("Nya.UI.Views.SettingsViewMainPanel.bsml")]
     internal class SettingsViewMainPanelController : BSMLAutomaticViewController, IInitializable, IDisposable
     {
-        private PluginConfig _pluginConfig = null!;
-        private MainFlowCoordinator _mainFlowCoordinator = null!;
-        private MenuTransitionsHelper _menuTransitionsHelper = null!;
-        private SettingsViewRightPanelController _settingsViewRightPanelController = null!;
-        private UIUtils _uiUtils = null!;
         public FlowCoordinator parentFlowCoordinator = null!;
 
         private bool _inMenu;
@@ -36,20 +34,39 @@ namespace Nya.UI.ViewControllers
         private Vector3 _menuRotation;
         private Vector3 _pausePosition;
         private Vector3 _pauseRotation;
+        private bool _catCoreEnabled;
+        private bool _nyaCommandEnabled;
+        private int _nyaCommandCooldown;
+        private bool _currentNyaCommandEnabled;
+
+        private SiraLog _siraLog = null!;
+        private UIUtils _uiUtils = null!;
+        private PluginConfig _pluginConfig = null!;
+        private CatCoreManager? _catCoreManager = null;
+        private MainFlowCoordinator _mainFlowCoordinator = null!;
+        private MenuTransitionsHelper _menuTransitionsHelper = null!;
+        private SettingsViewRightPanelController _settingsViewRightPanelController = null!;
 
         [Inject]
-        public void Constructor(PluginConfig pluginConfig, UIUtils uiUtils, MainFlowCoordinator mainFlowCoordinator, MenuTransitionsHelper menuTransitionsHelper, SettingsViewRightPanelController settingsViewRightPanelController)
+        public void Constructor(SiraLog siraLog, UIUtils uiUtils, PluginConfig pluginConfig, [InjectOptional] CatCoreManager catCoreManager, MainFlowCoordinator mainFlowCoordinator, MenuTransitionsHelper menuTransitionsHelper, SettingsViewRightPanelController settingsViewRightPanelController)
         {
+            _siraLog = siraLog;
+            _uiUtils = uiUtils;
             _pluginConfig = pluginConfig;
+            _catCoreManager = catCoreManager;
             _mainFlowCoordinator = mainFlowCoordinator;
             _menuTransitionsHelper = menuTransitionsHelper;
             _settingsViewRightPanelController = settingsViewRightPanelController;
-            _uiUtils = uiUtils;
         }
 
         protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
         {
             base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
+            if (PluginManager.GetPluginFromId("CatCore") == null)
+            {
+                _catCoreTab.IsVisible = false;
+            }
+
 
             InMenu = _pluginConfig.InMenu;
             InPause = _pluginConfig.InPause;
@@ -63,21 +80,15 @@ namespace Nya.UI.ViewControllers
             _menuRotation = _pluginConfig.MenuRotation;
             _pausePosition = _pluginConfig.PausePosition;
             _pauseRotation = _pluginConfig.PauseRotation;
+            CatCoreEnabled = _pluginConfig.CatCoreEnabled;
+            NyaCommandEnabled = _pluginConfig.NyaCommandEnabled;
+            NyaCommandCooldown = _pluginConfig.NyaCommandCooldown;
+            CurrentNyaCommandEnabled = _pluginConfig.CurrentNyaCommandEnabled;
         }
 
         [UIValue("view-controller-active")]
         private bool ViewControllerActive => isActiveAndEnabled;
-
-        [UIValue("size-delta-view-controller")]
-        private int SizeDeltaViewController
-        {
-            get
-            {
-                if (isActiveAndEnabled) return -50;
-                return 0;
-            }
-        }
-
+        
         [UIValue("restart-required")]
         private bool RestartRequired => InMenu != _pluginConfig.InMenu && isActiveAndEnabled;
 
@@ -159,6 +170,50 @@ namespace Nya.UI.ViewControllers
                 NotifyPropertyChanged();
             }
         }
+        
+        [UIValue("cat-core-enabled")]
+        private bool CatCoreEnabled
+        {
+            get => _catCoreEnabled;
+            set
+            {
+                _catCoreEnabled = value;
+                NotifyPropertyChanged();
+            }
+        }
+        
+        [UIValue("nya-command-enabled")]
+        private bool NyaCommandEnabled
+        {
+            get => _nyaCommandEnabled;
+            set
+            {
+                _nyaCommandEnabled = value;
+                NotifyPropertyChanged();
+            }
+        }
+        
+        [UIValue("nya-command-cooldown")]
+        private int NyaCommandCooldown
+        {
+            get => _nyaCommandCooldown;
+            set
+            {
+                _nyaCommandCooldown = value;
+                NotifyPropertyChanged();
+            }
+        }
+        
+        [UIValue("current-nya-command-enabled")]
+        private bool CurrentNyaCommandEnabled
+        {
+            get => _currentNyaCommandEnabled;
+            set
+            {
+                _currentNyaCommandEnabled = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         [UIValue("separate-positions")]
         private bool SeparatePositions
@@ -179,6 +234,9 @@ namespace Nya.UI.ViewControllers
             set => NotifyPropertyChanged();
         }
 
+        [UIComponent("cat-core-tab")]
+        private readonly Tab _catCoreTab = null!;
+        
         [UIComponent("bg-colour-setting")]
         private readonly Transform _bgColourSettingTransform = null!;
 
@@ -190,6 +248,7 @@ namespace Nya.UI.ViewControllers
 
         [UIComponent("reset-pause-position")]
         private readonly Button _resetPausePositionButton = null!;
+        
 
         [UIAction("bg-colour-default-clicked")]
         private void BgColourDefaultClicked()
@@ -226,6 +285,7 @@ namespace Nya.UI.ViewControllers
         private void OkClicked()
         {
             var restartRequired = RestartRequired;
+            var catCoreActionNeeded = _pluginConfig.CatCoreEnabled != _catCoreEnabled;
             _pluginConfig.InMenu = InMenu;
             _pluginConfig.InPause = InPause;
             _pluginConfig.BackgroundColor = BgColour;
@@ -238,9 +298,30 @@ namespace Nya.UI.ViewControllers
             _pluginConfig.MenuRotation = _menuRotation;
             _pluginConfig.PausePosition = _pausePosition;
             _pluginConfig.PauseRotation = _pauseRotation;
+            _pluginConfig.CatCoreEnabled = _catCoreEnabled;
+            _pluginConfig.NyaCommandEnabled = _nyaCommandEnabled;
+            _pluginConfig.NyaCommandCooldown = _nyaCommandCooldown;
+            _pluginConfig.CurrentNyaCommandEnabled = _currentNyaCommandEnabled;
 
-            if (restartRequired) _menuTransitionsHelper.RestartGame();
-            else parentFlowCoordinator.DismissFlowCoordinator(_mainFlowCoordinator.YoungestChildFlowCoordinatorOrSelf(), animationDirection: AnimationDirection.Vertical);
+            _siraLog.Info(catCoreActionNeeded);
+            if (catCoreActionNeeded)
+            {
+                _siraLog.Info(_pluginConfig.CatCoreEnabled);
+                if (_pluginConfig.CatCoreEnabled)
+                {
+                    // User shouldn't even be able to access CatCore settings if it's not installed, so not going to bother making sure catCoreManager isn't null
+                    _catCoreManager!.StartCatCoreServices();
+                }
+                else
+                {
+                    _catCoreManager!.EndCatCoreServices();
+                }
+            }
+            
+            if (restartRequired) 
+                _menuTransitionsHelper.RestartGame();
+            else 
+                parentFlowCoordinator.DismissFlowCoordinator(_mainFlowCoordinator.YoungestChildFlowCoordinatorOrSelf(), animationDirection: AnimationDirection.Vertical);
         }
 
         [UIAction("cancel-clicked")]
@@ -272,6 +353,10 @@ namespace Nya.UI.ViewControllers
             _menuRotation = _pluginConfig.MenuRotation;
             _pausePosition = _pluginConfig.PausePosition;
             _pauseRotation = _pluginConfig.PauseRotation;
+            CatCoreEnabled = _pluginConfig.CatCoreEnabled;
+            NyaCommandEnabled = _pluginConfig.NyaCommandEnabled;
+            NyaCommandCooldown = _pluginConfig.NyaCommandCooldown;
+            CurrentNyaCommandEnabled = _pluginConfig.CurrentNyaCommandEnabled;
         }
 
         [UIAction("#apply")]
@@ -288,6 +373,10 @@ namespace Nya.UI.ViewControllers
             _pluginConfig.MenuRotation = _menuRotation;
             _pluginConfig.PausePosition = _pausePosition;
             _pluginConfig.PauseRotation = _pauseRotation;
+            _pluginConfig.CatCoreEnabled = _catCoreEnabled;
+            _pluginConfig.NyaCommandEnabled = _nyaCommandEnabled;
+            _pluginConfig.NyaCommandCooldown = _nyaCommandCooldown;
+            _pluginConfig.CurrentNyaCommandEnabled = _currentNyaCommandEnabled;
         }
 
         [UIAction("#cancel")]
@@ -302,12 +391,9 @@ namespace Nya.UI.ViewControllers
             }
         }
 
-        public void Initialize()
-        {
-            BSMLSettings.instance.AddSettingsMenu("Nya", "Nya.UI.Views.SettingsViewMainPanel.bsml", this);
-        }
+        public void Initialize() => BSMLSettings.instance.AddSettingsMenu("Nya", "Nya.UI.Views.SettingsViewMainPanel.bsml", this);
 
-        public void Dispose()
+            public void Dispose()
         {
             if (BSMLSettings.instance != null)
             {

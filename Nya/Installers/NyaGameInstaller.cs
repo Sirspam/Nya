@@ -20,9 +20,9 @@ namespace Nya.Installers
                 return;
             }
 
-            Container.BindInterfacesAndSelfTo<NyaViewGameController>().AsSingle();
+            Container.BindInterfacesTo<NyaViewGameController>().AsSingle();
             Container.BindInterfacesAndSelfTo<SettingsModalGameController>().AsSingle();
-            Container.BindInterfacesAndSelfTo<NsfwConfirmModalController>().AsSingle();
+            Container.Bind<NsfwConfirmModalController>().AsSingle();
         }
     }
 }

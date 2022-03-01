@@ -7,12 +7,12 @@ namespace Nya.Installers
     {
         public override void InstallBindings()
         {
-            Container.BindInterfacesAndSelfTo<NyaViewMenuController>().AsSingle();
+            Container.BindInterfacesTo<NyaViewMenuController>().AsSingle();
             Container.BindInterfacesAndSelfTo<SettingsModalMenuController>().AsSingle();
-            Container.BindInterfacesAndSelfTo<NsfwConfirmModalController>().AsSingle();
+            Container.Bind<NsfwConfirmModalController>().AsSingle();
             Container.BindInterfacesAndSelfTo<SettingsViewMainPanelController>().FromNewComponentAsViewController().AsSingle();
             Container.BindInterfacesAndSelfTo<SettingsViewRightPanelController>().FromNewComponentAsViewController().AsSingle();
-            Container.BindInterfacesAndSelfTo<NyaSettingsFlowCoordinator>().FromNewComponentOnNewGameObject().AsSingle();
+            Container.Bind<NyaSettingsFlowCoordinator>().FromNewComponentOnNewGameObject().AsSingle();
         }
     }
 }

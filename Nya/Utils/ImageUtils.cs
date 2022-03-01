@@ -26,7 +26,6 @@ namespace Nya.Utils
         private readonly Random _random;
 
         private byte[]? _nyaImageBytes;
-        private byte[]? _nyaImageBytesCompressed;
         private string? _nyaImageEndpoint;
         public string? NyaImageURL;
 
@@ -116,7 +115,7 @@ namespace Nya.Utils
                     }
 
                     _nyaImageBytes = File.ReadAllBytes(NyaImageURL!);
-                    await Task.Run(DownscaleNyaImage);
+                    NyaImageURL = null;
                     LoadNyaImage(image);
                     return;
                 }
@@ -144,7 +143,6 @@ namespace Nya.Utils
                 }
 
                 _nyaImageBytes = await GetWebDataToBytesAsync(NyaImageURL);
-                await Task.Run(DownscaleNyaImage);
                 LoadNyaImage(image);
             }
             catch (Exception e) // e for dEez nuts
@@ -153,40 +151,7 @@ namespace Nya.Utils
                 LoadErrorSprite(image);
             }
         }
-
-        private void DownscaleNyaImage()
-        {
-            if (_nyaImageBytes == null || NyaImageURL == null)
-            {
-                return;
-            }
-            
-            var originalImage = System.Drawing.Image.FromStream(new MemoryStream(_nyaImageBytes));
-            // This is either a great way to get away with just one comparison or completely stupid
-            // Also I simply have no clue how to make this work for gifs, so we'll just leave those be.
-            if (originalImage.Width + originalImage.Height <= 1024f || NyaImageURL.EndsWith(".gif") || NyaImageURL.EndsWith(".apng"))
-            {
-                _nyaImageBytesCompressed = _nyaImageBytes;
-                return;
-            }
-
-            var ratio = (double)originalImage.Width / originalImage.Height;
-            if (512 * ratio <= originalImage.Width)
-            {
-                var resizedImage = new Bitmap(originalImage, (int)(512f * ratio), 512);
-                using var ms = new MemoryStream();
-                resizedImage.Save(ms, originalImage.RawFormat);
-                _nyaImageBytesCompressed = ms.ToArray();
-            }
-            else
-            {
-                var resizedImage = new Bitmap(originalImage, 512, (int)(512 / ratio));
-                using var ms = new MemoryStream();
-                resizedImage.Save(ms, originalImage.RawFormat);
-                _nyaImageBytesCompressed = ms.ToArray();
-            }
-        }
-
+        
         public void LoadNyaImage(ImageView image)
         {
             if (_nyaImageBytes == null)
@@ -195,14 +160,19 @@ namespace Nya.Utils
                 return;
             }
 
-            if (image.sprite.texture.GetRawTextureData() == _nyaImageBytesCompressed)
+            if (image.sprite.texture.GetRawTextureData() == _nyaImageBytes)
             {
                 return;
             }
 
             _siraLog.Info($"Loading image from {NyaImageURL}");
-            image.SetImage(NyaImageURL, false, true);
-            // image.SetImage(NyaImageURL);
+            var options = new BeatSaberUI.ScaleOptions
+            {
+                ShouldScale = true,
+                MaintainRatio = true,
+                Width = 512
+            };
+            image.SetImage(NyaImageURL, false, options);
         }
 
         private void LoadErrorSprite(Image image)
