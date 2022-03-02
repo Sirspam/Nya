@@ -27,6 +27,23 @@ namespace Nya.Utils
                 }
             },
             {
+              "xSky", new SourceData
+              {
+                  BaseEndpoint = "https://api.xsky.dev/",
+                  Mode = DataMode.Json,
+                  SfwEndpoints = new List<string> { "neko", "catboy", "furry", "ff" },
+                  NsfwEndpoints = new List<string> { "hentai", "bsdm", "feet", "trap", "gif", "futa" }
+              }
+            },
+            {
+                "Anime-Images API", new SourceData
+                {
+                    BaseEndpoint = "https://anime-api.hisoka17.repl.co/img/",
+                    Mode = DataMode.Json,
+                    SfwEndpoints = new List<string> { "hug", "kiss", "slap", "wink", "pat", "kill", "cuddle", "punch", "waifu" },
+                    NsfwEndpoints = new List<string> { "hentai", "boobs", "lesbian" }
+                }
+            },
             {
                 "Local Files", new SourceData
                 {
