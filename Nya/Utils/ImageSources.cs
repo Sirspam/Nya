@@ -4,12 +4,12 @@ using IPA.Utilities;
 
 namespace Nya.Utils
 {
-    public class WebAPIs
+    public class ImageSources
     {
-        internal static Dictionary<string, APIData> APIs { get; } = new Dictionary<string, APIData>
+        internal static Dictionary<string, SourceData> Sources { get; } = new Dictionary<string, SourceData>
         {
             {
-                "waifu.pics", new APIData
+                "waifu.pics", new SourceData
                 {
                     BaseEndpoint = "https://api.waifu.pics/",
                     Mode = DataMode.Json,
@@ -18,7 +18,7 @@ namespace Nya.Utils
                 }
             },
             {
-                "nekos.life", new APIData
+                "nekos.life", new SourceData
                 {
                     BaseEndpoint = "https://nekos.life/api/v2/img/",
                     Mode = DataMode.Json,
@@ -27,16 +27,8 @@ namespace Nya.Utils
                 }
             },
             {
-              "", new APIData
-              {
-                  BaseEndpoint = "https://api.xsky.dev/",
-                  Mode = DataMode.Json,
-                  SfwEndpoints = new List<string> { "/neko", "/catboy", "/furry", "/ff" },
-                  NsfwEndpoints = new List<string> { "/hentai", "/bsdm", "/feet", "/trap", "/gif", "/futa" }
-              }
-            },
             {
-                "Local Files", new APIData
+                "Local Files", new SourceData
                 {
                     BaseEndpoint = Path.Combine(UnityGame.UserDataPath, "Nya"),
                     Mode = DataMode.Local,
@@ -45,14 +37,14 @@ namespace Nya.Utils
                 }
             }
         };
-    }
 
-    internal class APIData
-    {
-        internal string BaseEndpoint { get; set; } = string.Empty;
-        internal DataMode Mode { get; set; }
-        internal List<string> SfwEndpoints { get; set; } = new List<string>();
-        internal List<string> NsfwEndpoints { get; set; } = new List<string>();
+        internal struct SourceData
+        {
+            internal string BaseEndpoint;
+            internal DataMode Mode;
+            internal List<string> SfwEndpoints;
+            internal List<string> NsfwEndpoints;
+        }
     }
 
     internal enum DataMode

@@ -74,7 +74,7 @@ namespace Nya.Utils
             try
             {
                 _siraLog.Info($"Attempting to get image url from {_config.SelectedAPI}, {endpoint}");
-                var response = await GetWebDataToBytesAsync(WebAPIs.APIs[_config.SelectedAPI].BaseEndpoint + endpoint);
+                var response = await GetWebDataToBytesAsync(ImageSources.Sources[_config.SelectedAPI].BaseEndpoint + endpoint);
                 if (response == null)
                 {
                     return null;
@@ -94,13 +94,13 @@ namespace Nya.Utils
         {
             try
             {
-                if (WebAPIs.APIs[_config.SelectedAPI].Mode == DataMode.Local)
+                if (ImageSources.Sources[_config.SelectedAPI].Mode == DataMode.Local)
                 {
                     var type = _config.Nsfw ? "nsfw" : "sfw";
                     var oldImageURL = NyaImageURL;
                     while (NyaImageURL == oldImageURL)
                     {
-                        var files = Directory.GetFiles(Path.Combine(WebAPIs.APIs[_config.SelectedAPI].BaseEndpoint, type));
+                        var files = Directory.GetFiles(Path.Combine(ImageSources.Sources[_config.SelectedAPI].BaseEndpoint, type));
                         switch (files.Length)
                         {
                             case 0:
@@ -124,7 +124,7 @@ namespace Nya.Utils
                     ? _config.SelectedEndpoints[_config.SelectedAPI].SelectedNsfwEndpoint
                     : _config.SelectedEndpoints[_config.SelectedAPI].SelectedSfwEndpoint;
 
-                switch (WebAPIs.APIs[_config.SelectedAPI].Mode)
+                switch (ImageSources.Sources[_config.SelectedAPI].Mode)
                 {
                     case DataMode.Json:
                         var newUrl = NyaImageURL;

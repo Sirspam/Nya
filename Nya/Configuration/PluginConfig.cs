@@ -33,7 +33,7 @@ namespace Nya.Configuration
         public virtual int NyaCommandCooldown { get; set; } = 10;
         public virtual bool CurrentNyaCommandEnabled { get; set; } = false;
 
-        public virtual string SelectedAPI { get; set; } = WebAPIs.APIs.Keys.First();
+        public virtual string SelectedAPI { get; set; } = ImageSources.Sources.Keys.First();
 
         [NonNullable][UseConverter(typeof(DictionaryConverter<EndpointData>))]
         public virtual Dictionary<string, EndpointData> SelectedEndpoints { get; set; } = new Dictionary<string, EndpointData>();
@@ -68,19 +68,19 @@ namespace Nya.Configuration
         /// </remark>
         private void FixConfigIssues()
         {
-            if (SelectedEndpoints.Count == WebAPIs.APIs.Count)
+            if (SelectedEndpoints.Count == ImageSources.Sources.Count)
             {
                 return;
             }
 
             using var _ = ChangeTransaction;
             SelectedEndpoints.Clear();
-            foreach (var key in WebAPIs.APIs.Keys)
+            foreach (var key in ImageSources.Sources.Keys)
             {
                 SelectedEndpoints.Add(key, new EndpointData
                 {
-                    SelectedSfwEndpoint = WebAPIs.APIs[key].SfwEndpoints[0],
-                    SelectedNsfwEndpoint = WebAPIs.APIs[key].NsfwEndpoints[0]
+                    SelectedSfwEndpoint = ImageSources.Sources[key].SfwEndpoints[0],
+                    SelectedNsfwEndpoint = ImageSources.Sources[key].NsfwEndpoints[0]
                 });
             }
         }
