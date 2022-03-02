@@ -7,9 +7,11 @@ Nya requires BSML and SiraUtil, which can both be found in ModAssistant.
 ## Usage
 Nya's settings can be accessed from either the Mod Settings panel or from within Nya's setting modal
 ### Supported Image Sources
+**Note: I don't own any of these sources so I can't guarantee the images will always be appropiate**
 * [Waifu.Pics](https://waifu.pics/)
 * [Nekos.Life](https://nekos.life/)
 * [xSky API](https://api.xsky.dev/)
+* [Anime-Images API](https://anime-api.hisoka17.repl.co/)
 * Local Files
 ### Local Files
 In order for local files to work there must be compatible images in the sfw / nsfw files found in Nya's UserData folder.
