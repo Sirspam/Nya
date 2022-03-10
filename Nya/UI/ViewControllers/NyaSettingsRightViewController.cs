@@ -1,11 +1,9 @@
-﻿using System.Threading.Tasks;
-using BeatSaberMarkupLanguage.Attributes;
+﻿using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.ViewControllers;
 using Nya.Configuration;
 using Nya.Utils;
 using TMPro;
 using Tweening;
-using UnityEngine.EventSystems;
 using Zenject;
 
 namespace Nya.UI.ViewControllers
@@ -37,20 +35,20 @@ namespace Nya.UI.ViewControllers
             if (!_pluginConfig.RainbowBackgroundColor)
             {
                 _rainbowText.SetText("<#FF0000>R<#FF7F00>A<#FFFF00>I<#00FF00>N<#0000FF>B<#4B0082>O<#9400D3>W\n<#FFFFFF>Enabled");
-                KindlyAskRainbowTextToShowUpThenHaveItSodOffAfterFourSeconds();
+                KindlyAskRainbowTextToShowUpThenHaveItSodOffAfterTwoSeconds();
                 _uiUtils.RainbowNyaBg(true);
                 _pluginConfig.RainbowBackgroundColor = true;
             }
             else
             {
                 _rainbowText.SetText("<#FF0000>R<#FF7F00>A<#FFFF00>I<#00FF00>N<#0000FF>B<#4B0082>O<#9400D3>W\n<#FFFFFF>Disabled");
-                KindlyAskRainbowTextToShowUpThenHaveItSodOffAfterFourSeconds();
+                KindlyAskRainbowTextToShowUpThenHaveItSodOffAfterTwoSeconds();
                 _uiUtils.RainbowNyaBg(false);
                 _pluginConfig.RainbowBackgroundColor = false;
             }
         }
 
-        private void KindlyAskRainbowTextToShowUpThenHaveItSodOffAfterFourSeconds() // Code maintainability is important!
+        private void KindlyAskRainbowTextToShowUpThenHaveItSodOffAfterTwoSeconds() // Code maintainability is important!
         {
             if (_visible) return;
             _timeTweeningManager.KillAllTweens(_rainbowText);
@@ -59,9 +57,7 @@ namespace Nya.UI.ViewControllers
                 onCompleted = delegate
                 {
                     _visible = true;
-                    Task.Delay(4000);
-                    _timeTweeningManager.KillAllTweens(_rainbowText);
-                    var tween = new FloatTween(1, 0f, val => _rainbowText.alpha = val, 0.5f, EaseType.InOutQuad)
+                    var tween = new FloatTween(1, 0f, val => _rainbowText.alpha = val, 0.5f, EaseType.InOutQuad, 2f)
                     {
                         onCompleted = delegate { _visible = false; }
                     };
