@@ -12,62 +12,63 @@ namespace Nya.UI.ViewControllers
 {
     [HotReload(RelativePathToLayout = @"..\Views\NyaSettingsRightView.bsml")]
     [ViewDefinition("Nya.UI.Views.NyaSettingsRightView.bsml")]
-    internal class NyaSettingsRightViewController : BSMLAutomaticViewController, IPointerClickHandler
+    internal class NyaSettingsRightViewController : BSMLAutomaticViewController
     {
-        private PluginConfig _config = null!;
-        private TimeTweeningManager _uwuTweenyManager = null!;
         private UIUtils _uiUtils = null!;
+        private PluginConfig _pluginConfig = null!;
+        private TimeTweeningManager _timeTweeningManager = null!;
 
         private bool _visible;
 
         [Inject]
-        public void Constructor(PluginConfig config, UIUtils uiUtils, TimeTweeningManager timeTweeningManager)
+        public void Constructor(UIUtils uiUtils, PluginConfig pluginConfig, TimeTweeningManager timeTweeningManager)
         {
-            _config = config;
             _uiUtils = uiUtils;
-            _uwuTweenyManager = timeTweeningManager;
+            _pluginConfig = pluginConfig;
+            _timeTweeningManager = timeTweeningManager;
         }
 
         [UIComponent("rainbow-text")]
         private readonly TMP_Text _rainbowText = null!;
 
-        public void OnPointerClick(PointerEventData eventData)
+        [UIAction("rainbow-clicked")]
+        public void RainbowClicked()
         {
-            if (!_config.RainbowBackgroundColor)
+            if (!_pluginConfig.RainbowBackgroundColor)
             {
                 _rainbowText.SetText("<#FF0000>R<#FF7F00>A<#FFFF00>I<#00FF00>N<#0000FF>B<#4B0082>O<#9400D3>W\n<#FFFFFF>Enabled");
                 KindlyAskRainbowTextToShowUpThenHaveItSodOffAfterFourSeconds();
                 _uiUtils.RainbowNyaBg(true);
-                _config.RainbowBackgroundColor = true;
+                _pluginConfig.RainbowBackgroundColor = true;
             }
             else
             {
                 _rainbowText.SetText("<#FF0000>R<#FF7F00>A<#FFFF00>I<#00FF00>N<#0000FF>B<#4B0082>O<#9400D3>W\n<#FFFFFF>Disabled");
                 KindlyAskRainbowTextToShowUpThenHaveItSodOffAfterFourSeconds();
                 _uiUtils.RainbowNyaBg(false);
-                _config.RainbowBackgroundColor = false;
+                _pluginConfig.RainbowBackgroundColor = false;
             }
         }
 
         private void KindlyAskRainbowTextToShowUpThenHaveItSodOffAfterFourSeconds() // Code maintainability is important!
         {
             if (_visible) return;
-            _uwuTweenyManager.KillAllTweens(_rainbowText);
+            _timeTweeningManager.KillAllTweens(_rainbowText);
             var tween = new FloatTween(0, 1f, val => _rainbowText.alpha = val, 0.5f, EaseType.InOutQuad)
             {
                 onCompleted = delegate
                 {
                     _visible = true;
                     Task.Delay(4000);
-                    _uwuTweenyManager.KillAllTweens(_rainbowText);
+                    _timeTweeningManager.KillAllTweens(_rainbowText);
                     var tween = new FloatTween(1, 0f, val => _rainbowText.alpha = val, 0.5f, EaseType.InOutQuad)
                     {
                         onCompleted = delegate { _visible = false; }
                     };
-                    _uwuTweenyManager.AddTween(tween, _rainbowText);
+                    _timeTweeningManager.AddTween(tween, _rainbowText);
                 }
             };
-            _uwuTweenyManager.AddTween(tween, _rainbowText);
+            _timeTweeningManager.AddTween(tween, _rainbowText);
         }
     }
 }
