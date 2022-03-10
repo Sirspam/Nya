@@ -1,6 +1,5 @@
 ﻿using System;
 using IPA.Loader;
-using Nya.AffinityPatches;
 using Nya.Configuration;
 using Nya.CatCore;
 using Nya.Utils;

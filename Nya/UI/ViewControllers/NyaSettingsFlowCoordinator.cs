@@ -5,19 +5,19 @@ namespace Nya.UI.ViewControllers
 {
     internal class NyaSettingsFlowCoordinator : FlowCoordinator
     {
-        private SettingsViewMainPanelController _settingsViewMainPanelController = null!;
-        private SettingsViewRightPanelController _settingsViewRightPanelController = null!;
+        private NyaSettingsMainViewController _nyaSettingsMainViewController = null!;
+        private NyaSettingsRightViewController _nyaSettingsRightViewController = null!;
 
         [Inject]
-        public void Constructor(SettingsViewMainPanelController settingsViewMainPanelController, SettingsViewRightPanelController settingsViewRightPanelController)
+        public void Constructor(NyaSettingsMainViewController nyaSettingsMainViewController, NyaSettingsRightViewController nyaSettingsRightViewController)
         {
-            _settingsViewMainPanelController = settingsViewMainPanelController;
-            _settingsViewRightPanelController = settingsViewRightPanelController;
+            _nyaSettingsMainViewController = nyaSettingsMainViewController;
+            _nyaSettingsRightViewController = nyaSettingsRightViewController;
         }
 
         protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
         {
-            ProvideInitialViewControllers(_settingsViewMainPanelController, rightScreenViewController: _settingsViewRightPanelController);
+            ProvideInitialViewControllers(_nyaSettingsMainViewController, rightScreenViewController: _nyaSettingsRightViewController);
         }
     }
 }

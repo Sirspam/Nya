@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
@@ -16,28 +17,29 @@ using Zenject;
 
 namespace Nya.UI.ViewControllers
 {
-    [HotReload(RelativePathToLayout = @"..\Views\SettingsViewMainPanel.bsml")]
-    [ViewDefinition("Nya.UI.Views.SettingsViewMainPanel.bsml")]
-    internal class SettingsViewMainPanelController : BSMLAutomaticViewController, IInitializable, IDisposable
+    [HotReload(RelativePathToLayout = @"..\Views\NyaSettingsMainView.bsml")]
+    [ViewDefinition("Nya.UI.Views.NyaSettingsMainView.bsml")]
+    internal class NyaSettingsMainViewController : BSMLAutomaticViewController, IInitializable, IDisposable
     {
         public FlowCoordinator parentFlowCoordinator = null!;
 
         private bool _inMenu;
         private bool _inPause;
-        private Color _bgColor;
+        private Color _backgroundColor;
         private bool _rememberNsfw;
         private bool _skipNsfw;
         private int _autoNyaWait;
-        private bool _easterEggs;
+        private int _scaleRatio;
         private bool _separatePositions;
-        private Vector3 _menuPosition;
-        private Vector3 _menuRotation;
-        private Vector3 _pausePosition;
-        private Vector3 _pauseRotation;
+        private bool _easterEggs;
         private bool _catCoreEnabled;
         private bool _nyaCommandEnabled;
         private int _nyaCommandCooldown;
         private bool _currentNyaCommandEnabled;
+        private Vector3 _menuPosition;
+        private Vector3 _menuRotation;
+        private Vector3 _pausePosition;
+        private Vector3 _pauseRotation;
 
         private SiraLog _siraLog = null!;
         private UIUtils _uiUtils = null!;
@@ -45,10 +47,10 @@ namespace Nya.UI.ViewControllers
         private CatCoreManager? _catCoreManager = null;
         private MainFlowCoordinator _mainFlowCoordinator = null!;
         private MenuTransitionsHelper _menuTransitionsHelper = null!;
-        private SettingsViewRightPanelController _settingsViewRightPanelController = null!;
+        private NyaSettingsRightViewController _nyaSettingsRightViewController = null!;
 
         [Inject]
-        public void Constructor(SiraLog siraLog, UIUtils uiUtils, PluginConfig pluginConfig, [InjectOptional] CatCoreManager catCoreManager, MainFlowCoordinator mainFlowCoordinator, MenuTransitionsHelper menuTransitionsHelper, SettingsViewRightPanelController settingsViewRightPanelController)
+        public void Constructor(SiraLog siraLog, UIUtils uiUtils, PluginConfig pluginConfig, [InjectOptional] CatCoreManager catCoreManager, MainFlowCoordinator mainFlowCoordinator, MenuTransitionsHelper menuTransitionsHelper, NyaSettingsRightViewController nyaSettingsRightViewController)
         {
             _siraLog = siraLog;
             _uiUtils = uiUtils;
@@ -56,34 +58,34 @@ namespace Nya.UI.ViewControllers
             _catCoreManager = catCoreManager;
             _mainFlowCoordinator = mainFlowCoordinator;
             _menuTransitionsHelper = menuTransitionsHelper;
-            _settingsViewRightPanelController = settingsViewRightPanelController;
+            _nyaSettingsRightViewController = nyaSettingsRightViewController;
         }
 
         protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
         {
             base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
+            
             if (PluginManager.GetPluginFromId("CatCore") == null)
             {
                 _catCoreTab.IsVisible = false;
             }
-
-
+            
             InMenu = _pluginConfig.InMenu;
             InPause = _pluginConfig.InPause;
-            BgColour = _pluginConfig.BackgroundColor;
+            BackgroundColor = _pluginConfig.BackgroundColor;
             RememberNsfw = _pluginConfig.RememberNsfw;
             SkipNsfw = _pluginConfig.SkipNsfw;
-            AutoNyaWait = _pluginConfig.AutoNyaWait;
-            EasterEggs = _pluginConfig.EasterEggs;
+            ScalingValue = _pluginConfig.ScaleRatio;
             SeparatePositions = _pluginConfig.SeparatePositions;
-            _menuPosition = _pluginConfig.MenuPosition;
-            _menuRotation = _pluginConfig.MenuRotation;
-            _pausePosition = _pluginConfig.PausePosition;
-            _pauseRotation = _pluginConfig.PauseRotation;
+            EasterEggs = _pluginConfig.EasterEggs;
             CatCoreEnabled = _pluginConfig.CatCoreEnabled;
             NyaCommandEnabled = _pluginConfig.NyaCommandEnabled;
             NyaCommandCooldown = _pluginConfig.NyaCommandCooldown;
             CurrentNyaCommandEnabled = _pluginConfig.CurrentNyaCommandEnabled;
+            _menuPosition = _pluginConfig.MenuPosition;
+            _menuRotation = _pluginConfig.MenuRotation;
+            _pausePosition = _pluginConfig.PausePosition;
+            _pauseRotation = _pluginConfig.PauseRotation;
         }
 
         [UIValue("view-controller-active")]
@@ -116,12 +118,12 @@ namespace Nya.UI.ViewControllers
         }
 
         [UIValue("bg-colour")]
-        private Color BgColour
+        private Color BackgroundColor
         {
-            get => _bgColor;
+            get => _backgroundColor;
             set
             {
-                _bgColor = value;
+                _backgroundColor = value;
                 _uiUtils.NyaBgMaterial.color = value;
                 NotifyPropertyChanged();
             }
@@ -159,59 +161,31 @@ namespace Nya.UI.ViewControllers
                 NotifyPropertyChanged();
             }
         }
-        
-        [UIValue("easter-eggs")]
-        private bool EasterEggs
+
+        [UIValue("scaling-choices")] 
+        private List<object> ScalingChoices = new List<object> { "Disabled", 128, 256, 512, 1024 };
+
+        [UIValue("scaling-value")]
+        private object ScalingValue
         {
-            get => _easterEggs;
-            set
+            get
             {
-                _easterEggs = value;
-                NotifyPropertyChanged();
+                if (_scaleRatio == 0)
+                    return "Disabled";
+                return _scaleRatio;
             }
-        }
-        
-        [UIValue("cat-core-enabled")]
-        private bool CatCoreEnabled
-        {
-            get => _catCoreEnabled;
             set
             {
-                _catCoreEnabled = value;
+                if (value.ToString() == "Disabled")
+                {
+                    _scaleRatio = 0;
+                    NotifyPropertyChanged();
+                    return;
+                }
+                
+                _scaleRatio = (int) value;
                 NotifyPropertyChanged();
-            }
-        }
-        
-        [UIValue("nya-command-enabled")]
-        private bool NyaCommandEnabled
-        {
-            get => _nyaCommandEnabled;
-            set
-            {
-                _nyaCommandEnabled = value;
-                NotifyPropertyChanged();
-            }
-        }
-        
-        [UIValue("nya-command-cooldown")]
-        private int NyaCommandCooldown
-        {
-            get => _nyaCommandCooldown;
-            set
-            {
-                _nyaCommandCooldown = value;
-                NotifyPropertyChanged();
-            }
-        }
-        
-        [UIValue("current-nya-command-enabled")]
-        private bool CurrentNyaCommandEnabled
-        {
-            get => _currentNyaCommandEnabled;
-            set
-            {
-                _currentNyaCommandEnabled = value;
-                NotifyPropertyChanged();
+
             }
         }
 
@@ -232,6 +206,61 @@ namespace Nya.UI.ViewControllers
         {
             get => !SeparatePositions;
             set => NotifyPropertyChanged();
+        }
+
+        [UIValue("easter-eggs")]
+        private bool EasterEggs
+        {
+            get => _easterEggs;
+            set
+            {
+                _easterEggs = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        [UIValue("cat-core-enabled")]
+        private bool CatCoreEnabled
+        {
+            get => _catCoreEnabled;
+            set
+            {
+                _catCoreEnabled = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        [UIValue("nya-command-enabled")]
+        private bool NyaCommandEnabled
+        {
+            get => _nyaCommandEnabled;
+            set
+            {
+                _nyaCommandEnabled = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        [UIValue("nya-command-cooldown")]
+        private int NyaCommandCooldown
+        {
+            get => _nyaCommandCooldown;
+            set
+            {
+                _nyaCommandCooldown = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        [UIValue("current-nya-command-enabled")]
+        private bool CurrentNyaCommandEnabled
+        {
+            get => _currentNyaCommandEnabled;
+            set
+            {
+                _currentNyaCommandEnabled = value;
+                NotifyPropertyChanged();
+            }
         }
 
         [UIComponent("cat-core-tab")]
@@ -281,32 +310,35 @@ namespace Nya.UI.ViewControllers
             _pauseRotation = new Vector3(0f, 270f, 0f);
         }
 
-        [UIAction("ok-clicked")]
-        private void OkClicked()
+        private void SaveValuesToConfig()
         {
-            var restartRequired = RestartRequired;
-            var catCoreActionNeeded = _pluginConfig.CatCoreEnabled != _catCoreEnabled;
             _pluginConfig.InMenu = InMenu;
             _pluginConfig.InPause = InPause;
-            _pluginConfig.BackgroundColor = BgColour;
+            _pluginConfig.BackgroundColor = BackgroundColor;
             _pluginConfig.RememberNsfw = RememberNsfw;
             _pluginConfig.SkipNsfw = SkipNsfw;
             _pluginConfig.AutoNyaWait = AutoNyaWait;
-            _pluginConfig.EasterEggs = EasterEggs;
+            _pluginConfig.ScaleRatio = _scaleRatio;
             _pluginConfig.SeparatePositions = SeparatePositions;
             _pluginConfig.MenuPosition = _menuPosition;
             _pluginConfig.MenuRotation = _menuRotation;
             _pluginConfig.PausePosition = _pausePosition;
             _pluginConfig.PauseRotation = _pauseRotation;
-            _pluginConfig.CatCoreEnabled = _catCoreEnabled;
-            _pluginConfig.NyaCommandEnabled = _nyaCommandEnabled;
-            _pluginConfig.NyaCommandCooldown = _nyaCommandCooldown;
-            _pluginConfig.CurrentNyaCommandEnabled = _currentNyaCommandEnabled;
+            _pluginConfig.CatCoreEnabled = CatCoreEnabled;
+            _pluginConfig.NyaCommandEnabled = NyaCommandEnabled;
+            _pluginConfig.NyaCommandCooldown = NyaCommandCooldown;
+            _pluginConfig.CurrentNyaCommandEnabled = CurrentNyaCommandEnabled;
+        }
 
-            _siraLog.Info(catCoreActionNeeded);
+        [UIAction("ok-clicked")]
+        private void OkClicked()
+        {
+            var restartRequired = RestartRequired;
+            var catCoreActionNeeded = _pluginConfig.CatCoreEnabled != CatCoreEnabled;
+            SaveValuesToConfig();
+            
             if (catCoreActionNeeded)
             {
-                _siraLog.Info(_pluginConfig.CatCoreEnabled);
                 if (_pluginConfig.CatCoreEnabled)
                 {
                     // User shouldn't even be able to access CatCore settings if it's not installed, so not going to bother making sure catCoreManager isn't null
@@ -334,51 +366,13 @@ namespace Nya.UI.ViewControllers
                 floatingScreen.transform.position = _menuPosition;
                 floatingScreen.transform.rotation = Quaternion.Euler(_menuRotation);
             }
-            _settingsViewRightPanelController.gameObject.SetActive(false); // Thank you leaderboard panel for kidnapping my right panel
+            _nyaSettingsRightViewController.gameObject.SetActive(false); // Thank you leaderboard panel for kidnapping my right panel
             parentFlowCoordinator.DismissFlowCoordinator(_mainFlowCoordinator.YoungestChildFlowCoordinatorOrSelf(), animationDirection: AnimationDirection.Vertical);
         }
 
-        [UIAction("#post-parse")]
-        private void ModSettingsParse()
-        {
-            if (isActiveAndEnabled) return;
-            InMenu = _pluginConfig.InMenu;
-            InPause = _pluginConfig.InPause;
-            BgColour = _pluginConfig.BackgroundColor;
-            RememberNsfw = _pluginConfig.RememberNsfw;
-            SkipNsfw = _pluginConfig.SkipNsfw;
-            AutoNyaWait = _pluginConfig.AutoNyaWait;
-            SeparatePositions = _pluginConfig.SeparatePositions;
-            _menuPosition = _pluginConfig.MenuPosition;
-            _menuRotation = _pluginConfig.MenuRotation;
-            _pausePosition = _pluginConfig.PausePosition;
-            _pauseRotation = _pluginConfig.PauseRotation;
-            CatCoreEnabled = _pluginConfig.CatCoreEnabled;
-            NyaCommandEnabled = _pluginConfig.NyaCommandEnabled;
-            NyaCommandCooldown = _pluginConfig.NyaCommandCooldown;
-            CurrentNyaCommandEnabled = _pluginConfig.CurrentNyaCommandEnabled;
-        }
-
         [UIAction("#apply")]
-        private void ModSettingsApply()
-        {
-            _pluginConfig.InMenu = InMenu;
-            _pluginConfig.InPause = InPause;
-            _pluginConfig.BackgroundColor = BgColour;
-            _pluginConfig.RememberNsfw = RememberNsfw;
-            _pluginConfig.SkipNsfw = SkipNsfw;
-            _pluginConfig.AutoNyaWait = AutoNyaWait;
-            _pluginConfig.SeparatePositions = SeparatePositions;
-            _pluginConfig.MenuPosition = _menuPosition;
-            _pluginConfig.MenuRotation = _menuRotation;
-            _pluginConfig.PausePosition = _pausePosition;
-            _pluginConfig.PauseRotation = _pauseRotation;
-            _pluginConfig.CatCoreEnabled = _catCoreEnabled;
-            _pluginConfig.NyaCommandEnabled = _nyaCommandEnabled;
-            _pluginConfig.NyaCommandCooldown = _nyaCommandCooldown;
-            _pluginConfig.CurrentNyaCommandEnabled = _currentNyaCommandEnabled;
-        }
-
+        private void ModSettingsApply() => SaveValuesToConfig();
+        
         [UIAction("#cancel")]
         private void ModSettingsCancel()
         {
@@ -391,7 +385,7 @@ namespace Nya.UI.ViewControllers
             }
         }
 
-        public void Initialize() => BSMLSettings.instance.AddSettingsMenu("Nya", "Nya.UI.Views.SettingsViewMainPanel.bsml", this);
+        public void Initialize() => BSMLSettings.instance.AddSettingsMenu("Nya", "Nya.UI.Views.NyaSettingsMainView.bsml", this);
 
             public void Dispose()
         {

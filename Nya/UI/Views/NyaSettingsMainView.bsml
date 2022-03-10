@@ -13,22 +13,23 @@
 
 		<tab tab-name="Behaviour" tags="settings-tab" horizontal-fit='PreferredSize' vertical-fit='PreferredSize'>
 			<modifier-container child-expand-width='true' horizontal-fit='PreferredSize' anchor-pos-y="10">
-				<slider-setting id='auto-wait-slider' text='Auto Nya wait time' hover-hint='How many seconds Auto Nya will wait for before getting a new image' value='auto-wait-value' increment='1' min='4' max='60' integer-only='true'/>
-				<checkbox-setting id='remember-NSFW-checkbox' text='Remember NSFW setting' hover-hint='If disabled Nya will always be set to SFW on start-up' value='remember-NSFW' apply-on-change='true' bind-value='true'/>
-				<checkbox-setting id='skip-NSFW-checkbox' text='Skip NSFW confirmation' hover-hint='You horny pastry puffer' value='skip-NSFW' apply-on-change='true' bind-value='true'/>
-				<checkbox-setting id='easter-eggs-checkbox' text='Easter Eggs' hover-hint="They're funny please I swear" value='easter-eggs' apply-on-change='true'/>
+				<slider-setting id='auto-wait-slider' text='Auto Nya wait time' hover-hint='How many seconds Auto Nya will wait for before getting a new image' increment='1' min='4' max='60' integer-only='true' value='auto-wait-value' bind-value="true" apply-on-change="true"/>
+				<checkbox-setting id='remember-NSFW-checkbox' text='Remember NSFW setting' hover-hint='If disabled Nya will always be set to SFW on start-up' value='remember-NSFW' bind-value="true" apply-on-change="true"/>
+				<checkbox-setting id='skip-NSFW-checkbox' text='Skip NSFW confirmation' hover-hint='You horny pastry puffer' value='skip-NSFW' bind-value="true" apply-on-change="true"/>
+				<dropdown-list-setting id="scale-dropdown" text="Downscale images" hover-hint="Image downscaling helps reduce the stutter whenever loading a new image. It's recommended to keep this enabled" value="scaling-value" choices="scaling-choices" bind-value="true" apply-on-change="true"/>
+				<checkbox-setting id='easter-eggs-checkbox' text='Easter Eggs' hover-hint="They're funny please I swear" value='easter-eggs' bind-value="true" apply-on-change="true"/>
 			</modifier-container>
 		</tab>
 		
 		<tab tab-name="Floating Screen" tags="settings-tab" horizontal-fit='PreferredSize' vertical-fit='PreferredSize'>
 			<modifier-container child-expand-width='true' horizontal-fit='PreferredSize' anchor-pos-y="10">
 				<horizontal>
-					<color-setting id='bg-colour-setting' text='Nya background colour' hover-hint='Only effects the floating screens' value='bg-colour' apply-on-change='true' bind-value='true' pref-width='70'/>
-					<button id='bg-colour-default' text='Default' on-click='bg-colour-default-clicked' font-size='3'/>
+					<color-setting id='bg-colour-setting' text='Nya background colour' hover-hint='Only effects the floating screens' value='bg-colour' pref-width='70' bind-value="true" apply-on-change="true"/>
+					<button id='bg-colour-default' text='Default' on-click='bg-colour-default-clicked' font-size='4'/>
 				</horizontal>
-				<checkbox-setting id='in-menu-checkbox' text='Detach Nya in the menu' value='in-menu' apply-on-change='true' bind-value='true'/>
-				<checkbox-setting id='in-pause-checkbox' text='Show Nya in the pause menu' value='in-pause' apply-on-change='true' bind-value='true'/>
-				<checkbox-setting id='separate-positions-checkbox' text="Separate menu Nya's and pause Nya's positions" value="separate-positions" apply-on-change='true' bind-value='true'/>
+				<checkbox-setting id='in-menu-checkbox' text='Detach Nya in the menu' value='in-menu' bind-value="true" apply-on-change="true"/>
+				<checkbox-setting id='in-pause-checkbox' text='Show Nya in the pause menu' value='in-pause' bind-value="true" apply-on-change="true"/>
+				<checkbox-setting id='separate-positions-checkbox' text="Separate menu Nya's and pause Nya's positions" value="separate-positions" bind-value="true" apply-on-change="true"/>
 				<horizontal>
 					<button active='~separate-positions-but-opposite' text="Reset Nya's position" hover-hint="Resets Nya's screen to it's default position" on-click='reset-menu-clicked'/>
 					<button id='reset-menu-position' active='~separate-positions' text="Reset menu Nya's position" hover-hint="Resets the menu Nya screen to it's default position" on-click='reset-menu-clicked'/>
@@ -39,10 +40,10 @@
 		
 		<tab id="cat-core-tab" tab-name="Cat Core" tags="settings-tab" horizontal-fit='PreferredSize' vertical-fit='PreferredSize'>
 		 <modifier-container child-expand-width='true' horizontal-fit='PreferredSize' anchor-pos-y="10">
-			 <checkbox-setting id='cat-core-checkbox' text='Enable CatCore commands' value='cat-core-enabled' apply-on-change='true' bind-value='true'/>
-			 <checkbox-setting id='nya-command-checkbox' text='Enable Nya command' value='nya-command-enabled' interactable="~cat-core-enabled" apply-on-change='true' bind-value='true'/>
-			 <slider-setting show-buttons="true" id ="nya-command-cooldown-slider" text="Global Nya command cooldown" value="nya-command-cooldown" integer-only="true" min="2" max="60" interactable="~cat-core-enabled" apply-on-change="true" bind-value="true"/>
-			 <checkbox-setting id='current-nya-command-checkbox' text='Enable CurrentNya command' value='current-nya-command-enabled' interactable="~cat-core-enabled" apply-on-change='true' bind-value='true'/>
+			 <checkbox-setting id='cat-core-checkbox' text='Enable CatCore commands' value='cat-core-enabled' bind-value="true" apply-on-change="true"/>
+			 <checkbox-setting id='nya-command-checkbox' text='Enable Nya command' value='nya-command-enabled' interactable="~cat-core-enabled" bind-value="true" apply-on-change="true"/>
+			 <slider-setting id ="nya-command-cooldown-slider" text="Global Nya command cooldown" value="nya-command-cooldown" integer-only="true" min="2" max="60" interactable="~cat-core-enabled" bind-value="true" apply-on-change="true"/>
+			 <checkbox-setting id='current-nya-command-checkbox' text='Enable CurrentNya command' value='current-nya-command-enabled' interactable="~cat-core-enabled" bind-value="true" apply-on-change="true"/>
 		 </modifier-container>
 		</tab>
 	</vertical>

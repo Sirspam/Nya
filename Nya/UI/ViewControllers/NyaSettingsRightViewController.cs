@@ -10,9 +10,9 @@ using Zenject;
 
 namespace Nya.UI.ViewControllers
 {
-    [HotReload(RelativePathToLayout = @"..\Views\SettingsViewRightPanel.bsml")]
-    [ViewDefinition("Nya.UI.Views.SettingsViewRightPanel.bsml")]
-    internal class SettingsViewRightPanelController : BSMLAutomaticViewController, IPointerClickHandler
+    [HotReload(RelativePathToLayout = @"..\Views\NyaSettingsRightView.bsml")]
+    [ViewDefinition("Nya.UI.Views.NyaSettingsRightView.bsml")]
+    internal class NyaSettingsRightViewController : BSMLAutomaticViewController, IPointerClickHandler
     {
         private PluginConfig _config = null!;
         private TimeTweeningManager _uwuTweenyManager = null!;

@@ -12,7 +12,7 @@ Nya's settings can be accessed from either the Mod Settings panel or from within
 * [Nekos.Life](https://nekos.life/)
 * [xSky API](https://api.xsky.dev/)
 * [Anime-Images API](https://anime-api.hisoka17.repl.co/)
-* Local Files
+* [Local Files](#local-files)
 ### Local Files
 In order for local files to work there must be compatible images in the sfw / nsfw files found in Nya's UserData folder.
 The compatible file types are PNG, JPEG, GIF and APNG.

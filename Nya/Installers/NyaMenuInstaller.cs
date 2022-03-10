@@ -10,8 +10,8 @@ namespace Nya.Installers
             Container.BindInterfacesTo<NyaViewMenuController>().AsSingle();
             Container.BindInterfacesAndSelfTo<SettingsModalMenuController>().AsSingle();
             Container.Bind<NsfwConfirmModalController>().AsSingle();
-            Container.BindInterfacesAndSelfTo<SettingsViewMainPanelController>().FromNewComponentAsViewController().AsSingle();
-            Container.BindInterfacesAndSelfTo<SettingsViewRightPanelController>().FromNewComponentAsViewController().AsSingle();
+            Container.BindInterfacesAndSelfTo<NyaSettingsMainViewController>().FromNewComponentAsViewController().AsSingle();
+            Container.BindInterfacesAndSelfTo<NyaSettingsRightViewController>().FromNewComponentAsViewController().AsSingle();
             Container.Bind<NyaSettingsFlowCoordinator>().FromNewComponentOnNewGameObject().AsSingle();
         }
     }
