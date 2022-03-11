@@ -8,64 +8,60 @@ using UnityEngine;
 
 namespace Nya.UI.ViewControllers
 {
-    public class NsfwConfirmModalController
+    internal class NsfwConfirmModalController
     {
         public delegate void ButtonPressed();
 
         private ButtonPressed _yesButtonPressed = null!;
         private ButtonPressed _noButtonPressed = null!;
 
-        #region components
-        
         [UIComponent("modal")]
-        private ModalView modalView = null!;
+        private readonly ModalView _modalView = null!;
 
         [UIComponent("modal")]
-        private readonly RectTransform modalTransform = null!;
-
-        #endregion components
+        private readonly RectTransform _modalTransform = null!;
 
         [UIAction("yes-click")]
         private void YesNsfw()
         {
             _yesButtonPressed.Invoke();
-            parserParams.EmitEvent("close-modal");
+            _parserParams.EmitEvent("close-modal");
         }
 
         [UIAction("no-click")]
         private void NoNsfw()
         {
             _noButtonPressed.Invoke();
-            parserParams.EmitEvent("close-modal");
+            _parserParams.EmitEvent("close-modal");
         }
 
         [UIParams]
-        private readonly BSMLParserParams parserParams = null!;
+        private readonly BSMLParserParams _parserParams = null!;
 
         private void Parse(Component parentTransform)
         {
-            if (!modalView)
+            if (!_modalView)
             {
                 BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.NSFWConfirmModal.bsml"), parentTransform.gameObject, this);
-                modalView.SetField("_animateParentCanvas", false);
-                modalView.name = "NyaNSFWConfirmaModal";
+                _modalView.SetField("_animateParentCanvas", false);
+                _modalView.name = "NyaNsfwConfirmModal";
             }
         }
 
         internal void ShowModal(Transform parentTransform, ButtonPressed yesButtonPressedCallback, ButtonPressed noButtonPressedCallback)
         {
             Parse(parentTransform);
-            parserParams.EmitEvent("close-modal");
-            parserParams.EmitEvent("open-modal");
+            _parserParams.EmitEvent("close-modal");
+            _parserParams.EmitEvent("open-modal");
             _yesButtonPressed = yesButtonPressedCallback;
             _noButtonPressed = noButtonPressedCallback;
         }
 
         internal void HideModal()
         {
-            if (modalTransform != null)
+            if (_modalTransform != null)
             {
-                modalTransform.GetComponent<ModalView>().Hide(false);
+                _modalTransform.GetComponent<ModalView>().Hide(false);
             }
         }
     }
