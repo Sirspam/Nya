@@ -8,6 +8,7 @@ using BeatSaberMarkupLanguage.ViewControllers;
 using HMUI;
 using IPA.Loader;
 using Nya.CatCore;
+using Nya.Components;
 using Nya.Configuration;
 using Nya.Utils;
 using SiraUtil.Logging;
@@ -64,12 +65,20 @@ namespace Nya.UI.ViewControllers
         protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
         {
             base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
-            
-            if (PluginManager.GetPluginFromId("CatCore") == null)
+
+            if (firstActivation)
             {
-                _catCoreTab.IsVisible = false;
+                if (PluginManager.GetPluginFromId("CatCore") == null)
+                {
+                    _catCoreTab.IsVisible = false;
+                }
+                
+                _chocolaImage.name = "ChocolaImage";
+                _vanillaImage.name = "VanillaImage";
+                _chocolaImage.gameObject.AddComponent<NyaSettingsClickableImage>();
+                _vanillaImage.gameObject.AddComponent<NyaSettingsClickableImage>();   
             }
-            
+
             InMenu = _pluginConfig.InMenu;
             InPause = _pluginConfig.InPause;
             BackgroundColor = _pluginConfig.BackgroundColor;
@@ -263,6 +272,12 @@ namespace Nya.UI.ViewControllers
             }
         }
 
+        [UIComponent("chocola-image")]
+        private readonly ImageView _chocolaImage = null!;
+        
+        [UIComponent("vanilla-image")]
+        private readonly ImageView _vanillaImage = null!;
+        
         [UIComponent("cat-core-tab")]
         private readonly Tab _catCoreTab = null!;
         
