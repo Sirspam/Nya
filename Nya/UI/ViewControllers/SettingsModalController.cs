@@ -209,6 +209,7 @@ namespace Nya.UI.ViewControllers
             else
             {
                 NsfwCheck = value;
+                PluginConfig.Changed();
             }
         }
 
