@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using BeatSaberMarkupLanguage;
@@ -13,6 +14,7 @@ using HMUI;
 using IPA.Utilities;
 using Nya.Configuration;
 using Nya.Utils;
+using SiraUtil.Logging;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -21,23 +23,25 @@ namespace Nya.UI.ViewControllers
 {
     internal abstract class SettingsModalController : IInitializable, INotifyPropertyChanged
     {
-        private readonly ImageUtils _imageUtils;
-        private readonly UIUtils _uiUtils;
-        private readonly MainCamera _mainCamera;
-        private readonly NsfwConfirmModalController _nsfwConfirmModalController;
+        private bool _unskewed = false;
 
-        protected readonly PluginConfig Config;
+        private readonly SiraLog _siraLog;
+        private readonly UIUtils _uiUtils;
+        private readonly ImageUtils _imageUtils;
+        private readonly MainCamera _mainCamera;
+        protected readonly PluginConfig PluginConfig;
+        private readonly NsfwConfirmModalController _nsfwConfirmModalController;
 
         public event PropertyChangedEventHandler PropertyChanged = null!;
 
-        protected SettingsModalController(PluginConfig config, ImageUtils imageUtils, UIUtils uiUtils, NsfwConfirmModalController nsfwConfirmModalController, MainCamera mainCamera)
+        protected SettingsModalController(UIUtils uiUtils, ImageUtils imageUtils, MainCamera mainCamera, PluginConfig pluginConfig, NsfwConfirmModalController nsfwConfirmModalController, SiraLog siraLog)
         {
+            _uiUtils = uiUtils;
             _imageUtils = imageUtils;
             _mainCamera = mainCamera;
+            PluginConfig = pluginConfig;
             _nsfwConfirmModalController = nsfwConfirmModalController;
-            _uiUtils = uiUtils;
-
-            Config = config;
+            _siraLog = siraLog;
         }
 
         #region components
@@ -51,6 +55,9 @@ namespace Nya.UI.ViewControllers
         [UIComponent("modal")]
         protected readonly RectTransform ModalTransform = null!;
 
+        [UIComponent("settings-modal-tab-selector")]
+        protected readonly Transform TabSelector = null!;
+        
         [UIComponent("screen-tab")]
         protected readonly Tab ScreenTab = null!;
 
@@ -97,52 +104,11 @@ namespace Nya.UI.ViewControllers
 
         #region values
 
-        [UIValue("nya-nsfw-check")]
-        protected bool NsfwCheck
-        {
-            get => Config.Nsfw;
-            set
-            {
-                Config.Nsfw = value;
-                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(NsfwCheck)));
-            }
-        }
-
-        [UIValue("api-list")]
-        protected List<object> APIList = new List<object>();
-
-        [UIValue("api-value")]
-        protected string APIValue
-        {
-            get => Config.SelectedAPI;
-            set => Config.SelectedAPI = value;
-        }
-
-        [UIValue("sfw-list")]
-        protected List<object> SfwList = new List<object>();
-
-        [UIValue("sfw-value")]
-        protected string SfwValue
-        {
-            get => Config.SelectedEndpoints[APIValue].SelectedSfwEndpoint;
-            set => Config.SelectedEndpoints[APIValue].SelectedSfwEndpoint = value;
-        }
-
-        [UIValue("nsfw-list")]
-        protected List<object> NsfwList = new List<object>();
-
-        [UIValue("nsfw-value")]
-        protected string NsfwValue
-        {
-            get => Config.SelectedEndpoints[APIValue].SelectedNsfwEndpoint;
-            set => Config.SelectedEndpoints[APIValue].SelectedNsfwEndpoint = value;
-        }
-
         [UIValue("show-handle")]
         protected bool PauseHandle
         {
-            get => Config.ShowHandle;
-            set => Config.ShowHandle = value;
+            get => PluginConfig.ShowHandle;
+            set => PluginConfig.ShowHandle = value;
         }
 
         #endregion values
@@ -155,9 +121,9 @@ namespace Nya.UI.ViewControllers
             SetupLists();
         }
 
-        protected void BaseParse(Transform parentTransform, object host)
+        private void BaseParse(Transform parentTransform, object host)
         {
-            if (!ModalView)
+            if (!ModalView && !_unskewed)
             {
                 BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.SettingsModal.bsml"), parentTransform.gameObject, host);
                 ModalView.SetField("_animateParentCanvas", true);
@@ -167,11 +133,22 @@ namespace Nya.UI.ViewControllers
             }
         }
 
-        public void ShowModal(Transform parentTransform, object host)
+        protected void ShowModal(Transform parentTransform, object host)
         {
             BaseParse(parentTransform, host);
             ParserParams.EmitEvent("close-modal");
             ParserParams.EmitEvent("open-modal");
+            
+            if (_unskewed)
+                return;
+            
+            // I have had it with this motherfucking skew on this motherfucking modal
+            foreach (var child in TabSelector.gameObject.GetComponentsInChildren<ImageView>())
+            {
+                child.SetField("_skew", 0f);
+            }
+
+            _unskewed = true;
         }
 
         public void HideModal()
@@ -182,8 +159,26 @@ namespace Nya.UI.ViewControllers
                 _nsfwConfirmModalController.HideModal();
             }
         }
+        
 
-        #region actions
+        #region NyaTab
+
+        #region Values
+        
+        [UIValue("nya-nsfw-check")]
+        protected bool NsfwCheck
+        {
+            get => PluginConfig.Nsfw;
+            set
+            {
+                PluginConfig.Nsfw = value;
+                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(NsfwCheck)));
+            }
+        }
+        
+        #endregion
+
+        #region Actions
 
         [UIAction("nya-download-clicked")]
         protected void DownloadNya()
@@ -202,7 +197,7 @@ namespace Nya.UI.ViewControllers
         [UIAction("nya-nsfw-changed")]
         protected void NsfwToggle(bool value)
         {
-            if (value && !Config.SkipNsfw)
+            if (value && !PluginConfig.SkipNsfw)
             {
                 _nsfwConfirmModalController.ShowModal(NsfwCheckbox, NsfwConfirmYes, NsfwConfirmNo);
             }
@@ -212,6 +207,48 @@ namespace Nya.UI.ViewControllers
                 PluginConfig.Changed();
             }
         }
+
+        #endregion
+        
+        #endregion
+
+        #region SourcesTab
+
+        #region Values
+
+        [UIValue("api-list")]
+        protected List<object> APIList = new List<object>();
+
+        [UIValue("api-value")]
+        protected string APIValue
+        {
+            get => PluginConfig.SelectedAPI;
+            set => PluginConfig.SelectedAPI = value;
+        }
+
+        [UIValue("sfw-list")]
+        protected List<object> SfwList = new List<object>();
+
+        [UIValue("sfw-value")]
+        protected string SfwValue
+        {
+            get => PluginConfig.SelectedEndpoints[APIValue].SelectedSfwEndpoint;
+            set => PluginConfig.SelectedEndpoints[APIValue].SelectedSfwEndpoint = value;
+        }
+
+        [UIValue("nsfw-list")]
+        protected List<object> NsfwList = new List<object>();
+
+        [UIValue("nsfw-value")]
+        protected string NsfwValue
+        {
+            get => PluginConfig.SelectedEndpoints[APIValue].SelectedNsfwEndpoint;
+            set => PluginConfig.SelectedEndpoints[APIValue].SelectedNsfwEndpoint = value;
+        }
+
+        #endregion
+
+        #region Actions
 
         [UIAction("api-change")]
         protected void ApiChange(string value)
@@ -223,17 +260,36 @@ namespace Nya.UI.ViewControllers
         [UIAction("sfw-change")]
         protected void SfwChange(string value)
         {
-            SfwValue = value;
-            Config.SelectedEndpoints[APIValue].SelectedSfwEndpoint = value;
-            Config.Changed();
+            PluginConfig.SelectedEndpoints[APIValue].SelectedSfwEndpoint = value;
+            PluginConfig.Changed();
         }
 
         [UIAction("nsfw-change")]
         protected void NsfwChange(string value)
         {
-            NsfwValue = value;
-            Config.Changed();
+            PluginConfig.SelectedEndpoints[APIValue].SelectedNsfwEndpoint = value;
+            PluginConfig.Changed();
         }
+
+        [UIAction("format-source")]
+        protected string FormatSource(string value)
+        {
+            return value.Split('/').Last();
+        }
+
+        #endregion
+        
+        #endregion
+
+        #region ScreenTab
+
+        #region Values
+
+        
+
+        #endregion
+
+        #region Actions
 
         [UIAction("face-headset-clicked")]
         protected void FaceHeadsetClicked()
@@ -260,15 +316,15 @@ namespace Nya.UI.ViewControllers
             var gameObjectTransform = RootTransform.root.gameObject.transform;
             gameObjectTransform.position = new Vector3(0f, 3.65f, 4f);
             gameObjectTransform.rotation = Quaternion.Euler(new Vector3(335f, 0f, 0f));
-            if (RootTransform.root.name == "NyaGameFloatingScreen" && Config.SeparatePositions)
+            if (RootTransform.root.name == "NyaGameFloatingScreen" && PluginConfig.SeparatePositions)
             {
-                Config.PausePosition = gameObjectTransform.position;
-                Config.PauseRotation = gameObjectTransform.eulerAngles;
+                PluginConfig.PausePosition = gameObjectTransform.position;
+                PluginConfig.PauseRotation = gameObjectTransform.eulerAngles;
             }
             else
             {
-                Config.MenuPosition = gameObjectTransform.position;
-                Config.MenuRotation = gameObjectTransform.eulerAngles;
+                PluginConfig.MenuPosition = gameObjectTransform.position;
+                PluginConfig.MenuRotation = gameObjectTransform.eulerAngles;
             }
         }
 
@@ -278,52 +334,45 @@ namespace Nya.UI.ViewControllers
             RootTransform.root.GetChild(1).gameObject.SetActive(value); // Gets the handle child
         }
 
-        #endregion actions
+        #endregion
+        
+        #endregion
 
-        protected void NsfwConfirmYes()
+        #region MoreSettingsTab
+        
+        
+        
+        #endregion
+
+        private void NsfwConfirmYes()
         {
             NsfwCheck = true;
-            Config.Changed();
+            PluginConfig.Changed();
         }
 
-        protected void NsfwConfirmNo()
+        private void NsfwConfirmNo()
         {
             if (NsfwCheck) // Stops from editing the config if the nsfw value is already false
             {
                 NsfwCheck = false;
-                Config.Changed();
+                PluginConfig.Changed();
             }
             PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(NsfwCheck)));
         }
 
-        protected void SetupLists()
+        private void SetupLists()
         {
-            foreach (var api in WebAPIs.APIs.Keys)
-            {
-                APIList.Add(api);
-            }
-            foreach (var endpoint in WebAPIs.APIs[APIValue].SfwEndpoints)
-            {
-                SfwList.Add(endpoint);
-            }
-            foreach (var endpoint in WebAPIs.APIs[APIValue].NsfwEndpoints)
-            {
-                NsfwList.Add(endpoint);
-            }
+            APIList = ImageSources.Sources.Keys.Cast<object>().ToList();
+            SfwList = ImageSources.Sources[APIValue].SfwEndpoints.Cast<object>().ToList();
+            NsfwList = ImageSources.Sources[APIValue].NsfwEndpoints.Cast<object>().ToList();
         }
 
-        protected void UpdateLists()
+        private void UpdateLists()
         {
             SfwDropDownListSetting.values.Clear();
             NsfwDropDownListSetting.values.Clear();
-            foreach (var endpoint in WebAPIs.APIs[APIValue].SfwEndpoints)
-            {
-                SfwDropDownListSetting.values.Add(endpoint);
-            }
-            foreach (var endpoint in WebAPIs.APIs[APIValue].NsfwEndpoints)
-            {
-                NsfwDropDownListSetting.values.Add(endpoint);
-            }
+            SfwDropDownListSetting.values = ImageSources.Sources[APIValue].SfwEndpoints.Cast<object>().ToList();
+            NsfwDropDownListSetting.values = ImageSources.Sources[APIValue].NsfwEndpoints.Cast<object>().ToList();
             SfwDropDownListSetting.UpdateChoices();
             NsfwDropDownListSetting.UpdateChoices();
         }
