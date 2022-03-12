@@ -7,6 +7,7 @@ using BeatSaberMarkupLanguage.Settings;
 using BeatSaberMarkupLanguage.ViewControllers;
 using HMUI;
 using IPA.Loader;
+using IPA.Utilities;
 using Nya.CatCore;
 using Nya.Components;
 using Nya.Configuration;
@@ -14,6 +15,7 @@ using Nya.Utils;
 using SiraUtil.Logging;
 using UnityEngine;
 using UnityEngine.UI;
+using VRUIControls;
 using Zenject;
 
 namespace Nya.UI.ViewControllers
@@ -72,11 +74,13 @@ namespace Nya.UI.ViewControllers
                 {
                     _catCoreTab.IsVisible = false;
                 }
-                
+
+                _topPanel.gameObject.AddComponent<VRGraphicRaycaster>().SetField("_physicsRaycaster", BeatSaberUI.PhysicsRaycasterWithCache);
+                _topPanel.gameObject.GetComponent<Canvas>().additionalShaderChannels = AdditionalCanvasShaderChannels.TexCoord1 | AdditionalCanvasShaderChannels.TexCoord2;
                 _chocolaImage.name = "ChocolaImage";
                 _vanillaImage.name = "VanillaImage";
                 _chocolaImage.gameObject.AddComponent<NyaSettingsClickableImage>();
-                _vanillaImage.gameObject.AddComponent<NyaSettingsClickableImage>();   
+                _vanillaImage.gameObject.AddComponent<NyaSettingsClickableImage>();
             }
 
             InMenu = _pluginConfig.InMenu;
@@ -272,6 +276,9 @@ namespace Nya.UI.ViewControllers
             }
         }
 
+        [UIComponent("top-panel")] 
+        private readonly HorizontalOrVerticalLayoutGroup _topPanel = null!;
+        
         [UIComponent("chocola-image")]
         private readonly ImageView _chocolaImage = null!;
         
@@ -292,7 +299,6 @@ namespace Nya.UI.ViewControllers
 
         [UIComponent("reset-pause-position")]
         private readonly Button _resetPausePositionButton = null!;
-        
 
         [UIAction("bg-colour-default-clicked")]
         private void BgColourDefaultClicked()
@@ -400,7 +406,10 @@ namespace Nya.UI.ViewControllers
             }
         }
 
-        public void Initialize() => BSMLSettings.instance.AddSettingsMenu("Nya", "Nya.UI.Views.NyaSettingsMainView.bsml", this);
+        public void Initialize()
+        {
+            BSMLSettings.instance.AddSettingsMenu("Nya", "Nya.UI.Views.NyaSettingsMainView.bsml", this);   
+        }
 
             public void Dispose()
         {
