@@ -5,7 +5,6 @@ using HMUI;
 using Nya.Configuration;
 using Nya.CatCore;
 using Nya.Utils;
-using SiraUtil.Logging;
 using Tweening;
 using UnityEngine;
 using Zenject;
@@ -22,8 +21,8 @@ namespace Nya.UI.ViewControllers
 
         private FloatingScreen? _floatingScreen;
 
-        public NyaViewGameController(PluginConfig config, ImageUtils imageUtils, UIUtils uiUtils, IGamePause gamePause, CatCoreInfo catCoreInfo, TimeTweeningManager timeTweeningManager, SettingsModalGameController settingsModalGameController)
-            : base(config, imageUtils)
+        public NyaViewGameController(PluginConfig pluginConfig, ImageUtils imageUtils, UIUtils uiUtils, IGamePause gamePause, CatCoreInfo catCoreInfo, TimeTweeningManager timeTweeningManager, SettingsModalGameController settingsModalGameController)
+            : base(pluginConfig, imageUtils)
         {
             _uiUtils = uiUtils;
             _gamePause = gamePause;
@@ -34,7 +33,7 @@ namespace Nya.UI.ViewControllers
 
         public void Initialize()
         {
-            _floatingScreen = _uiUtils.CreateNyaFloatingScreen(this, Config.SeparatePositions ? Config.PausePosition : Config.MenuPosition, Quaternion.Euler(Config.PauseRotation));
+            _floatingScreen = PluginConfig.SeparatePositions ? _uiUtils.CreateNyaFloatingScreen(this, PluginConfig.PausePosition, Quaternion.Euler(PluginConfig.PauseRotation)) : _uiUtils.CreateNyaFloatingScreen(this, PluginConfig.MenuPosition, Quaternion.Euler(PluginConfig.MenuRotation));
             _floatingScreen.gameObject.name = "NyaGameFloatingScreen";
             
             _floatingScreen.gameObject.SetActive(false);
@@ -76,15 +75,15 @@ namespace Nya.UI.ViewControllers
         {
             var transform = _floatingScreen!.transform;
 
-            if (Config.SeparatePositions)
+            if (PluginConfig.SeparatePositions)
             {
-                Config.PausePosition = transform.position;
-                Config.PauseRotation = transform.eulerAngles;
+                PluginConfig.PausePosition = transform.position;
+                PluginConfig.PauseRotation = transform.eulerAngles;
             }
             else
             {
-                Config.MenuPosition = transform.position;
-                Config.MenuRotation = transform.eulerAngles;
+                PluginConfig.MenuPosition = transform.position;
+                PluginConfig.MenuRotation = transform.eulerAngles;
             }
         }
 
