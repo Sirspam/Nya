@@ -14,7 +14,7 @@ using HMUI;
 using IPA.Utilities;
 using Nya.Configuration;
 using Nya.Utils;
-using SiraUtil.Logging;
+using Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -23,25 +23,26 @@ namespace Nya.UI.ViewControllers
 {
     internal abstract class SettingsModalController : IInitializable, INotifyPropertyChanged
     {
+        private GameObject? _handle;
         private bool _unskewed = false;
 
-        private readonly SiraLog _siraLog;
         private readonly UIUtils _uiUtils;
         private readonly ImageUtils _imageUtils;
         private readonly MainCamera _mainCamera;
         protected readonly PluginConfig PluginConfig;
+        private readonly TimeTweeningManager _timeTweeningManager;
         private readonly NsfwConfirmModalController _nsfwConfirmModalController;
 
         public event PropertyChangedEventHandler PropertyChanged = null!;
 
-        protected SettingsModalController(UIUtils uiUtils, ImageUtils imageUtils, MainCamera mainCamera, PluginConfig pluginConfig, NsfwConfirmModalController nsfwConfirmModalController, SiraLog siraLog)
+        protected SettingsModalController(UIUtils uiUtils, ImageUtils imageUtils, MainCamera mainCamera, PluginConfig pluginConfig, TimeTweeningManager timeTweeningManager, NsfwConfirmModalController nsfwConfirmModalController)
         {
             _uiUtils = uiUtils;
             _imageUtils = imageUtils;
             _mainCamera = mainCamera;
             PluginConfig = pluginConfig;
+            _timeTweeningManager = timeTweeningManager;
             _nsfwConfirmModalController = nsfwConfirmModalController;
-            _siraLog = siraLog;
         }
 
         #region components
@@ -295,43 +296,93 @@ namespace Nya.UI.ViewControllers
         protected void FaceHeadsetClicked()
         {
             _uiUtils.ButtonUnderlineClick(FaceHeadsetButton.gameObject);
-            var transform = RootTransform.root.gameObject.transform;
-            transform.LookAt(_mainCamera.camera.transform);
-            transform.Rotate(0f, 180f, 0, Space.Self); // Nya decides that it's shy and faces away from the user, so we do a little flipping
+            _timeTweeningManager.KillAllTweens(RootTransform);
+            var rootTransform = RootTransform.root.gameObject.transform;
+            var previousRotation = rootTransform.rotation;
+            var newRotation = Quaternion.LookRotation(rootTransform.position - _mainCamera.camera.transform.position);
+            var tween = new FloatTween(0f, 1f, val => RootTransform.root.gameObject.transform.rotation = Quaternion.Lerp(previousRotation, newRotation, val), 0.5f, EaseType.OutQuart);
+            _timeTweeningManager.AddTween(tween, RootTransform);
+            if (RootTransform.root.name == "nyaGameFloatingScreen" && PluginConfig.SeparatePositions)
+            {
+                PluginConfig.PauseRotation = newRotation.eulerAngles;
+            }
+            else
+            {
+                PluginConfig.MenuRotation = newRotation.eulerAngles;
+            }
         }
 
         [UIAction("reset-rotation-clicked")]
         protected void ResetRotationClicked()
         {
             _uiUtils.ButtonUnderlineClick(ResetRotationButton.gameObject);
-            var transform = RootTransform.root.gameObject.transform;
-            var rotation = transform.rotation.eulerAngles;
-            transform.rotation = Quaternion.Euler(0f, rotation.y, 0f);
+            _timeTweeningManager.KillAllTweens(RootTransform);
+            var previousRotation = RootTransform.root.gameObject.transform.rotation;
+            var newRotation = Quaternion.Euler(0f, previousRotation.y, 0f);
+            var tween = new FloatTween(0f, 1f, val => RootTransform.root.gameObject.transform.rotation = Quaternion.Lerp(previousRotation, newRotation, val), 0.5f, EaseType.OutQuart);
+            _timeTweeningManager.AddTween(tween, RootTransform);
+            if (RootTransform.root.name == "nyaGameFloatingScreen" && PluginConfig.SeparatePositions)
+            {
+                PluginConfig.PauseRotation = newRotation.eulerAngles;
+            }
+            else
+            {
+                PluginConfig.MenuRotation = newRotation.eulerAngles;
+            }
         }
 
         [UIAction("reset-position-clicked")]
         protected void ResetPositionClicked()
         {
             _uiUtils.ButtonUnderlineClick(ResetPositionButton.gameObject);
-            var gameObjectTransform = RootTransform.root.gameObject.transform;
-            gameObjectTransform.position = new Vector3(0f, 3.65f, 4f);
-            gameObjectTransform.rotation = Quaternion.Euler(new Vector3(335f, 0f, 0f));
+            _timeTweeningManager.KillAllTweens(RootTransform);
+            var transform = RootTransform.root.gameObject.transform;
+            var oldPosition = transform.position;
+            var newPosition = new Vector3(0f, 3.65f, 4f);
+            var oldRotation = transform.rotation;
+            var newRotation = Quaternion.Euler(new Vector3(335f, 0f, 0f));
+            var positionTween = new FloatTween(0f, 1f, val => transform.position = Vector3.Lerp(oldPosition, newPosition, val), 0.5f, EaseType.OutQuart);
+            var rotationTween = new FloatTween(0f, 1f, val => transform.rotation = Quaternion.Lerp(oldRotation, newRotation, val), 0.5f, EaseType.OutQuart);
+            _timeTweeningManager.AddTween(positionTween, RootTransform);
+            _timeTweeningManager.AddTween(rotationTween, RootTransform);
             if (RootTransform.root.name == "NyaGameFloatingScreen" && PluginConfig.SeparatePositions)
             {
-                PluginConfig.PausePosition = gameObjectTransform.position;
-                PluginConfig.PauseRotation = gameObjectTransform.eulerAngles;
+                PluginConfig.PausePosition = newPosition;
+                PluginConfig.PauseRotation = newRotation.eulerAngles;
             }
             else
             {
-                PluginConfig.MenuPosition = gameObjectTransform.position;
-                PluginConfig.MenuRotation = gameObjectTransform.eulerAngles;
+                PluginConfig.MenuPosition = newPosition;
+                PluginConfig.MenuRotation = newRotation.eulerAngles;
             }
         }
 
         [UIAction("show-handle-changed")]
         protected void ShowHandleChanged(bool value)
         {
-            RootTransform.root.GetChild(1).gameObject.SetActive(value); // Gets the handle child
+            if (_handle == null)
+                _handle = RootTransform.root.GetChild(1).gameObject;
+
+            _timeTweeningManager.KillAllTweens(_handle);
+            Vector3Tween tween;
+            if (value)
+            {
+                var oldScale = _handle.transform.localScale;
+                tween = new Vector3Tween(oldScale, _uiUtils.HandleScale, val => _handle.transform.localScale = val, 0.5f, EaseType.OutQuart)
+                {
+                    onStart = delegate { _handle.gameObject.SetActive(true); }
+                };
+            }
+            else
+            {
+                var newScale = new Vector3(0f, _uiUtils.HandleScale.y, _uiUtils.HandleScale.z);
+                tween = new Vector3Tween(_uiUtils.HandleScale, newScale, val => _handle.transform.localScale = val, 0.5f, EaseType.OutQuart)
+                {
+                    onCompleted = delegate { _handle.gameObject.SetActive(false); }
+                };
+            }
+            
+            _timeTweeningManager.AddTween(tween, _handle);
         }
 
         #endregion

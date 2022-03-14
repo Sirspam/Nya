@@ -3,6 +3,8 @@ using BeatSaberMarkupLanguage.Attributes;
 using HMUI;
 using Nya.Configuration;
 using Nya.Utils;
+using SiraUtil.Logging;
+using Tweening;
 using UnityEngine;
 
 namespace Nya.UI.ViewControllers
@@ -11,20 +13,20 @@ namespace Nya.UI.ViewControllers
     {
         private readonly MainFlowCoordinator _mainFlowCoordinator;
         private readonly NyaSettingsFlowCoordinator _nyaSettingsFlowCoordinator;
-        private readonly SettingsViewMainPanelController _settingsViewMainPanelController;
+        private readonly NyaSettingsMainViewController _nyaSettingsMainViewController;
 
-        public SettingsModalMenuController(PluginConfig config, ImageUtils imageUtils, UIUtils uiUtils, MainCamera mainCamera, NsfwConfirmModalController nsfwConfirmModalController,  MainFlowCoordinator mainFlowCoordinator, NyaSettingsFlowCoordinator nyaSettingsFlowCoordinator, SettingsViewMainPanelController settingsViewMainPanelController)
-            : base(config,imageUtils, uiUtils, nsfwConfirmModalController, mainCamera)
+        public SettingsModalMenuController(UIUtils uiUtils, ImageUtils imageUtils, MainCamera mainCamera, PluginConfig pluginConfig, TimeTweeningManager timeTweeningManager, NsfwConfirmModalController nsfwConfirmModalController, SiraLog siraLog,MainFlowCoordinator mainFlowCoordinator, NyaSettingsFlowCoordinator nyaSettingsFlowCoordinator, NyaSettingsMainViewController nyaSettingsMainViewController)
+            : base(uiUtils, imageUtils, mainCamera, pluginConfig, timeTweeningManager, nsfwConfirmModalController)
         {
             _mainFlowCoordinator = mainFlowCoordinator;
             _nyaSettingsFlowCoordinator = nyaSettingsFlowCoordinator;
-            _settingsViewMainPanelController = settingsViewMainPanelController;
+            _nyaSettingsMainViewController = nyaSettingsMainViewController;
         }
 
         public void ShowModal(Transform parentTransform)
         {
             ShowModal(parentTransform, this);
-            if (!Config.InMenu)
+            if (!PluginConfig.InMenu)
             {
                 ScreenTab.IsVisible = false;
             }
@@ -34,13 +36,13 @@ namespace Nya.UI.ViewControllers
         private void ShowNyaSettings()
         {
             HideModal();
-            if (_settingsViewMainPanelController.isActiveAndEnabled)
+            if (_nyaSettingsMainViewController.isActiveAndEnabled)
             {
                 return;
             }
 
-            _settingsViewMainPanelController.parentFlowCoordinator = _mainFlowCoordinator.YoungestChildFlowCoordinatorOrSelf();
-            _settingsViewMainPanelController.parentFlowCoordinator.PresentFlowCoordinator(_nyaSettingsFlowCoordinator, animationDirection: ViewController.AnimationDirection.Vertical);
+            _nyaSettingsMainViewController.parentFlowCoordinator = _mainFlowCoordinator.YoungestChildFlowCoordinatorOrSelf();
+            _nyaSettingsMainViewController.parentFlowCoordinator.PresentFlowCoordinator(_nyaSettingsFlowCoordinator, animationDirection: ViewController.AnimationDirection.Vertical);
         }
     }
 }
