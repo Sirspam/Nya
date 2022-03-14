@@ -92,11 +92,11 @@ namespace Nya.UI.ViewControllers
         [UIComponent("face-headset-button")]
         protected readonly Button FaceHeadsetButton = null!;
 
-        [UIComponent("reset-rotation-button")]
-        protected readonly Button ResetRotationButton = null!;
+        [UIComponent("set-upright-button")]
+        protected readonly Button SetUprightButton = null!;
 
-        [UIComponent("reset-position-button")]
-        protected readonly Button ResetPositionButton = null!;
+        [UIComponent("default-position-button")]
+        protected readonly Button DefaultPositionButton = null!;
 
         [UIComponent("show-handle-checkbox")]
         protected readonly GenericInteractableSetting ShowHandleCheckbox = null!;
@@ -312,13 +312,13 @@ namespace Nya.UI.ViewControllers
             }
         }
 
-        [UIAction("reset-rotation-clicked")]
-        protected void ResetRotationClicked()
+        [UIAction("set-upright-clicked")]
+        protected void SetUprightClicked()
         {
-            _uiUtils.ButtonUnderlineClick(ResetRotationButton.gameObject);
+            _uiUtils.ButtonUnderlineClick(SetUprightButton.gameObject);
             _timeTweeningManager.KillAllTweens(RootTransform);
             var previousRotation = RootTransform.root.gameObject.transform.rotation;
-            var newRotation = Quaternion.Euler(0f, previousRotation.y, 0f);
+            var newRotation = Quaternion.Euler(0f, previousRotation.eulerAngles.y, 0f);
             var tween = new FloatTween(0f, 1f, val => RootTransform.root.gameObject.transform.rotation = Quaternion.Lerp(previousRotation, newRotation, val), 0.5f, EaseType.OutQuart);
             _timeTweeningManager.AddTween(tween, RootTransform);
             if (RootTransform.root.name == "nyaGameFloatingScreen" && PluginConfig.SeparatePositions)
@@ -331,10 +331,10 @@ namespace Nya.UI.ViewControllers
             }
         }
 
-        [UIAction("reset-position-clicked")]
-        protected void ResetPositionClicked()
+        [UIAction("default-position-clicked")]
+        protected void DefaultPositionClicked()
         {
-            _uiUtils.ButtonUnderlineClick(ResetPositionButton.gameObject);
+            _uiUtils.ButtonUnderlineClick(DefaultPositionButton.gameObject);
             _timeTweeningManager.KillAllTweens(RootTransform);
             var transform = RootTransform.root.gameObject.transform;
             var oldPosition = transform.position;
@@ -367,6 +367,7 @@ namespace Nya.UI.ViewControllers
             Vector3Tween tween;
             if (value)
             {
+                _handle.gameObject.transform.localScale = new Vector3(0f, _uiUtils.HandleScale.y, _uiUtils.HandleScale.z);
                 var oldScale = _handle.transform.localScale;
                 tween = new Vector3Tween(oldScale, _uiUtils.HandleScale, val => _handle.transform.localScale = val, 0.5f, EaseType.OutQuart)
                 {

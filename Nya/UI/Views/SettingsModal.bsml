@@ -8,8 +8,8 @@
 			
 			<tab tab-name="Nya" tags='settings-modal-tab'>
 				<vertical horizontal-fit='PreferredSize' vertical-fit='PreferredSize' preferred-width='60' preferred-height='40' spacing='1'>
-					<button id='nya-download-button' text='Download Nya' on-click='nya-download-clicked' active='true' min-height='10' min-width='25'/>
-					<button id='nya-open-button' text='Open Nya' on-click='nya-open-clicked' active='true' min-height='10' min-width='25'/>
+					<button id='nya-download-button' text='Download Nya' on-click='nya-download-clicked' active='true' min-height='11' min-width='25'/>
+					<button id='nya-open-button' text='Open Nya' on-click='nya-open-clicked' active='true' min-height='11' min-width='25'/>
 					<checkbox-setting id='nsfw-checkbox' text='NSFW Nya' value='nya-nsfw-check' on-change='nya-nsfw-changed' bind-value='true'/>
 				</vertical>
 			</tab>
@@ -21,11 +21,11 @@
 				</vertical>
 			</tab>
 			<tab id='screen-tab' tab-name="Screen" tags='settings-modal-tab'>
-				<vertical horizontal-fit='PreferredSize' vertical-fit='PreferredSize' preferred-width='60' preferred-height='42' spacing='-3'>
+				<vertical horizontal-fit='PreferredSize' vertical-fit='PreferredSize' preferred-width='60' preferred-height='45' spacing='-3'>
 					<checkbox-setting id='show-handle-checkbox' text="Show Nya's movement handle" value='show-handle' on-change='show-handle-changed' apply-on-change='true'/>
-					<button id='face-headset-button' text='Face Headset' on-click='face-headset-clicked' min-height='10' min-width='28'/>
-					<button id='reset-rotation-button' text='Reset Rotation' on-click='reset-rotation-clicked' min-height='10' min-width='28'/>
-					<button id='reset-position-button' text='Reset Position' on-click='reset-position-clicked' min-height='10' min-width='28'/>
+					<button id='face-headset-button' text='Face Headset' on-click='face-headset-clicked' min-height='10' min-width='32'/>
+					<button id='set-upright-button' text='Set Upright' on-click='set-upright-clicked' min-height='10' min-width='32'/>
+					<button id='default-position-button' text='Default Position' on-click='default-position-clicked' min-height='10' min-width='32'/>
 				</vertical>
 			</tab>
 			<tab id='more-settings-tab' tab-name="➕" tags='settings-modal-tab'>
