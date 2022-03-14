@@ -13,11 +13,7 @@ namespace Nya.Utils
 {
     internal class UIUtils
     {
-        private readonly PluginConfig _config;
-        private readonly TimeTweeningManager _uwuTweenyManager; // Thanks PixelBoom
-
-        private Material? _nyaBgMaterial;
-
+        public Vector3 HandleScale;
         public Material NyaBgMaterial
         {
             get
@@ -26,7 +22,12 @@ namespace Nya.Utils
                 return _nyaBgMaterial;
             }
         }
+
+        private Material? _nyaBgMaterial;
         private Color? _defaultUnderlineColour;
+        
+        private readonly PluginConfig _config;
+        private readonly TimeTweeningManager _uwuTweenyManager; // Thanks PixelBoom
 
         public UIUtils(PluginConfig config, TimeTweeningManager timeTweeningManager)
         {
@@ -41,7 +42,8 @@ namespace Nya.Utils
             floatingScreen.gameObject.layer = 5;
             floatingScreen.gameObject.transform.GetChild(0).GetComponent<ImageView>().material = NyaBgMaterial;
             floatingScreen.handle.transform.localPosition = new Vector3(0f, -floatingScreen.ScreenSize.y / 1.8f, -5f);
-            floatingScreen.handle.transform.localScale = new Vector3(floatingScreen.ScreenSize.x * 0.8f, floatingScreen.ScreenSize.y / 15f, floatingScreen.ScreenSize.y / 15f);
+            HandleScale = new Vector3(floatingScreen.ScreenSize.x * 0.8f, floatingScreen.ScreenSize.y / 15f, floatingScreen.ScreenSize.y / 15f);
+            floatingScreen.handle.transform.localScale = HandleScale;
             floatingScreen.handle.gameObject.layer = 5;
             floatingScreen.HighlightHandle = true;
             if (!_config.ShowHandle)
