@@ -47,7 +47,7 @@ namespace Nya.UI.ViewControllers
         private SiraLog _siraLog = null!;
         private UIUtils _uiUtils = null!;
         private PluginConfig _pluginConfig = null!;
-        private CatCoreManager? _catCoreManager = null;
+        private CatCoreManager? _catCoreManager;
         private MainFlowCoordinator _mainFlowCoordinator = null!;
         private MenuTransitionsHelper _menuTransitionsHelper = null!;
         private NyaSettingsRightViewController _nyaSettingsRightViewController = null!;
@@ -70,11 +70,6 @@ namespace Nya.UI.ViewControllers
 
             if (firstActivation)
             {
-                if (PluginManager.GetPluginFromId("CatCore") == null)
-                {
-                    _catCoreTab.IsVisible = false;
-                }
-
                 _topPanel.gameObject.AddComponent<VRGraphicRaycaster>().SetField("_physicsRaycaster", BeatSaberUI.PhysicsRaycasterWithCache);
                 _topPanel.gameObject.GetComponent<Canvas>().additionalShaderChannels = AdditionalCanvasShaderChannels.TexCoord1 | AdditionalCanvasShaderChannels.TexCoord2;
                 _chocolaImage.name = "ChocolaImage";
@@ -82,23 +77,6 @@ namespace Nya.UI.ViewControllers
                 _chocolaImage.gameObject.AddComponent<NyaSettingsClickableImage>();
                 _vanillaImage.gameObject.AddComponent<NyaSettingsClickableImage>();
             }
-
-            InMenu = _pluginConfig.InMenu;
-            InPause = _pluginConfig.InPause;
-            BackgroundColor = _pluginConfig.BackgroundColor;
-            RememberNsfw = _pluginConfig.RememberNsfw;
-            SkipNsfw = _pluginConfig.SkipNsfw;
-            ScalingValue = _pluginConfig.ScaleRatio;
-            SeparatePositions = _pluginConfig.SeparatePositions;
-            EasterEggs = _pluginConfig.EasterEggs;
-            CatCoreEnabled = _pluginConfig.CatCoreEnabled;
-            NyaCommandEnabled = _pluginConfig.NyaCommandEnabled;
-            NyaCommandCooldown = _pluginConfig.NyaCommandCooldown;
-            CurrentNyaCommandEnabled = _pluginConfig.CurrentNyaCommandEnabled;
-            _menuPosition = _pluginConfig.MenuPosition;
-            _menuRotation = _pluginConfig.MenuRotation;
-            _pausePosition = _pluginConfig.PausePosition;
-            _pauseRotation = _pluginConfig.PauseRotation;
         }
 
         [UIValue("view-controller-active")]
@@ -300,6 +278,32 @@ namespace Nya.UI.ViewControllers
         [UIComponent("reset-pause-position")]
         private readonly Button _resetPausePositionButton = null!;
 
+        [UIAction("#post-parse")]
+        private void PostParse()
+        {
+            if (PluginManager.GetPluginFromId("CatCore") == null)
+            {
+                _catCoreTab.IsVisible = false;
+            }
+            
+            InMenu = _pluginConfig.InMenu;
+            InPause = _pluginConfig.InPause;
+            BackgroundColor = _pluginConfig.BackgroundColor;
+            RememberNsfw = _pluginConfig.RememberNsfw;
+            SkipNsfw = _pluginConfig.SkipNsfw;
+            ScalingValue = _pluginConfig.ScaleRatio;
+            SeparatePositions = _pluginConfig.SeparatePositions;
+            EasterEggs = _pluginConfig.EasterEggs;
+            CatCoreEnabled = _pluginConfig.CatCoreEnabled;
+            NyaCommandEnabled = _pluginConfig.NyaCommandEnabled;
+            NyaCommandCooldown = _pluginConfig.NyaCommandCooldown;
+            CurrentNyaCommandEnabled = _pluginConfig.CurrentNyaCommandEnabled;
+            _menuPosition = _pluginConfig.MenuPosition;
+            _menuRotation = _pluginConfig.MenuRotation;
+            _pausePosition = _pluginConfig.PausePosition;
+            _pauseRotation = _pluginConfig.PauseRotation;
+        }
+        
         [UIAction("bg-colour-default-clicked")]
         private void BgColourDefaultClicked()
         {
@@ -360,7 +364,7 @@ namespace Nya.UI.ViewControllers
             
             if (catCoreActionNeeded)
             {
-                if (_pluginConfig.CatCoreEnabled)
+                if (_pluginConfig.CatCoreEnabled && _catCoreManager != null)
                 {
                     // User shouldn't even be able to access CatCore settings if it's not installed, so not going to bother making sure catCoreManager isn't null
                     _catCoreManager!.StartCatCoreServices();
@@ -408,7 +412,7 @@ namespace Nya.UI.ViewControllers
 
         public void Initialize()
         {
-            BSMLSettings.instance.AddSettingsMenu("Nya", "Nya.UI.Views.NyaSettingsMainView.bsml", this);   
+            BSMLSettings.instance.AddSettingsMenu("Nya", "Nya.UI.Views.NyaSettingsMainView.bsml", this);
         }
 
             public void Dispose()
