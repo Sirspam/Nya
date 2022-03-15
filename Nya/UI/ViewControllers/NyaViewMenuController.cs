@@ -89,7 +89,7 @@ namespace Nya.UI.ViewControllers
             NyaButton.interactable = true;
         }
 
-        private void GameplaySetupViewController_didDeactivateEvent(bool firstActivation, bool addedToHierarchy)
+        private void MenuDeactived()
         {
             if (AutoNyaToggle)
             {

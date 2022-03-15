@@ -42,7 +42,7 @@ namespace Nya.CatCore
 					{
 						if (_nyaCommandUsedTime.AddSeconds(_pluginConfig.NyaCommandCooldown) < DateTime.Now)
 						{
-							_imageUtils.GetNewNyaImage(_catCoreInfo.CurrentImageView);
+							//_imageUtils.LoadNewNyaImage(_catCoreInfo.CurrentImageView);
 							_nyaCommandUsedTime = DateTime.Now;
 							message.Channel.SendMessage("! 😸");
 						}

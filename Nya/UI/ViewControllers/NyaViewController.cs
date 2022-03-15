@@ -57,7 +57,7 @@ namespace Nya.UI.ViewControllers
         protected void NyaPostParse()
         {
             NyaButton.interactable = false;
-            ImageUtils.LoadNyaImage(NyaImage);
+            ImageUtils.LoadCurrentNyaImage(NyaImage);
             NyaButton.interactable = true;
         }
 
@@ -65,7 +65,7 @@ namespace Nya.UI.ViewControllers
         protected void NyaClicked()
         {
             NyaButton.interactable = false;
-            ImageUtils.GetNewNyaImage(NyaImage);
+            ImageUtils.LoadNewNyaImage(NyaImage);
             NyaButton.interactable = true;
         }
 
@@ -88,7 +88,7 @@ namespace Nya.UI.ViewControllers
                 while (AutoNyaToggle)
                 {
                     await Semaphore.WaitAsync();
-                    ImageUtils.GetNewNyaImage(NyaImage);
+                    ImageUtils.LoadNewNyaImage(NyaImage);
                     await Task.Delay(PluginConfig.AutoNyaWait * 1000);
                     Semaphore.Release();
                 }

@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using BeatSaberMarkupLanguage;
 using HMUI;
 using IPA.Utilities;
@@ -14,7 +12,9 @@ using Nya.Configuration;
 using Nya.Entries;
 using SiraUtil.Logging;
 using SiraUtil.Web;
+using UnityEngine;
 using Image = UnityEngine.UI.Image;
+using Random = System.Random;
 
 namespace Nya.Utils
 {
@@ -90,7 +90,7 @@ namespace Nya.Utils
             }
         }
 
-        public async void GetNewNyaImage(ImageView image)
+        public async void LoadNewNyaImage(ImageView image)
         {
             try
             {
@@ -138,7 +138,7 @@ namespace Nya.Utils
                         }
                         
                         _nyaImageBytes = File.ReadAllBytes(NyaImageURL!);
-                        LoadNyaImage(image);
+                        LoadCurrentNyaImage(image);
                         break;
                     case DataMode.Unsupported:
                     default:
@@ -147,7 +147,7 @@ namespace Nya.Utils
                 }
 
                 _nyaImageBytes = await GetWebDataToBytesAsync(NyaImageURL!);
-                LoadNyaImage(image);
+                LoadCurrentNyaImage(image);
             }
             catch (Exception e) // e for dEez nuts
             {
@@ -156,11 +156,11 @@ namespace Nya.Utils
             }
         }
         
-        public void LoadNyaImage(ImageView image)
+        public void LoadCurrentNyaImage(ImageView image)
         {
             if (_nyaImageBytes == null)
             {
-                GetNewNyaImage(image);
+                LoadNewNyaImage(image);
                 return;
             }
 
