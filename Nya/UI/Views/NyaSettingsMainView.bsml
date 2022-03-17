@@ -37,15 +37,6 @@
 				</horizontal>
 			</modifier-container>
 		</tab>
-		
-		<tab id="cat-core-tab" tab-name="Cat Core" tags="settings-tab" horizontal-fit='PreferredSize' vertical-fit='PreferredSize'>
-		 <modifier-container child-expand-width='true' horizontal-fit='PreferredSize' anchor-pos-y="10">
-			 <checkbox-setting id='cat-core-checkbox' text='Enable CatCore commands' value='cat-core-enabled' bind-value="true" apply-on-change="true"/>
-			 <checkbox-setting id='nya-command-checkbox' text='Enable Nya command' value='nya-command-enabled' interactable="~cat-core-enabled" bind-value="true" apply-on-change="true"/>
-			 <slider-setting id ="nya-command-cooldown-slider" text="Global Nya command cooldown" value="nya-command-cooldown" integer-only="true" min="2" max="60" interactable="~cat-core-enabled" bind-value="true" apply-on-change="true"/>
-			 <checkbox-setting id='current-nya-command-checkbox' text='Enable CurrentNya command' value='current-nya-command-enabled' interactable="~cat-core-enabled" bind-value="true" apply-on-change="true"/>
-		 </modifier-container>
-		</tab>
 	</vertical>
 	
 	<text active='~restart-required' text="Applying these settings will require the game to soft restart" anchor-pos-x='55' anchor-pos-y='-47' font-size='5' italics='true' color='red'/>

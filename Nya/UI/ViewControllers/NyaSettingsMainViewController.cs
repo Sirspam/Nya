@@ -6,9 +6,7 @@ using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Settings;
 using BeatSaberMarkupLanguage.ViewControllers;
 using HMUI;
-using IPA.Loader;
 using IPA.Utilities;
-using Nya.CatCore;
 using Nya.Components;
 using Nya.Configuration;
 using Nya.Utils;
@@ -35,7 +33,6 @@ namespace Nya.UI.ViewControllers
         private int _scaleRatio;
         private bool _separatePositions;
         private bool _easterEggs;
-        private bool _catCoreEnabled;
         private bool _nyaCommandEnabled;
         private int _nyaCommandCooldown;
         private bool _currentNyaCommandEnabled;
@@ -47,18 +44,16 @@ namespace Nya.UI.ViewControllers
         private SiraLog _siraLog = null!;
         private UIUtils _uiUtils = null!;
         private PluginConfig _pluginConfig = null!;
-        private CatCoreManager? _catCoreManager;
         private MainFlowCoordinator _mainFlowCoordinator = null!;
         private MenuTransitionsHelper _menuTransitionsHelper = null!;
         private NyaSettingsRightViewController _nyaSettingsRightViewController = null!;
 
         [Inject]
-        public void Constructor(SiraLog siraLog, UIUtils uiUtils, PluginConfig pluginConfig, [InjectOptional] CatCoreManager catCoreManager, MainFlowCoordinator mainFlowCoordinator, MenuTransitionsHelper menuTransitionsHelper, NyaSettingsRightViewController nyaSettingsRightViewController)
+        public void Constructor(SiraLog siraLog, UIUtils uiUtils, PluginConfig pluginConfig, MainFlowCoordinator mainFlowCoordinator, MenuTransitionsHelper menuTransitionsHelper, NyaSettingsRightViewController nyaSettingsRightViewController)
         {
             _siraLog = siraLog;
             _uiUtils = uiUtils;
             _pluginConfig = pluginConfig;
-            _catCoreManager = catCoreManager;
             _mainFlowCoordinator = mainFlowCoordinator;
             _menuTransitionsHelper = menuTransitionsHelper;
             _nyaSettingsRightViewController = nyaSettingsRightViewController;
@@ -210,17 +205,6 @@ namespace Nya.UI.ViewControllers
             }
         }
 
-        [UIValue("cat-core-enabled")]
-        private bool CatCoreEnabled
-        {
-            get => _catCoreEnabled;
-            set
-            {
-                _catCoreEnabled = value;
-                NotifyPropertyChanged();
-            }
-        }
-
         [UIValue("nya-command-enabled")]
         private bool NyaCommandEnabled
         {
@@ -262,10 +246,7 @@ namespace Nya.UI.ViewControllers
         
         [UIComponent("vanilla-image")]
         private readonly ImageView _vanillaImage = null!;
-        
-        [UIComponent("cat-core-tab")]
-        private readonly Tab _catCoreTab = null!;
-        
+
         [UIComponent("bg-colour-setting")]
         private readonly Transform _bgColourSettingTransform = null!;
 
@@ -281,11 +262,7 @@ namespace Nya.UI.ViewControllers
         [UIAction("#post-parse")]
         private void PostParse()
         {
-            if (PluginManager.GetPluginFromId("CatCore") == null)
-            {
-                _catCoreTab.IsVisible = false;
-            }
-            
+
             InMenu = _pluginConfig.InMenu;
             InPause = _pluginConfig.InPause;
             BackgroundColor = _pluginConfig.BackgroundColor;
@@ -294,10 +271,6 @@ namespace Nya.UI.ViewControllers
             ScalingValue = _pluginConfig.ScaleRatio;
             SeparatePositions = _pluginConfig.SeparatePositions;
             EasterEggs = _pluginConfig.EasterEggs;
-            CatCoreEnabled = _pluginConfig.CatCoreEnabled;
-            NyaCommandEnabled = _pluginConfig.NyaCommandEnabled;
-            NyaCommandCooldown = _pluginConfig.NyaCommandCooldown;
-            CurrentNyaCommandEnabled = _pluginConfig.CurrentNyaCommandEnabled;
             _menuPosition = _pluginConfig.MenuPosition;
             _menuRotation = _pluginConfig.MenuRotation;
             _pausePosition = _pluginConfig.PausePosition;
@@ -349,32 +322,14 @@ namespace Nya.UI.ViewControllers
             _pluginConfig.MenuRotation = _menuRotation;
             _pluginConfig.PausePosition = _pausePosition;
             _pluginConfig.PauseRotation = _pauseRotation;
-            _pluginConfig.CatCoreEnabled = CatCoreEnabled;
-            _pluginConfig.NyaCommandEnabled = NyaCommandEnabled;
-            _pluginConfig.NyaCommandCooldown = NyaCommandCooldown;
-            _pluginConfig.CurrentNyaCommandEnabled = CurrentNyaCommandEnabled;
         }
 
         [UIAction("ok-clicked")]
         private void OkClicked()
         {
             var restartRequired = RestartRequired;
-            var catCoreActionNeeded = _pluginConfig.CatCoreEnabled != CatCoreEnabled;
             SaveValuesToConfig();
-            
-            if (catCoreActionNeeded)
-            {
-                if (_pluginConfig.CatCoreEnabled && _catCoreManager != null)
-                {
-                    // User shouldn't even be able to access CatCore settings if it's not installed, so not going to bother making sure catCoreManager isn't null
-                    _catCoreManager!.StartCatCoreServices();
-                }
-                else
-                {
-                    _catCoreManager!.EndCatCoreServices();
-                }
-            }
-            
+
             if (restartRequired) 
                 _menuTransitionsHelper.RestartGame();
             else 

@@ -3,7 +3,6 @@ using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.FloatingScreen;
 using HMUI;
 using Nya.Configuration;
-using Nya.CatCore;
 using Nya.Utils;
 using Tweening;
 using UnityEngine;
@@ -15,18 +14,16 @@ namespace Nya.UI.ViewControllers
     {
         private readonly UIUtils _uiUtils;
         private readonly IGamePause _gamePause;
-        private readonly CatCoreInfo _catCoreInfo;
         private readonly TimeTweeningManager _timeTweeningManager;
         private readonly SettingsModalGameController _settingsModalGameController;
 
         private FloatingScreen? _floatingScreen;
 
-        public NyaViewGameController(PluginConfig pluginConfig, ImageUtils imageUtils, UIUtils uiUtils, IGamePause gamePause, CatCoreInfo catCoreInfo, TimeTweeningManager timeTweeningManager, SettingsModalGameController settingsModalGameController)
+        public NyaViewGameController(PluginConfig pluginConfig, ImageUtils imageUtils, UIUtils uiUtils, IGamePause gamePause, TimeTweeningManager timeTweeningManager, SettingsModalGameController settingsModalGameController)
             : base(pluginConfig, imageUtils)
         {
             _uiUtils = uiUtils;
             _gamePause = gamePause;
-            _catCoreInfo = catCoreInfo;
             _timeTweeningManager = timeTweeningManager;
             _settingsModalGameController = settingsModalGameController;
         }
@@ -54,7 +51,6 @@ namespace Nya.UI.ViewControllers
 
         private void GamePause_didPauseEvent()
         {
-            _catCoreInfo.CurrentImageView = NyaImage;
             _floatingScreen!.gameObject.SetActive(true);
         }
 
@@ -66,7 +62,6 @@ namespace Nya.UI.ViewControllers
                 NyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = new Color(1f, 1f, 1f, 0.502f);
                 NyaButton.interactable = true;
             }
-            _catCoreInfo.CurrentImageView = null;
             _settingsModalGameController.HideModal();
             _floatingScreen!.gameObject.SetActive(false);
         }

@@ -1,7 +1,5 @@
-﻿using System;
-using IPA.Loader;
+﻿using IPA.Loader;
 using Nya.Configuration;
-using Nya.CatCore;
 using Nya.Utils;
 using Zenject;
 
@@ -21,11 +19,6 @@ namespace Nya.Installers
             Container.BindInstance(_pluginConfig).AsSingle();
             Container.Bind<ImageUtils>().AsSingle();
             Container.Bind<UIUtils>().AsSingle();
-            Container.Bind<CatCoreInfo>().AsSingle();
-            if (PluginManager.GetPluginFromId("CatCore") != null)
-            {
-                Container.BindInterfacesAndSelfTo<CatCoreManager>().AsSingle();
-            }
         }
     }
 }
