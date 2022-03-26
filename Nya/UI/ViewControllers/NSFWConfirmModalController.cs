@@ -10,6 +10,7 @@ namespace Nya.UI.ViewControllers
 {
     internal class NsfwConfirmModalController
     {
+        private bool _parsed;
         public delegate void ButtonPressed();
 
         private ButtonPressed _yesButtonPressed = null!;
@@ -40,11 +41,13 @@ namespace Nya.UI.ViewControllers
 
         private void Parse(Component parentTransform)
         {
-            if (!_modalView)
+            if (!_modalView && !_parsed)
             {
                 BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.NSFWConfirmModal.bsml"), parentTransform.gameObject, this);
                 _modalView.SetField("_animateParentCanvas", false);
                 _modalView.name = "NyaNsfwConfirmModal";
+
+                _parsed = true;
             }
         }
 

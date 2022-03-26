@@ -30,8 +30,8 @@
 			</tab>
 			<tab id='more-settings-tab' tab-name="➕" tags='settings-modal-tab'>
 				<vertical horizontal-fit='PreferredSize' vertical-fit='PreferredSize' preferred-width='50' preferred-height='45'>
-					<text text='More settings for Nya can be found in Mod Settings' word-wrapping='true' align='Center' font-size='5'/>
-					<primary-button text='Take me there!' on-click='show-nya-settings' min-height='10' min-width='25'/>
+					<text text='More settings for Nya can be found in Mod Settings' word-wrapping='true' align='Center' font-size='6'/>
+					<primary-button text='Take me there!' on-click='show-nya-settings' min-height='12' min-width='27' font-size="5"/>
 				</vertical>
 			</tab>
 		</vertical>

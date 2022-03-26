@@ -24,7 +24,7 @@ namespace Nya.UI.ViewControllers
     internal abstract class SettingsModalController : IInitializable, INotifyPropertyChanged
     {
         private GameObject? _handle;
-        private bool _unskewed = false;
+        private bool _parsed = false;
 
         private readonly UIUtils _uiUtils;
         private readonly ImageUtils _imageUtils;
@@ -124,13 +124,15 @@ namespace Nya.UI.ViewControllers
 
         private void BaseParse(Transform parentTransform, object host)
         {
-            if (!ModalView && !_unskewed)
+            if (!ModalView && !_parsed)
             {
                 BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.SettingsModal.bsml"), parentTransform.gameObject, host);
                 ModalView.SetField("_animateParentCanvas", true);
                 ApiDropDownTransform.Find("DropdownTableView").GetComponent<ModalView>().SetField("_animateParentCanvas", false);
                 SfwDropDownTransform.Find("DropdownTableView").GetComponent<ModalView>().SetField("_animateParentCanvas", false);
                 NsfwDropDownTransform.Find("DropdownTableView").GetComponent<ModalView>().SetField("_animateParentCanvas", false);
+
+                _parsed = true;
             }
         }
 
@@ -139,17 +141,6 @@ namespace Nya.UI.ViewControllers
             BaseParse(parentTransform, host);
             ParserParams.EmitEvent("close-modal");
             ParserParams.EmitEvent("open-modal");
-            
-            if (_unskewed)
-                return;
-            
-            // I have had it with this motherfucking skew on this motherfucking modal
-            foreach (var child in TabSelector.gameObject.GetComponentsInChildren<ImageView>())
-            {
-                child.SetField("_skew", 0f);
-            }
-
-            _unskewed = true;
         }
 
         public void HideModal()
