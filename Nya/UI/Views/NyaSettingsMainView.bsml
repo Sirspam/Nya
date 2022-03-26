@@ -12,21 +12,17 @@
 		</horizontal>
 
 		<tab tab-name="Behaviour" tags="settings-tab" horizontal-fit='PreferredSize' vertical-fit='PreferredSize'>
-			<modifier-container child-expand-width='true' horizontal-fit='PreferredSize' anchor-pos-y="10">
+			<vertical child-expand-width='true' horizontal-fit='PreferredSize' vertical-fit="PreferredSize" anchor-pos-y="10">
 				<slider-setting id='auto-wait-slider' text='Auto Nya wait time' hover-hint='How many seconds Auto Nya will wait for before getting a new image' increment='1' min='4' max='60' integer-only='true' value='auto-wait-value' bind-value="true" apply-on-change="true"/>
 				<checkbox-setting id='remember-NSFW-checkbox' text='Remember NSFW setting' hover-hint='If disabled Nya will always be set to SFW on start-up' value='remember-NSFW' bind-value="true" apply-on-change="true"/>
 				<checkbox-setting id='skip-NSFW-checkbox' text='Skip NSFW confirmation' hover-hint='You horny pastry puffer' value='skip-NSFW' bind-value="true" apply-on-change="true"/>
 				<dropdown-list-setting id="scale-dropdown" text="Downscale images" hover-hint="Image downscaling helps reduce the stutter whenever loading a new image. It's recommended to keep this enabled" value="scaling-value" choices="scaling-choices" bind-value="true" apply-on-change="true"/>
 				<checkbox-setting id='easter-eggs-checkbox' text='Easter Eggs' hover-hint="They're funny please I swear" value='easter-eggs' bind-value="true" apply-on-change="true"/>
-			</modifier-container>
+			</vertical>
 		</tab>
 		
 		<tab tab-name="Floating Screen" tags="settings-tab" horizontal-fit='PreferredSize' vertical-fit='PreferredSize'>
-			<modifier-container child-expand-width='true' horizontal-fit='PreferredSize' anchor-pos-y="10">
-				<horizontal>
-					<color-setting id='bg-colour-setting' text='Nya background colour' hover-hint='Only effects the floating screens' value='bg-colour' pref-width='70' bind-value="true" apply-on-change="true"/>
-					<button id='bg-colour-default' text='Default' on-click='bg-colour-default-clicked' font-size='4'/>
-				</horizontal>
+			<vertical child-expand-width='true' horizontal-fit='PreferredSize' vertical-fit="PreferredSize" anchor-pos-y="10">
 				<checkbox-setting id='in-menu-checkbox' text='Detach Nya in the menu' value='in-menu' bind-value="true" apply-on-change="true"/>
 				<checkbox-setting id='in-pause-checkbox' text='Show Nya in the pause menu' value='in-pause' bind-value="true" apply-on-change="true"/>
 				<checkbox-setting id='separate-positions-checkbox' text="Separate menu Nya's and pause Nya's positions" value="separate-positions" bind-value="true" apply-on-change="true"/>
@@ -35,7 +31,11 @@
 					<button id='reset-menu-position' active='~separate-positions' text="Reset menu Nya's position" hover-hint="Resets the menu Nya screen to it's default position" on-click='reset-menu-clicked'/>
 					<button id='reset-pause-position' active='~separate-positions' text="Reset pause Nya's position" hover-hint="Resets the pause Nya screen to it's default position" on-click='reset-pause-clicked'/>
 				</horizontal>
-			</modifier-container>
+				<horizontal>
+					<color-setting id='bg-colour-setting' text='Nya background colour' hover-hint='Only effects the floating screens' value='bg-colour' pref-width='70' bind-value="true" apply-on-change="true"/>
+					<button id='bg-colour-default' text='Default' on-click='bg-colour-default-clicked' font-size='4'/>
+				</horizontal>
+			</vertical>
 		</tab>
 	</vertical>
 	
