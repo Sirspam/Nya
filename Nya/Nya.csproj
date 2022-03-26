@@ -27,6 +27,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<Reference Include="Hive.Versioning, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null">
+		  <HintPath>$(BeatSaberDir)\Libs\Hive.Versioning.dll</HintPath>
+		</Reference>
 		<Reference Include="HMRendering">
 		  <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\HMRendering.dll</HintPath>
 		  <Private>False</Private>

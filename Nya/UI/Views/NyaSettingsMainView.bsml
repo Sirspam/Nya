@@ -1,4 +1,8 @@
 ﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
+	<vertical ignore-layout="true" anchor-pos-y="~update-text-position">
+		<text id="update-text" active="~update-available" color="#FFEE00"/>
+	</vertical>
+	
 	<horizontal id="top-panel" active="~view-controller-active" background="panel-top" anchor-min-y="1" pad-left="5" pad-right="5" pad-top="1" pad-bottom="1" horizontal-fit="PreferredSize" spacing="5">
 		<!-- These images are an requirement, I will fight you if you remove them. -->
 		<image id="chocola-image" src="Nya.Resources.Chocola_Mini_Sitting.png" preserve-aspect="true" pref-width="12" pref-height="12"/>

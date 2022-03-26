@@ -6,11 +6,16 @@ using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Settings;
 using BeatSaberMarkupLanguage.ViewControllers;
 using HMUI;
+using IPA.Loader;
 using IPA.Utilities;
 using Nya.Components;
 using Nya.Configuration;
 using Nya.Utils;
 using SiraUtil.Logging;
+using SiraUtil.Web.SiraSync;
+using SiraUtil.Zenject;
+using TMPro;
+using Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 using VRUIControls;
@@ -24,6 +29,7 @@ namespace Nya.UI.ViewControllers
     {
         public FlowCoordinator parentFlowCoordinator = null!;
 
+        private bool _updateAvailable;
         private bool _inMenu;
         private bool _inPause;
         private Color _backgroundColor;
@@ -44,16 +50,24 @@ namespace Nya.UI.ViewControllers
         private SiraLog _siraLog = null!;
         private UIUtils _uiUtils = null!;
         private PluginConfig _pluginConfig = null!;
+        private PluginMetadata _pluginMetadata = null!;
+        private ISiraSyncService _siraSyncService = null!;
+        private IPlatformUserModel _platformUserModel = null!;
+        private TimeTweeningManager _timeTweeningManager = null!;
         private MainFlowCoordinator _mainFlowCoordinator = null!;
         private MenuTransitionsHelper _menuTransitionsHelper = null!;
         private NyaSettingsRightViewController _nyaSettingsRightViewController = null!;
 
         [Inject]
-        public void Constructor(SiraLog siraLog, UIUtils uiUtils, PluginConfig pluginConfig, MainFlowCoordinator mainFlowCoordinator, MenuTransitionsHelper menuTransitionsHelper, NyaSettingsRightViewController nyaSettingsRightViewController)
+        public void Constructor(SiraLog siraLog, UIUtils uiUtils, PluginConfig pluginConfig, UBinder<Plugin, PluginMetadata> pluginMetadata, ISiraSyncService siraSyncService, IPlatformUserModel platformUserModel, TimeTweeningManager timeTweeningManager, MainFlowCoordinator mainFlowCoordinator, MenuTransitionsHelper menuTransitionsHelper, NyaSettingsRightViewController nyaSettingsRightViewController)
         {
             _siraLog = siraLog;
             _uiUtils = uiUtils;
             _pluginConfig = pluginConfig;
+            _pluginMetadata = pluginMetadata.Value;
+            _siraSyncService = siraSyncService;
+            _platformUserModel = platformUserModel;
+            _timeTweeningManager = timeTweeningManager;
             _mainFlowCoordinator = mainFlowCoordinator;
             _menuTransitionsHelper = menuTransitionsHelper;
             _nyaSettingsRightViewController = nyaSettingsRightViewController;
@@ -76,6 +90,29 @@ namespace Nya.UI.ViewControllers
 
         [UIValue("view-controller-active")]
         private bool ViewControllerActive => isActiveAndEnabled;
+
+        [UIValue("update-text-position")]
+        private int UpdateTextPosition
+        {
+            get
+            {
+                if (ViewControllerActive)
+                    return 13;
+                else
+                    return 1;
+            }
+        }
+        
+        [UIValue("update-available")]
+        private bool UpdateAvailable
+        {
+            get => _updateAvailable;
+            set
+            {
+                _updateAvailable = value;
+                NotifyPropertyChanged();
+            }
+        }
         
         [UIValue("restart-required")]
         private bool RestartRequired => InMenu != _pluginConfig.InMenu && isActiveAndEnabled;
@@ -238,6 +275,9 @@ namespace Nya.UI.ViewControllers
             }
         }
 
+        [UIComponent("update-text")] 
+        private readonly TextMeshProUGUI _updateText = null!;
+        
         [UIComponent("top-panel")] 
         private readonly HorizontalOrVerticalLayoutGroup _topPanel = null!;
         
@@ -260,9 +300,8 @@ namespace Nya.UI.ViewControllers
         private readonly Button _resetPausePositionButton = null!;
 
         [UIAction("#post-parse")]
-        private void PostParse()
+        private async void PostParse()
         {
-
             InMenu = _pluginConfig.InMenu;
             InPause = _pluginConfig.InPause;
             BackgroundColor = _pluginConfig.BackgroundColor;
@@ -275,6 +314,16 @@ namespace Nya.UI.ViewControllers
             _menuRotation = _pluginConfig.MenuRotation;
             _pausePosition = _pluginConfig.PausePosition;
             _pauseRotation = _pluginConfig.PauseRotation;
+            
+            var gitVersion = await _siraSyncService.LatestVersion();
+                if (gitVersion != null && gitVersion > _pluginMetadata.HVersion)
+                {
+                    _siraLog.Info($"{nameof(Nya)} v{gitVersion} is available on GitHub!");
+                    _updateText.text = $"{nameof(Nya)} v{gitVersion} is available on GitHub!";
+                    _updateText.alpha = 0f;
+                    UpdateAvailable = true;
+                    _timeTweeningManager.AddTween(new FloatTween(0f, 1f, val => _updateText.alpha = val, 0.4f, EaseType.InCubic), this);
+                }
         }
         
         [UIAction("bg-colour-default-clicked")]
@@ -370,7 +419,7 @@ namespace Nya.UI.ViewControllers
             BSMLSettings.instance.AddSettingsMenu("Nya", "Nya.UI.Views.NyaSettingsMainView.bsml", this);
         }
 
-            public void Dispose()
+        public void Dispose()
         {
             if (BSMLSettings.instance != null)
             {

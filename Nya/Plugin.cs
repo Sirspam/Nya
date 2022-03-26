@@ -18,6 +18,8 @@ namespace Nya
         {
             zenjector.UseLogger(logger);
             zenjector.UseHttpService();
+            zenjector.UseMetadataBinder<Plugin>();
+            zenjector.UseSiraSync();
             
             var config = conf.Generated<PluginConfig>();
 
