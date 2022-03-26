@@ -1,14 +1,14 @@
 ﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
-	<vertical ignore-layout='true'>
-		<text text='So all the text tags fucking die if this isnt here. If anyone knows a fix please tell me :pleading:' color='#00000000'/>
+	<vertical ignore-layout="true">
+		<text text="So all the text tags fucking die if this isnt here. If anyone knows a fix please tell me :pleading:" color="#00000000"/>
 	</vertical>
 	
-	<vertical pad-top='2'>
-		<img id='nya-image' preserve-aspect='true' pref-width='70' pref-height='70'/>
-		<horizontal spacing='10'>
-			<button id='auto-button' text='Auto Nya' on-click='nya-auto-clicked' active='true' min-width='20'/>
-			<primary-button id='nya-button' text='Nya' on-click='nya-click' active='true' min-width='20'/>
-			<button id='settings-button' text='⚙' on-click='settings-button-clicked' min-width='20'/>
+	<vertical pad-top="2">
+		<img id="nya-image" preserve-aspect="true" pref-width="70" pref-height="70"/>
+		<horizontal spacing="10">
+			<button id="auto-button" text="Auto Nya" on-click="nya-auto-clicked" active="true" min-width="20"/>
+			<primary-button id="nya-button" text="Nya" on-click="nya-click" active="true" min-width="20"/>
+			<button id="settings-button" text="⚙" on-click="settings-button-clicked" min-width="20"/>
 		</horizontal>
 	</vertical>
 </bg>
