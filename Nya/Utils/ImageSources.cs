@@ -31,8 +31,8 @@ namespace Nya.Utils
               {
                   BaseEndpoint = "https://api.xsky.dev/",
                   Mode = DataMode.Json,
-                  SfwEndpoints = new List<string> { "neko", "catboy", "furry", "ff" },
-                  NsfwEndpoints = new List<string> { "hentai", "bdsm", "feet", "trap", "gif", "futa" }
+                  SfwEndpoints = new List<string> { "neko", "catboy" },
+                  NsfwEndpoints = new List<string> { "hentai", "bdsm", "furry", "ff", "feet", "trap", "gif", "futa" }
               }
             },
             {
