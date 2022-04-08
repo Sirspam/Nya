@@ -85,8 +85,7 @@ namespace Nya.UI.ViewControllers
             }
             
             NyaButton.interactable = false;
-            ImageUtils.LoadCurrentNyaImage(NyaImage);
-            NyaButton.interactable = true;
+            ImageUtils.LoadCurrentNyaImage(NyaImage, () => NyaButton.interactable = true);
         }
         
         private void MenuDeactivated()

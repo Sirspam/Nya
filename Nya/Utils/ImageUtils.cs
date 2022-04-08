@@ -12,7 +12,6 @@ using Nya.Configuration;
 using Nya.Entries;
 using SiraUtil.Logging;
 using SiraUtil.Web;
-using UnityEngine;
 using Image = UnityEngine.UI.Image;
 using Random = System.Random;
 
@@ -27,7 +26,7 @@ namespace Nya.Utils
 
         private byte[]? _nyaImageBytes;
         private string? _nyaImageEndpoint;
-        public string? NyaImageURL;
+        private string? _nyaImageURL;
 
         public ImageUtils(SiraLog siraLog, IHttpService httpService, PluginConfig pluginConfig)
         {
@@ -90,7 +89,7 @@ namespace Nya.Utils
             }
         }
 
-        public async void LoadNewNyaImage(ImageView image)
+        public async void LoadNewNyaImage(ImageView image, Action? callback)
         {
             try
             {
@@ -101,10 +100,10 @@ namespace Nya.Utils
                 switch (ImageSources.Sources[_pluginConfig.SelectedAPI].Mode)
                 {
                     case DataMode.Json:
-                        var newUrl = NyaImageURL;
-                        NyaImageURL = await GetImageURL(selectedEndpoint);
+                        var newUrl = _nyaImageURL;
+                        _nyaImageURL = await GetImageURL(selectedEndpoint);
                         var count = 0;
-                        while (NyaImageURL == newUrl || NyaImageURL == null)
+                        while (_nyaImageURL == newUrl || _nyaImageURL == null)
                         {
                             count += 1;
                             if (count == 4)
@@ -113,14 +112,14 @@ namespace Nya.Utils
                                 return;
                             }
                             await Task.Delay(1000);
-                            NyaImageURL = await GetImageURL(selectedEndpoint);
+                            _nyaImageURL = await GetImageURL(selectedEndpoint);
                         }
 
                         break;
                     case DataMode.Local:
                         var type = _pluginConfig.Nsfw ? "nsfw" : "sfw";
-                        var oldImageURL = NyaImageURL;
-                        while (NyaImageURL == oldImageURL)
+                        var oldImageURL = _nyaImageURL;
+                        while (_nyaImageURL == oldImageURL)
                         {
                             var files = Directory.GetFiles(Path.Combine(ImageSources.Sources[_pluginConfig.SelectedAPI].BaseEndpoint, type));
                             switch (files.Length)
@@ -132,13 +131,13 @@ namespace Nya.Utils
                                 case 1 when oldImageURL != null:
                                     return;
                                 default:
-                                    NyaImageURL = files[_random.Next(files.Length)];
+                                    _nyaImageURL = files[_random.Next(files.Length)];
                                     break;
                             }
                         }
                         
-                        _nyaImageBytes = File.ReadAllBytes(NyaImageURL!);
-                        LoadCurrentNyaImage(image);
+                        _nyaImageBytes = File.ReadAllBytes(_nyaImageURL!);
+                        LoadCurrentNyaImage(image, () => callback?.Invoke());
                         break;
                     case DataMode.Unsupported:
                     default:
@@ -146,8 +145,8 @@ namespace Nya.Utils
                         return;
                 }
 
-                _nyaImageBytes = await GetWebDataToBytesAsync(NyaImageURL!);
-                LoadCurrentNyaImage(image);
+                _nyaImageBytes = await GetWebDataToBytesAsync(_nyaImageURL!);
+                LoadCurrentNyaImage(image, () => callback?.Invoke());
             }
             catch (Exception e) // e for dEez nuts
             {
@@ -156,20 +155,21 @@ namespace Nya.Utils
             }
         }
         
-        public void LoadCurrentNyaImage(ImageView image)
+        public void LoadCurrentNyaImage(ImageView image, Action? callback)
         {
             if (_nyaImageBytes == null)
             {
-                LoadNewNyaImage(image);
+                LoadNewNyaImage(image, callback);
                 return;
             }
 
             if (image.sprite.texture.GetRawTextureData() == _nyaImageBytes)
             {
+                callback?.Invoke();
                 return;
             }
 
-            _siraLog.Info($"Loading image from {NyaImageURL}");
+            _siraLog.Info($"Loading image from {_nyaImageURL}");
             var options = new BeatSaberUI.ScaleOptions
             {
                 ShouldScale = _pluginConfig.ScaleRatio != 0,
@@ -177,7 +177,7 @@ namespace Nya.Utils
                 Width = _pluginConfig.ScaleRatio,
                 Height = _pluginConfig.ScaleRatio
             };
-            image.SetImage(NyaImageURL, false, options);
+            image.SetImage(_nyaImageURL, false, options, () => callback?.Invoke());
         }
 
         private void LoadErrorSprite(Image image)
@@ -185,7 +185,7 @@ namespace Nya.Utils
             Utilities.GetData("Nya.Resources.Chocola_Dead.png", data =>
             {
                 _nyaImageBytes = data;
-                NyaImageURL = "Error Sprite";
+                _nyaImageURL = "Error Sprite";
                 image.sprite = Utilities.LoadSpriteRaw(data);
             });
             _siraLog.Warn("Error sprite loaded, something very wrong has happened ):");
