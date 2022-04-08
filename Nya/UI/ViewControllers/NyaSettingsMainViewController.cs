@@ -25,7 +25,7 @@ namespace Nya.UI.ViewControllers
 {
     [HotReload(RelativePathToLayout = @"..\Views\NyaSettingsMainView.bsml")]
     [ViewDefinition("Nya.UI.Views.NyaSettingsMainView.bsml")]
-    internal class NyaSettingsMainViewController : BSMLAutomaticViewController, IInitializable, IDisposable
+    internal class NyaSettingsMainViewController : BSMLAutomaticViewController
     {
         public FlowCoordinator parentFlowCoordinator = null!;
 
@@ -88,18 +88,8 @@ namespace Nya.UI.ViewControllers
             }
         }
 
-        [UIValue("view-controller-active")]
-        private bool ViewControllerActive => isActiveAndEnabled;
 
-        [UIValue("update-text-position")]
-        private int UpdateTextPosition
-        {
-            get
             {
-                if (ViewControllerActive)
-                    return 13;
-                else
-                    return 1;
             }
         }
         
@@ -399,13 +389,6 @@ namespace Nya.UI.ViewControllers
             parentFlowCoordinator.DismissFlowCoordinator(_mainFlowCoordinator.YoungestChildFlowCoordinatorOrSelf(), animationDirection: AnimationDirection.Vertical);
         }
 
-        [UIAction("#apply")]
-        private void ModSettingsApply() => SaveValuesToConfig();
-        
-        [UIAction("#cancel")]
-        private void ModSettingsCancel()
-        {
-            _uiUtils.NyaBgMaterial.color = _pluginConfig.BackgroundColor;
             if (_pluginConfig.InMenu)
             {
                 var floatingScreen = GameObject.Find("NyaMenuFloatingScreen");
@@ -414,17 +397,6 @@ namespace Nya.UI.ViewControllers
             }
         }
 
-        public void Initialize()
-        {
-            BSMLSettings.instance.AddSettingsMenu("Nya", "Nya.UI.Views.NyaSettingsMainView.bsml", this);
-        }
-
-        public void Dispose()
-        {
-            if (BSMLSettings.instance != null)
-            {
-                BSMLSettings.instance.RemoveSettingsMenu(this);
-            }
         }
     }
 }
