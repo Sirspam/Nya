@@ -24,8 +24,9 @@ namespace Nya.Configuration
         public virtual Vector3 MenuRotation { get; set; } = new Vector3(335f, 0f, 0f);
         public virtual Vector3 PausePosition { get; set; } = new Vector3(0f, 3.65f, 4f);
         public virtual Vector3 PauseRotation { get; set; } = new Vector3(335f, 0f, 0f);
-        public virtual bool RainbowBackgroundColor { get; set; } = false;
+        public virtual bool UseBackgroundColor { get; set; } = false;
         public virtual Color BackgroundColor { get; set; } = new Color(0.745f, 0.745f, 0.745f);
+        public virtual bool RainbowBackgroundColor { get; set; } = false;
         public virtual int AutoNyaWait { get; set; } = 4;
         public virtual int ScaleRatio { get; set; } = 512; // 0 means scaling disabled
         public virtual bool EasterEggs { get; set; } = true;

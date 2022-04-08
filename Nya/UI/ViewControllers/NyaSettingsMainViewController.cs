@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
-using BeatSaberMarkupLanguage.Components;
-using BeatSaberMarkupLanguage.Settings;
+using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.ViewControllers;
 using HMUI;
 using IPA.Loader;
@@ -42,6 +41,7 @@ namespace Nya.UI.ViewControllers
         private bool _nyaCommandEnabled;
         private int _nyaCommandCooldown;
         private bool _currentNyaCommandEnabled;
+        private bool _useBackgroundColor;
         private Vector3 _menuPosition;
         private Vector3 _menuRotation;
         private Vector3 _pausePosition;
@@ -52,31 +52,29 @@ namespace Nya.UI.ViewControllers
         private PluginConfig _pluginConfig = null!;
         private PluginMetadata _pluginMetadata = null!;
         private ISiraSyncService _siraSyncService = null!;
-        private IPlatformUserModel _platformUserModel = null!;
         private TimeTweeningManager _timeTweeningManager = null!;
         private MainFlowCoordinator _mainFlowCoordinator = null!;
         private MenuTransitionsHelper _menuTransitionsHelper = null!;
         private NyaSettingsRightViewController _nyaSettingsRightViewController = null!;
 
         [Inject]
-        public void Constructor(SiraLog siraLog, UIUtils uiUtils, PluginConfig pluginConfig, UBinder<Plugin, PluginMetadata> pluginMetadata, ISiraSyncService siraSyncService, IPlatformUserModel platformUserModel, TimeTweeningManager timeTweeningManager, MainFlowCoordinator mainFlowCoordinator, MenuTransitionsHelper menuTransitionsHelper, NyaSettingsRightViewController nyaSettingsRightViewController)
+        public void Constructor(SiraLog siraLog, UIUtils uiUtils, PluginConfig pluginConfig, UBinder<Plugin, PluginMetadata> pluginMetadata, ISiraSyncService siraSyncService, TimeTweeningManager timeTweeningManager, MainFlowCoordinator mainFlowCoordinator, MenuTransitionsHelper menuTransitionsHelper, NyaSettingsRightViewController nyaSettingsRightViewController)
         {
             _siraLog = siraLog;
             _uiUtils = uiUtils;
             _pluginConfig = pluginConfig;
             _pluginMetadata = pluginMetadata.Value;
             _siraSyncService = siraSyncService;
-            _platformUserModel = platformUserModel;
             _timeTweeningManager = timeTweeningManager;
             _mainFlowCoordinator = mainFlowCoordinator;
             _menuTransitionsHelper = menuTransitionsHelper;
             _nyaSettingsRightViewController = nyaSettingsRightViewController;
         }
 
-        protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
+        protected override async void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
         {
             base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
-
+            
             if (firstActivation)
             {
                 _topPanel.gameObject.AddComponent<VRGraphicRaycaster>().SetField("_physicsRaycaster", BeatSaberUI.PhysicsRaycasterWithCache);
@@ -85,14 +83,32 @@ namespace Nya.UI.ViewControllers
                 _vanillaImage.name = "VanillaImage";
                 _chocolaImage.gameObject.AddComponent<NyaSettingsClickableImage>();
                 _vanillaImage.gameObject.AddComponent<NyaSettingsClickableImage>();
+
+                BgColorSetting.modalColorPicker.doneEvent += (Color dontCareDidntAsk) => _pluginConfig.UseBackgroundColor = true;
+                BgColorSetting.modalColorPicker.cancelEvent += BgColorSettingCancelled;
+                            
+                var gitVersion = await _siraSyncService.LatestVersion();
+                if (gitVersion != null && gitVersion > _pluginMetadata.HVersion)
+                {
+                    _siraLog.Info($"{nameof(Nya)} v{gitVersion} is available on GitHub!");
+                    _updateText.text = $"{nameof(Nya)} v{gitVersion} is available on GitHub!";
+                    _updateText.alpha = 0f;
+                    UpdateAvailable = true;
+                    _timeTweeningManager.AddTween(new FloatTween(0f, 1f, val => _updateText.alpha = val, 0.4f, EaseType.InCubic), this);
+                }
             }
-        }
-
-
+            else
             {
+                AssignValues();
+            }
+
+            if (_pluginConfig.RainbowBackgroundColor)
+            {
+                BgColorSetting.interactable = false;
+                BgColorDefaultButton.interactable = false;
             }
         }
-        
+
         [UIValue("update-available")]
         private bool UpdateAvailable
         {
@@ -130,16 +146,16 @@ namespace Nya.UI.ViewControllers
             }
         }
 
-        [UIValue("bg-colour")]
+        [UIValue("bg-color")]
         private Color BackgroundColor
         {
             get => _backgroundColor;
             set
             {
                 _backgroundColor = value;
-                _uiUtils.NyaBgMaterial.color = value;
                 NotifyPropertyChanged();
             }
+
         }
 
         [UIValue("remember-NSFW")]
@@ -277,11 +293,11 @@ namespace Nya.UI.ViewControllers
         [UIComponent("vanilla-image")]
         private readonly ImageView _vanillaImage = null!;
 
-        [UIComponent("bg-colour-setting")]
-        private readonly Transform _bgColourSettingTransform = null!;
+        [UIComponent("bg-color-setting")]
+        public readonly ColorSetting BgColorSetting = null!;
 
-        [UIComponent("bg-colour-default")]
-        private readonly Button _bgColourDefaultButton = null!;
+        [UIComponent("bg-color-default")]
+        public readonly Button BgColorDefaultButton = null!;
 
         [UIComponent("reset-menu-position")]
         private readonly Button _resetMenuPositionButton = null!;
@@ -289,40 +305,36 @@ namespace Nya.UI.ViewControllers
         [UIComponent("reset-pause-position")]
         private readonly Button _resetPausePositionButton = null!;
 
-        [UIAction("#post-parse")]
-        private async void PostParse()
+        private void BgColorSettingCancelled()
         {
-            InMenu = _pluginConfig.InMenu;
-            InPause = _pluginConfig.InPause;
-            BackgroundColor = _pluginConfig.BackgroundColor;
-            RememberNsfw = _pluginConfig.RememberNsfw;
-            SkipNsfw = _pluginConfig.SkipNsfw;
-            ScalingValue = _pluginConfig.ScaleRatio;
-            SeparatePositions = _pluginConfig.SeparatePositions;
-            EasterEggs = _pluginConfig.EasterEggs;
-            _menuPosition = _pluginConfig.MenuPosition;
-            _menuRotation = _pluginConfig.MenuRotation;
-            _pausePosition = _pluginConfig.PausePosition;
-            _pauseRotation = _pluginConfig.PauseRotation;
-            
-            var gitVersion = await _siraSyncService.LatestVersion();
-                if (gitVersion != null && gitVersion > _pluginMetadata.HVersion)
-                {
-                    _siraLog.Info($"{nameof(Nya)} v{gitVersion} is available on GitHub!");
-                    _updateText.text = $"{nameof(Nya)} v{gitVersion} is available on GitHub!";
-                    _updateText.alpha = 0f;
-                    UpdateAvailable = true;
-                    _timeTweeningManager.AddTween(new FloatTween(0f, 1f, val => _updateText.alpha = val, 0.4f, EaseType.InCubic), this);
-                }
+            if ((!_useBackgroundColor || !_pluginConfig.UseBackgroundColor) && _pluginConfig.InMenu)
+            {
+                GameObject.Find("NyaMenuFloatingScreen").gameObject.transform.GetChild(0).GetComponent<ImageView>().material = Resources.FindObjectsOfTypeAll<Material>().Last(x => x.name == "UIFogBG");
+            }
         }
         
-        [UIAction("bg-colour-default-clicked")]
-        private void BgColourDefaultClicked()
+        [UIAction("#post-parse")]
+        private void PostParse()
         {
-            _uiUtils.ButtonUnderlineClick(_bgColourDefaultButton.gameObject);
-            var modalColourPicker = _bgColourSettingTransform.GetChild(2).GetComponent<ModalColorPicker>();
-            modalColourPicker.CurrentColor = new Color(0.745f, 0.745f, 0.745f);
-            modalColourPicker.DonePressed(); // Thank you DonePressed for making everything magically work
+            AssignValues();
+        }
+        
+        [UIAction("bg-color-setting-changed")]
+        private void BgColorSettingChanged(Color value)
+        {
+            _backgroundColor = value;
+            _uiUtils.SetNyaMaterialColor(value);
+        }
+        
+        [UIAction("bg-color-default-clicked")]
+        private void BgColorDefaultClicked()
+        {
+            _uiUtils.ButtonUnderlineClick(BgColorDefaultButton.gameObject);
+            _pluginConfig.UseBackgroundColor = false;
+            if (_pluginConfig.InMenu)
+            {
+                GameObject.Find("NyaMenuFloatingScreen").gameObject.transform.GetChild(0).GetComponent<ImageView>().material = Resources.FindObjectsOfTypeAll<Material>().Last(x => x.name == "UIFogBG");
+            }
         }
 
         [UIAction("reset-menu-clicked")]
@@ -347,6 +359,23 @@ namespace Nya.UI.ViewControllers
             _pauseRotation = new Vector3(0f, 270f, 0f);
         }
 
+        private void AssignValues()
+        {
+            InMenu = _pluginConfig.InMenu;
+            InPause = _pluginConfig.InPause;
+            BackgroundColor = _pluginConfig.BackgroundColor;
+            RememberNsfw = _pluginConfig.RememberNsfw;
+            SkipNsfw = _pluginConfig.SkipNsfw;
+            ScalingValue = _pluginConfig.ScaleRatio;
+            SeparatePositions = _pluginConfig.SeparatePositions;
+            EasterEggs = _pluginConfig.EasterEggs;
+            _useBackgroundColor = _pluginConfig.UseBackgroundColor;
+            _menuPosition = _pluginConfig.MenuPosition;
+            _menuRotation = _pluginConfig.MenuRotation;
+            _pausePosition = _pluginConfig.PausePosition;
+            _pauseRotation = _pluginConfig.PauseRotation;
+        }
+        
         private void SaveValuesToConfig()
         {
             _pluginConfig.InMenu = InMenu;
@@ -378,25 +407,27 @@ namespace Nya.UI.ViewControllers
         [UIAction("cancel-clicked")]
         private void CancelClicked()
         {
-            _uiUtils.NyaBgMaterial.color = _pluginConfig.BackgroundColor;
+            _siraLog.Info(_useBackgroundColor);
+            _siraLog.Info(_pluginConfig.UseBackgroundColor);
+            if (!_useBackgroundColor)
+            {
+                _siraLog.Info("lol");
+                BgColorSettingCancelled();
+            }
+            else
+            {
+                _uiUtils.SetNyaMaterialColor(_pluginConfig.BackgroundColor);   
+            }
+            
             if (_pluginConfig.InMenu)
             {
                 var floatingScreen = GameObject.Find("NyaMenuFloatingScreen");
                 floatingScreen.transform.position = _menuPosition;
                 floatingScreen.transform.rotation = Quaternion.Euler(_menuRotation);
             }
+            
             _nyaSettingsRightViewController.gameObject.SetActive(false); // Thank you leaderboard panel for kidnapping my right panel
             parentFlowCoordinator.DismissFlowCoordinator(_mainFlowCoordinator.YoungestChildFlowCoordinatorOrSelf(), animationDirection: AnimationDirection.Vertical);
-        }
-
-            if (_pluginConfig.InMenu)
-            {
-                var floatingScreen = GameObject.Find("NyaMenuFloatingScreen");
-                floatingScreen.transform.position = _menuPosition;
-                floatingScreen.transform.rotation = Quaternion.Euler(_menuRotation);
-            }
-        }
-
         }
     }
 }

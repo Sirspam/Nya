@@ -15,15 +15,17 @@ namespace Nya.UI.ViewControllers
         private UIUtils _uiUtils = null!;
         private PluginConfig _pluginConfig = null!;
         private TimeTweeningManager _timeTweeningManager = null!;
+        private NyaSettingsMainViewController _nyaSettingsMainViewController = null!;
 
         private bool _visible;
 
         [Inject]
-        public void Constructor(UIUtils uiUtils, PluginConfig pluginConfig, TimeTweeningManager timeTweeningManager)
+        public void Constructor(UIUtils uiUtils, PluginConfig pluginConfig, TimeTweeningManager timeTweeningManager, NyaSettingsMainViewController nyaSettingsMainViewController)
         {
             _uiUtils = uiUtils;
             _pluginConfig = pluginConfig;
             _timeTweeningManager = timeTweeningManager;
+            _nyaSettingsMainViewController = nyaSettingsMainViewController;
         }
 
         [UIComponent("rainbow-text")]
@@ -38,6 +40,9 @@ namespace Nya.UI.ViewControllers
                 KindlyAskRainbowTextToShowUpThenHaveItSodOffAfterTwoSeconds();
                 _uiUtils.RainbowNyaBg(true);
                 _pluginConfig.RainbowBackgroundColor = true;
+                _pluginConfig.BackgroundColor = _nyaSettingsMainViewController.BgColorSetting.CurrentColor;
+                _nyaSettingsMainViewController.BgColorSetting.interactable = false;
+                _nyaSettingsMainViewController.BgColorDefaultButton.interactable = false;
             }
             else
             {
@@ -45,6 +50,8 @@ namespace Nya.UI.ViewControllers
                 KindlyAskRainbowTextToShowUpThenHaveItSodOffAfterTwoSeconds();
                 _uiUtils.RainbowNyaBg(false);
                 _pluginConfig.RainbowBackgroundColor = false;
+                _nyaSettingsMainViewController.BgColorSetting.interactable = true;
+                _nyaSettingsMainViewController.BgColorDefaultButton.interactable = true;
             }
         }
 
