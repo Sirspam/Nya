@@ -1,5 +1,4 @@
-﻿using IPA.Loader;
-using Nya.Configuration;
+﻿using Nya.Configuration;
 using Nya.Utils;
 using Zenject;
 

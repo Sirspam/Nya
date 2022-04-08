@@ -12,8 +12,7 @@ using Nya.Configuration;
 using Nya.Entries;
 using SiraUtil.Logging;
 using SiraUtil.Web;
-using Image = UnityEngine.UI.Image;
-using Random = System.Random;
+using UnityEngine.UI;
 
 namespace Nya.Utils
 {

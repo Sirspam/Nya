@@ -84,7 +84,7 @@ namespace Nya.UI.ViewControllers
                 _chocolaImage.gameObject.AddComponent<NyaSettingsClickableImage>();
                 _vanillaImage.gameObject.AddComponent<NyaSettingsClickableImage>();
 
-                BgColorSetting.modalColorPicker.doneEvent += (Color dontCareDidntAsk) => _pluginConfig.UseBackgroundColor = true;
+                BgColorSetting.modalColorPicker.doneEvent += dontCareDidntAsk => _pluginConfig.UseBackgroundColor = true;
                 BgColorSetting.modalColorPicker.cancelEvent += BgColorSettingCancelled;
                             
                 var gitVersion = await _siraSyncService.LatestVersion();
@@ -192,7 +192,7 @@ namespace Nya.UI.ViewControllers
         }
 
         [UIValue("scaling-choices")] 
-        private List<object> ScalingChoices = new List<object> { "Disabled", 128, 256, 512, 1024 };
+        private List<object> _scalingChoices = new List<object> { "Disabled", 128, 256, 512, 1024 };
 
         [UIValue("scaling-value")]
         private object ScalingValue

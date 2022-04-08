@@ -3,7 +3,6 @@ using BeatSaberMarkupLanguage.Attributes;
 using HMUI;
 using Nya.Configuration;
 using Nya.Utils;
-using SiraUtil.Logging;
 using Tweening;
 using UnityEngine;
 
@@ -15,7 +14,7 @@ namespace Nya.UI.ViewControllers
         private readonly NyaSettingsFlowCoordinator _nyaSettingsFlowCoordinator;
         private readonly NyaSettingsMainViewController _nyaSettingsMainViewController;
 
-        public SettingsModalMenuController(UIUtils uiUtils, ImageUtils imageUtils, MainCamera mainCamera, PluginConfig pluginConfig, TimeTweeningManager timeTweeningManager, NsfwConfirmModalController nsfwConfirmModalController, SiraLog siraLog,MainFlowCoordinator mainFlowCoordinator, NyaSettingsFlowCoordinator nyaSettingsFlowCoordinator, NyaSettingsMainViewController nyaSettingsMainViewController)
+        public SettingsModalMenuController(UIUtils uiUtils, ImageUtils imageUtils, MainCamera mainCamera, PluginConfig pluginConfig, TimeTweeningManager timeTweeningManager, NsfwConfirmModalController nsfwConfirmModalController, MainFlowCoordinator mainFlowCoordinator, NyaSettingsFlowCoordinator nyaSettingsFlowCoordinator, NyaSettingsMainViewController nyaSettingsMainViewController)
             : base(uiUtils, imageUtils, mainCamera, pluginConfig, timeTweeningManager, nsfwConfirmModalController)
         {
             _mainFlowCoordinator = mainFlowCoordinator;

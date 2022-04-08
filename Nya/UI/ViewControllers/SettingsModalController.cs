@@ -18,13 +18,14 @@ using Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
+using Component = UnityEngine.Component;
 
 namespace Nya.UI.ViewControllers
 {
     internal abstract class SettingsModalController : IInitializable, INotifyPropertyChanged
     {
         private GameObject? _handle;
-        private bool _parsed = false;
+        private bool _parsed;
 
         private readonly UIUtils _uiUtils;
         private readonly ImageUtils _imageUtils;
@@ -122,7 +123,7 @@ namespace Nya.UI.ViewControllers
             SetupLists();
         }
 
-        private void BaseParse(Transform parentTransform, object host)
+        private void BaseParse(Component parentTransform, object host)
         {
             if (!ModalView && !_parsed)
             {

@@ -56,7 +56,7 @@ namespace Nya.Utils
         public async void ButtonUnderlineClick(GameObject gameObject)
         {
             var underline = await Task.Run(() => gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>());
-            _defaultUnderlineColor ??= await Task.Run(() => Resources.FindObjectsOfTypeAll<Button>().Last(x => (x.name == "BSMLButton")).transform.Find("Underline").gameObject.GetComponent<ImageView>().color);
+            _defaultUnderlineColor ??= await Task.Run(() => Resources.FindObjectsOfTypeAll<Button>().Last(x => x.name == "BSMLButton").transform.Find("Underline").gameObject.GetComponent<ImageView>().color);
 
             _uwuTweenyManager.KillAllTweens(underline);
             var tween = new FloatTween(0f, 1f, val => underline.color = Color.Lerp(new Color(0f, 0.7f, 1f), (Color) _defaultUnderlineColor, val), 1f, EaseType.InSine);
@@ -71,7 +71,7 @@ namespace Nya.Utils
             }
             
             color.a = 0.55f;
-            NyaBgMaterial!.color = color;
+            NyaBgMaterial.color = color;
         }
         
         public void RainbowNyaBg(bool active)
