@@ -70,7 +70,7 @@ namespace Nya.Utils
                 GameObject.Find("NyaMenuFloatingScreen").gameObject.transform.GetChild(0).GetComponent<ImageView>().material = NyaBgMaterial;
             }
             
-            color.a = 0.55f;
+            color.a = 0.6f;
             NyaBgMaterial.color = color;
         }
         
