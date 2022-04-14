@@ -58,7 +58,13 @@ namespace Nya.UI.ViewControllers
         protected readonly RectTransform ModalTransform = null!;
 
         [UIComponent("settings-modal-tab-selector")]
-        protected readonly Transform TabSelector = null!;
+        protected readonly TabSelector TabSelector = null!;
+        
+        [UIComponent("nya-tab")]
+        protected readonly Tab NyaTab = null!;
+
+        [UIComponent("api-tab")]
+        protected readonly Tab ApiTab = null!;
         
         [UIComponent("screen-tab")]
         protected readonly Tab ScreenTab = null!;
@@ -142,6 +148,12 @@ namespace Nya.UI.ViewControllers
             BaseParse(parentTransform, host);
             ParserParams.EmitEvent("close-modal");
             ParserParams.EmitEvent("open-modal");
+
+            NyaTab.gameObject.SetActive(true);
+            ApiTab.gameObject.SetActive(false);
+            ScreenTab.gameObject.SetActive(false);
+            MoreSettingsTab.gameObject.SetActive(false);
+            TabSelector.Refresh();
         }
 
         public void HideModal()

@@ -31,6 +31,14 @@ namespace Nya.UI.ViewControllers
         [UIComponent("rainbow-text")]
         private readonly TMP_Text _rainbowText = null!;
 
+        protected override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
+        {
+            base.DidDeactivate(removedFromHierarchy, screenSystemDisabling);
+
+            // Thank you leaderboard panel for kidnapping my right panel
+            gameObject.SetActive(false);
+        }
+        
         [UIAction("rainbow-clicked")]
         public void RainbowClicked()
         {

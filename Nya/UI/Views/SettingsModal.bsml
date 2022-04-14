@@ -6,14 +6,14 @@
 				<tab-selector id="settings-modal-tab-selector" tab-tag="settings-modal-tab" child-expand-width="true" child-control-width="true"/>
 			</horizontal>
 			
-			<tab tab-name="Nya" tags="settings-modal-tab">
+			<tab id="nya-tab" tab-name="Nya" tags="settings-modal-tab">
 				<vertical horizontal-fit="PreferredSize" vertical-fit="PreferredSize" preferred-width="60" preferred-height="40" spacing="1">
 					<button id="nya-download-button" text="Download Nya" on-click="nya-download-clicked" active="true" min-height="11" min-width="25"/>
 					<button id="nya-open-button" text="Open Nya" on-click="nya-open-clicked" active="true" min-height="11" min-width="25"/>
 					<checkbox-setting id="nsfw-checkbox" text="NSFW Nya" value="nya-nsfw-check" on-change="nya-nsfw-changed" bind-value="true"/>
 				</vertical>
 			</tab>
-			<tab tab-name="Sources" tags="settings-modal-tab">
+			<tab id="api-tab" tab-name="Sources" tags="settings-modal-tab">
 				<vertical horizontal-fit="PreferredSize" vertical-fit="PreferredSize" preferred-width="60" preferred-height="45" spacing="-3">
 					<dropdown-list-setting id="api-dropdown" text="API" value="api-value" choices="api-list" on-change="api-change"/>
 					<dropdown-list-setting id="sfw-dropdown" text="SFW endpoint" value="sfw-value" choices="sfw-list" formatter="format-source" on-change="sfw-change" apply-on-change="true" bind-value="true"/>

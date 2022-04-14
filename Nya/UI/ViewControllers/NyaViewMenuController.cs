@@ -59,7 +59,7 @@ namespace Nya.UI.ViewControllers
                 GameplaySetup.instance.RemoveTab("Nya");
             }
 
-            if (PluginConfig.InMenu)
+            if (_floatingScreen != null)
             {
                 _floatingScreen!.HandleReleased -= FloatingScreen_HandleReleased;
                 Object.Destroy(_floatingScreen);
