@@ -49,7 +49,7 @@ namespace Nya.Utils
             if (_pluginConfig.UseBackgroundColor)
                 floatingScreen.gameObject.transform.GetChild(0).GetComponent<ImageView>().material = NyaBgMaterial;
             if (_pluginConfig.RainbowBackgroundColor)
-                RainbowNyaBg(true);
+                ToggleRainbowNyaBg(true, floatingScreen.gameObject);
             return floatingScreen;
         }
 
@@ -74,7 +74,7 @@ namespace Nya.Utils
             NyaBgMaterial.color = color;
         }
         
-        public void RainbowNyaBg(bool active)
+        public void ToggleRainbowNyaBg(bool active, GameObject? floatingScreen = null)
         {
             _uwuTweenyManager.KillAllTweens(NyaBgMaterial);
             if (!active)
@@ -85,14 +85,32 @@ namespace Nya.Utils
                 }
                 else
                 {
-                    GameObject.Find("NyaMenuFloatingScreen").gameObject.transform.GetChild(0).GetComponent<ImageView>().material = Resources.FindObjectsOfTypeAll<Material>().Last(x => x.name == "UIFogBG");
+                    if (floatingScreen == null)
+                    {
+                        floatingScreen = GameObject.Find("NyaMenuFloatingScreen").gameObject;
+                        if (floatingScreen == null)
+                        {
+                            return;
+                        }
+                    }
+                    
+                    floatingScreen.transform.GetChild(0).GetComponent<ImageView>().material = Resources.FindObjectsOfTypeAll<Material>().Last(x => x.name == "UIFogBG");
                 }
                 return;
             }
 
             if (!_pluginConfig.UseBackgroundColor)
             {
-                GameObject.Find("NyaMenuFloatingScreen").gameObject.transform.GetChild(0).GetComponent<ImageView>().material = NyaBgMaterial;
+                if (floatingScreen == null)
+                {
+                    floatingScreen = GameObject.Find("NyaMenuFloatingScreen").gameObject;
+                    if (floatingScreen == null)
+                    {
+                        return;
+                    }
+                }
+
+                floatingScreen.transform.GetChild(0).GetComponent<ImageView>().material = NyaBgMaterial;
             }
             
             var tween = new FloatTween(0f, 1, val => SetNyaMaterialColor(Color.HSVToRGB(val, 1f, 1f)), 6f, EaseType.Linear)

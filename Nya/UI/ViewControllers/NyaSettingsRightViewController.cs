@@ -38,7 +38,7 @@ namespace Nya.UI.ViewControllers
             {
                 _rainbowText.SetText("<#FF0000>R<#FF7F00>A<#FFFF00>I<#00FF00>N<#0000FF>B<#4B0082>O<#9400D3>W\n<#FFFFFF>Enabled");
                 KindlyAskRainbowTextToShowUpThenHaveItSodOffAfterTwoSeconds();
-                _uiUtils.RainbowNyaBg(true);
+                _uiUtils.ToggleRainbowNyaBg(true);
                 _pluginConfig.RainbowBackgroundColor = true;
                 _pluginConfig.BackgroundColor = _nyaSettingsMainViewController.BgColorSetting.CurrentColor;
                 _nyaSettingsMainViewController.BgColorSetting.interactable = false;
@@ -48,7 +48,7 @@ namespace Nya.UI.ViewControllers
             {
                 _rainbowText.SetText("<#FF0000>R<#FF7F00>A<#FFFF00>I<#00FF00>N<#0000FF>B<#4B0082>O<#9400D3>W\n<#FFFFFF>Disabled");
                 KindlyAskRainbowTextToShowUpThenHaveItSodOffAfterTwoSeconds();
-                _uiUtils.RainbowNyaBg(false);
+                _uiUtils.ToggleRainbowNyaBg(false);
                 _pluginConfig.RainbowBackgroundColor = false;
                 _nyaSettingsMainViewController.BgColorSetting.interactable = true;
                 _nyaSettingsMainViewController.BgColorDefaultButton.interactable = true;
