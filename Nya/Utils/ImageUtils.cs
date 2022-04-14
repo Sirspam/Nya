@@ -105,7 +105,7 @@ namespace Nya.Utils
                         while (_nyaImageURL == newUrl || _nyaImageURL == null)
                         {
                             count += 1;
-                            if (count == 4)
+                            if (count == 3)
                             {
                                 LoadErrorSprite(image);
                                 return;
@@ -187,7 +187,7 @@ namespace Nya.Utils
                 _nyaImageURL = "Error Sprite";
                 image.sprite = Utilities.LoadSpriteRaw(data);
             });
-            _siraLog.Warn("Error sprite loaded, something very wrong has happened ):");
+            _siraLog.Warn("Error sprite loaded");
         }
     }
 }
