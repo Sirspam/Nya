@@ -108,6 +108,7 @@ namespace Nya.Utils
                             if (count == 3)
                             {
                                 LoadErrorSprite(image);
+                                callback?.Invoke();
                                 return;
                             }
                             await Task.Delay(1000);
