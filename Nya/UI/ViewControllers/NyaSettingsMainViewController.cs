@@ -411,7 +411,6 @@ namespace Nya.UI.ViewControllers
             _siraLog.Info(_pluginConfig.UseBackgroundColor);
             if (!_useBackgroundColor)
             {
-                _siraLog.Info("lol");
                 BgColorSettingCancelled();
             }
             else
