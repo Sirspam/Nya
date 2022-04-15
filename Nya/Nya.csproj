@@ -125,4 +125,16 @@
 		</PackageReference>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Update="UI\ViewControllers\ModalControllers\NSFWConfirmModalController.cs">
+	    <SubType>Code</SubType>
+	  </Compile>
+	  <Compile Update="UI\ViewControllers\NyaViewControllers\NyaViewController.cs">
+	    <SubType>Code</SubType>
+	  </Compile>
+	  <Compile Update="UI\ViewControllers\NyaViewControllers\NyaViewGameController.cs">
+	    <SubType>Code</SubType>
+	  </Compile>
+	</ItemGroup>
+
 </Project>
