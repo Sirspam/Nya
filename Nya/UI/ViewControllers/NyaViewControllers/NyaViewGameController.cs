@@ -3,12 +3,13 @@ using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.FloatingScreen;
 using HMUI;
 using Nya.Configuration;
+using Nya.UI.ViewControllers.ModalControllers;
 using Nya.Utils;
 using Tweening;
 using UnityEngine;
 using Zenject;
 
-namespace Nya.UI.ViewControllers
+namespace Nya.UI.ViewControllers.NyaViewControllers
 {
     internal class NyaViewGameController : NyaViewController, IInitializable, IDisposable
     {

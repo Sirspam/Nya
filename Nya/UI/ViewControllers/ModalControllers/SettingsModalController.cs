@@ -20,7 +20,7 @@ using UnityEngine.UI;
 using Zenject;
 using Component = UnityEngine.Component;
 
-namespace Nya.UI.ViewControllers
+namespace Nya.UI.ViewControllers.ModalControllers
 {
     internal abstract class SettingsModalController : IInitializable, INotifyPropertyChanged
     {

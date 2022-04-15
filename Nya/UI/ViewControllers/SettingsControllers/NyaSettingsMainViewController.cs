@@ -20,7 +20,7 @@ using UnityEngine.UI;
 using VRUIControls;
 using Zenject;
 
-namespace Nya.UI.ViewControllers
+namespace Nya.UI.ViewControllers.SettingsControllers
 {
     [HotReload(RelativePathToLayout = @"..\Views\NyaSettingsMainView.bsml")]
     [ViewDefinition("Nya.UI.Views.NyaSettingsMainView.bsml")]

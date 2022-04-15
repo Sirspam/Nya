@@ -6,7 +6,7 @@ using HMUI;
 using IPA.Utilities;
 using UnityEngine;
 
-namespace Nya.UI.ViewControllers
+namespace Nya.UI.ViewControllers.ModalControllers
 {
     internal class NsfwConfirmModalController
     {

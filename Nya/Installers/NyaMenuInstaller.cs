@@ -1,4 +1,8 @@
-﻿using Nya.UI.ViewControllers;
+﻿using Nya.UI.FlowControllers;
+using Nya.UI.ViewControllers;
+using Nya.UI.ViewControllers.ModalControllers;
+using Nya.UI.ViewControllers.NyaViewControllers;
+using Nya.UI.ViewControllers.SettingsControllers;
 using Zenject;
 
 namespace Nya.Installers

@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
-namespace Nya.UI.ViewControllers
+namespace Nya.UI.ViewControllers.SettingsControllers
 {
 	internal class NyaModSettingsViewController : IInitializable, IDisposable
 	{

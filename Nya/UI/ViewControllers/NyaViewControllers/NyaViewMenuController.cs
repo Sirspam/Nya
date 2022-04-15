@@ -4,13 +4,14 @@ using BeatSaberMarkupLanguage.FloatingScreen;
 using BeatSaberMarkupLanguage.GameplaySetup;
 using HMUI;
 using Nya.Configuration;
+using Nya.UI.ViewControllers.ModalControllers;
 using Nya.Utils;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
 using Object = UnityEngine.Object;
 
-namespace Nya.UI.ViewControllers
+namespace Nya.UI.ViewControllers.NyaViewControllers
 {
     internal class NyaViewMenuController : NyaViewController, IInitializable, IDisposable
     {

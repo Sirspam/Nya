@@ -6,7 +6,7 @@ using TMPro;
 using Tweening;
 using Zenject;
 
-namespace Nya.UI.ViewControllers
+namespace Nya.UI.ViewControllers.SettingsControllers
 {
     [HotReload(RelativePathToLayout = @"..\Views\NyaSettingsRightView.bsml")]
     [ViewDefinition("Nya.UI.Views.NyaSettingsRightView.bsml")]

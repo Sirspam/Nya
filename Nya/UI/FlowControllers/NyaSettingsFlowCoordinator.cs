@@ -1,8 +1,10 @@
 ﻿using HMUI;
 using Nya.Configuration;
+using Nya.UI.ViewControllers;
+using Nya.UI.ViewControllers.SettingsControllers;
 using Zenject;
 
-namespace Nya.UI.ViewControllers
+namespace Nya.UI.FlowControllers
 {
     internal class NyaSettingsFlowCoordinator : FlowCoordinator
     {

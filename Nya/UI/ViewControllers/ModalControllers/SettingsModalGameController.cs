@@ -3,7 +3,7 @@ using Nya.Utils;
 using Tweening;
 using UnityEngine;
 
-namespace Nya.UI.ViewControllers
+namespace Nya.UI.ViewControllers.ModalControllers
 {
     internal class SettingsModalGameController : SettingsModalController
     {

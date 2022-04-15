@@ -8,7 +8,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Nya.UI.ViewControllers
+namespace Nya.UI.ViewControllers.NyaViewControllers
 {
     internal abstract class NyaViewController
     {

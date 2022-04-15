@@ -2,11 +2,13 @@
 using BeatSaberMarkupLanguage.Attributes;
 using HMUI;
 using Nya.Configuration;
+using Nya.UI.FlowControllers;
+using Nya.UI.ViewControllers.SettingsControllers;
 using Nya.Utils;
 using Tweening;
 using UnityEngine;
 
-namespace Nya.UI.ViewControllers
+namespace Nya.UI.ViewControllers.ModalControllers
 {
     internal class SettingsModalMenuController : SettingsModalController
     {
