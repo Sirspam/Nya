@@ -279,7 +279,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
         [UIAction("format-source")]
         protected string FormatSource(string value)
         {
-            return value.Split('/').Last();
+            return value.Split('/').Last().Replace("_", " ");
         }
 
         #endregion
