@@ -71,14 +71,21 @@ namespace Nya.Utils
         {
             try
             {
-                _siraLog.Info($"Attempting to get image url from {_pluginConfig.SelectedAPI}, {endpoint}");
-                var response = await GetWebDataToBytesAsync(ImageSources.Sources[_pluginConfig.SelectedAPI].BaseEndpoint + endpoint);
+                var path = ImageSources.Sources[_pluginConfig.SelectedAPI].BaseEndpoint + endpoint;
+                _siraLog.Info($"Attempting to get image url from {path}");
+                var response = await GetWebDataToBytesAsync(path);
                 if (response == null)
                 {
                     return null;
                 }
 
                 var endpointResult = JsonConvert.DeserializeObject<WebAPIEntries>(Encoding.UTF8.GetString(response));
+                if (endpointResult.Url == null)
+                {
+                    _siraLog.Error($"Couldn't find url value in response: {JsonConvert.SerializeObject(Encoding.UTF8.GetString(response))}");
+                    return null;
+                }
+                
                 _nyaImageEndpoint = endpointResult.Url.Split('/').Last();
                 return endpointResult.Url;
             }
@@ -107,10 +114,16 @@ namespace Nya.Utils
                             count += 1;
                             if (count == 3)
                             {
-                                LoadErrorSprite(image);
-                                callback?.Invoke();
-                                return;
+                                if (_nyaImageURL == null)
+                                {
+                                    LoadErrorSprite(image);
+                                    callback?.Invoke();
+                                    return;
+                                }
+                                
+                                break;
                             }
+
                             await Task.Delay(1000);
                             _nyaImageURL = await GetImageURL(selectedEndpoint);
                         }
@@ -172,10 +185,9 @@ namespace Nya.Utils
             _siraLog.Info($"Loading image from {_nyaImageURL}");
             var options = new BeatSaberUI.ScaleOptions
             {
-                ShouldScale = _pluginConfig.ScaleRatio != 0,
+                ShouldScale = _pluginConfig.ScaleValue != 0,
                 MaintainRatio = true,
                 Width = _pluginConfig.ScaleRatio,
-                Height = _pluginConfig.ScaleRatio
             };
             image.SetImage(_nyaImageURL, false, options, () => callback?.Invoke());
         }
