@@ -13,7 +13,13 @@ namespace Nya.Utils
                 {
                     BaseEndpoint = "https://api.waifu.pics/",
                     Mode = DataMode.Json,
-                    SfwEndpoints = new List<string> { "sfw/neko", "sfw/waifu", "sfw/awoo", "sfw/shinobu", "sfw/megumin", "sfw/cuddle", "sfw/cry", "sfw/hug", "sfw/kiss", "sfw/lick", "sfw/pat", "sfw/smug", "sfw/bonk", "sfw/yeet", "sfw/blush", "sfw/smile", "sfw/wave", "sfw/highfive", "sfw/nom", "sfw/bite", "sfw/glomp", "sfw/slap", "sfw/kick", "sfw/happy", "sfw/wink", "sfw/poke", "sfw/dance" }, // No 'kill' endpoint because it makes me sad :(
+                    SfwEndpoints = new List<string>
+                    {
+                        "sfw/neko", "sfw/waifu", "sfw/awoo", "sfw/shinobu", "sfw/megumin", "sfw/cuddle", "sfw/cry",
+                        "sfw/hug", "sfw/kiss", "sfw/lick", "sfw/pat", "sfw/smug", "sfw/bonk", "sfw/yeet", "sfw/blush",
+                        "sfw/smile", "sfw/wave", "sfw/highfive", "sfw/nom", "sfw/bite", "sfw/glomp", "sfw/slap",
+                        "sfw/kick", "sfw/happy", "sfw/wink", "sfw/poke", "sfw/dance"
+                    }, // No 'kill' endpoint because it makes me sad :(
                     NsfwEndpoints = new List<string> { "nsfw/neko", "nsfw/waifu", "nsfw/trap", "nsfw/blowjob" }
                 }
             },
@@ -22,8 +28,20 @@ namespace Nya.Utils
                 {
                     BaseEndpoint = "https://nekos.life/api/v2/img/",
                     Mode = DataMode.Json,
-                    SfwEndpoints = new List<string> { "neko", "ngif", "waifu", "smug", "gecg", "meow" },
-                    NsfwEndpoints = new List<string> { "lewd", "lewd_gif", "yuri", "futa", "femdom", "boobs", "cum"} // Not all API endpoints because nekos.life has so many nsfw endpoints it's ludicrous
+                    SfwEndpoints = new List<string>
+                    {
+                        "neko", "ngif", "meow", "tickle", "slap", "poke", "pat", "lizard", "kiss", "hug", "fox_girl",
+                        "feed", "cuddle", "kemonomimi", "holo", "smug", "baka", "woof", "wallpaper", "goose", "gecg",
+                        "avatar", "waifu"
+                    },
+                    NsfwEndpoints = new List<string>
+                    {
+                        "Random_hentai_gif", "pussy", "nsfw_neko_gif", "lewd", "les", "kuni", "cum", "classic", "boobs",
+                        "bj", "anal", "nsfw_avatar", "yuri", "trap", "tits", "solog", "solo", "pwankg", "pussy_jpg",
+                        "lewdkemo", "lewdk", "keta", "hololewd", "holoero", "hentai", "futanari", "femdom", "feetg",
+                        "erofeet", "feet", "ero", "erok", "erokemo", "eron", "eroyuri", "cum_jpg", "blowjob", "spank",
+                        "gasm"
+                    } // 38 nsfw endpoints 💀
                 }
             },
             {
