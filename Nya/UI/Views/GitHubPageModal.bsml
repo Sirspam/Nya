@@ -1,0 +1,12 @@
+﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
+    <modal id="modal" show-event="open-modal" hide-event="close-modal" size-delta-x="45" size-delta-y="35" anchor-pos-x="-70" anchor-pos-y="30" move-to-center="false">
+        <vertical pad-top="1" pref-width="45">
+            <text text="~modal-text" font-size="5" anchor-max-x="5" align="Center" word-wrapping="true"/>
+            <img src="Nya.Resources.Chocovani_Laptop.png" preserve-aspect="true" pref-width="20" pref-height="20"/>
+            <horizontal>
+                <button text="Yes" on-click="yes-clicked" min-width="18"/>
+                <button text="No" on-click="no-clicked" min-width="18"/>
+            </horizontal>
+        </vertical>
+    </modal>
+</bg>

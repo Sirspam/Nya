@@ -1,32 +1,46 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.ViewControllers;
+using IPA.Loader;
 using Nya.Configuration;
+using Nya.UI.ViewControllers.ModalControllers;
 using Nya.Utils;
+using SiraUtil.Zenject;
 using TMPro;
 using Tweening;
 using Zenject;
+using UnityEngine;
 
 namespace Nya.UI.ViewControllers.SettingsControllers
 {
-    [HotReload(RelativePathToLayout = @"..\Views\NyaSettingsRightView.bsml")]
+    [HotReload(RelativePathToLayout = @"..\..\Views\NyaSettingsRightView.bsml")]
     [ViewDefinition("Nya.UI.Views.NyaSettingsRightView.bsml")]
     internal class NyaSettingsRightViewController : BSMLAutomaticViewController
     {
         private UIUtils _uiUtils = null!;
         private PluginConfig _pluginConfig = null!;
+        private PluginMetadata _pluginMetadata = null!;
         private TimeTweeningManager _timeTweeningManager = null!;
+        private GitHubPageModalController _gitHubPageModalController = null!;
         private NyaSettingsMainViewController _nyaSettingsMainViewController = null!;
 
         private bool _visible;
 
         [Inject]
-        public void Constructor(UIUtils uiUtils, PluginConfig pluginConfig, TimeTweeningManager timeTweeningManager, NyaSettingsMainViewController nyaSettingsMainViewController)
+        public void Constructor(UIUtils uiUtils, PluginConfig pluginConfig, UBinder<Plugin, PluginMetadata> pluginMetadata, TimeTweeningManager timeTweeningManager, GitHubPageModalController gitHubPageModalController, NyaSettingsMainViewController nyaSettingsMainViewController)
         {
             _uiUtils = uiUtils;
             _pluginConfig = pluginConfig;
+            _pluginMetadata = pluginMetadata.Value;
             _timeTweeningManager = timeTweeningManager;
+            _gitHubPageModalController = gitHubPageModalController;
             _nyaSettingsMainViewController = nyaSettingsMainViewController;
         }
+        
+        [UIValue("version-text-value")]
+        private string VersionText => $"{_pluginMetadata.Name} v{_pluginMetadata.HVersion} by {_pluginMetadata.Author}";
+
+        [UIValue("rainbow-nya-available")]
+        private bool RainbowNyaAvailable => _pluginConfig.InMenu;
 
         [UIComponent("rainbow-text")]
         private readonly TMP_Text _rainbowText = null!;
@@ -37,6 +51,17 @@ namespace Nya.UI.ViewControllers.SettingsControllers
 
             // Thank you leaderboard panel for kidnapping my right panel
             gameObject.SetActive(false);
+        }
+
+        [UIAction("version-text-clicked")]
+        private void VersionTextClicked()
+        {
+            if (_pluginMetadata.PluginHomeLink == null)
+            {
+                return;
+            }
+
+            _gitHubPageModalController.ShowModal(_rainbowText.transform, _pluginMetadata.Name, _pluginMetadata.PluginHomeLink.ToString());
         }
         
         [UIAction("rainbow-clicked")]
