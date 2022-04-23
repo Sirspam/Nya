@@ -52,19 +52,21 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         private PluginConfig _pluginConfig = null!;
         private PluginMetadata _pluginMetadata = null!;
         private ISiraSyncService _siraSyncService = null!;
+        private FloatingScreenUtils _floatingScreenUtils = null!;
         private TimeTweeningManager _timeTweeningManager = null!;
         private MainFlowCoordinator _mainFlowCoordinator = null!;
         private MenuTransitionsHelper _menuTransitionsHelper = null!;
         private NyaSettingsRightViewController _nyaSettingsRightViewController = null!;
 
         [Inject]
-        public void Constructor(SiraLog siraLog, UIUtils uiUtils, PluginConfig pluginConfig, UBinder<Plugin, PluginMetadata> pluginMetadata, ISiraSyncService siraSyncService, TimeTweeningManager timeTweeningManager, MainFlowCoordinator mainFlowCoordinator, MenuTransitionsHelper menuTransitionsHelper, NyaSettingsRightViewController nyaSettingsRightViewController)
+        public void Constructor(SiraLog siraLog, UIUtils uiUtils, PluginConfig pluginConfig, UBinder<Plugin, PluginMetadata> pluginMetadata, ISiraSyncService siraSyncService, FloatingScreenUtils floatingScreenUtils, TimeTweeningManager timeTweeningManager, MainFlowCoordinator mainFlowCoordinator, MenuTransitionsHelper menuTransitionsHelper)
         {
             _siraLog = siraLog;
             _uiUtils = uiUtils;
             _pluginConfig = pluginConfig;
             _pluginMetadata = pluginMetadata.Value;
             _siraSyncService = siraSyncService;
+            _floatingScreenUtils = floatingScreenUtils;
             _timeTweeningManager = timeTweeningManager;
             _mainFlowCoordinator = mainFlowCoordinator;
             _menuTransitionsHelper = menuTransitionsHelper;
@@ -323,7 +325,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         private void BgColorSettingChanged(Color value)
         {
             _backgroundColor = value;
-            _uiUtils.SetNyaMaterialColor(value);
+            _floatingScreenUtils.SetNyaMaterialColor(value);
         }
         
         [UIAction("bg-color-default-clicked")]
@@ -415,7 +417,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
             }
             else
             {
-                _uiUtils.SetNyaMaterialColor(_pluginConfig.BackgroundColor);   
+                _floatingScreenUtils.SetNyaMaterialColor(_pluginConfig.BackgroundColor);   
             }
             
             if (_pluginConfig.InMenu)

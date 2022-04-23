@@ -16,8 +16,9 @@ namespace Nya.Installers
         public override void InstallBindings()
         {
             Container.BindInstance(_pluginConfig).AsSingle();
-            Container.Bind<ImageUtils>().AsSingle();
             Container.Bind<UIUtils>().AsSingle();
+            Container.Bind<ImageUtils>().AsSingle();
+            Container.Bind<FloatingScreenUtils>().AsSingle();
         }
     }
 }

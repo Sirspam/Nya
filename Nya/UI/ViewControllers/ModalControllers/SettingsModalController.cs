@@ -31,17 +31,19 @@ namespace Nya.UI.ViewControllers.ModalControllers
         private readonly ImageUtils _imageUtils;
         private readonly MainCamera _mainCamera;
         protected readonly PluginConfig PluginConfig;
+        private readonly FloatingScreenUtils _floatingScreenUtils;
         private readonly TimeTweeningManager _timeTweeningManager;
         private readonly NsfwConfirmModalController _nsfwConfirmModalController;
 
         public event PropertyChangedEventHandler PropertyChanged = null!;
 
-        protected SettingsModalController(UIUtils uiUtils, ImageUtils imageUtils, MainCamera mainCamera, PluginConfig pluginConfig, TimeTweeningManager timeTweeningManager, NsfwConfirmModalController nsfwConfirmModalController)
+        protected SettingsModalController(UIUtils uiUtils, ImageUtils imageUtils, MainCamera mainCamera, PluginConfig pluginConfig, FloatingScreenUtils floatingScreenUtils, TimeTweeningManager timeTweeningManager, NsfwConfirmModalController nsfwConfirmModalController)
         {
             _uiUtils = uiUtils;
             _imageUtils = imageUtils;
             _mainCamera = mainCamera;
             PluginConfig = pluginConfig;
+            _floatingScreenUtils = floatingScreenUtils;
             _timeTweeningManager = timeTweeningManager;
             _nsfwConfirmModalController = nsfwConfirmModalController;
         }
@@ -371,17 +373,17 @@ namespace Nya.UI.ViewControllers.ModalControllers
             Vector3Tween tween;
             if (value)
             {
-                _handle.gameObject.transform.localScale = new Vector3(0f, _uiUtils.HandleScale.y, _uiUtils.HandleScale.z);
+                _handle.gameObject.transform.localScale = new Vector3(0f, _floatingScreenUtils.HandleScale.y, _floatingScreenUtils.HandleScale.z);
                 var oldScale = _handle.transform.localScale;
-                tween = new Vector3Tween(oldScale, _uiUtils.HandleScale, val => _handle.transform.localScale = val, 0.5f, EaseType.OutQuart)
+                tween = new Vector3Tween(oldScale, _floatingScreenUtils.HandleScale, val => _handle.transform.localScale = val, 0.5f, EaseType.OutQuart)
                 {
                     onStart = delegate { _handle.gameObject.SetActive(true); }
                 };
             }
             else
             {
-                var newScale = new Vector3(0f, _uiUtils.HandleScale.y, _uiUtils.HandleScale.z);
-                tween = new Vector3Tween(_uiUtils.HandleScale, newScale, val => _handle.transform.localScale = val, 0.5f, EaseType.OutQuart)
+                var newScale = new Vector3(0f, _floatingScreenUtils.HandleScale.y, _floatingScreenUtils.HandleScale.z);
+                tween = new Vector3Tween(_floatingScreenUtils.HandleScale, newScale, val => _handle.transform.localScale = val, 0.5f, EaseType.OutQuart)
                 {
                     onCompleted = delegate { _handle.gameObject.SetActive(false); }
                 };

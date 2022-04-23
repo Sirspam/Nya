@@ -13,29 +13,30 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
 {
     internal class NyaViewGameController : NyaViewController, IInitializable, IDisposable
     {
-        private readonly UIUtils _uiUtils;
         private readonly IGamePause _gamePause;
+        private readonly FloatingScreenUtils _floatingScreenUtils;
         private readonly TimeTweeningManager _timeTweeningManager;
         private readonly SettingsModalGameController _settingsModalGameController;
-
-        private FloatingScreen? _floatingScreen;
-
-        public NyaViewGameController(PluginConfig pluginConfig, ImageUtils imageUtils, UIUtils uiUtils, IGamePause gamePause, TimeTweeningManager timeTweeningManager, SettingsModalGameController settingsModalGameController)
+        
+        public NyaViewGameController(PluginConfig pluginConfig, ImageUtils imageUtils, IGamePause gamePause, FloatingScreenUtils floatingScreenUtils, TimeTweeningManager timeTweeningManager, SettingsModalGameController settingsModalGameController)
             : base(pluginConfig, imageUtils)
         {
-            _uiUtils = uiUtils;
             _gamePause = gamePause;
+            _floatingScreenUtils = floatingScreenUtils;
             _timeTweeningManager = timeTweeningManager;
             _settingsModalGameController = settingsModalGameController;
         }
 
         public void Initialize()
         {
-            _floatingScreen = PluginConfig.SeparatePositions ? _uiUtils.CreateNyaFloatingScreen(this, PluginConfig.PausePosition, Quaternion.Euler(PluginConfig.PauseRotation)) : _uiUtils.CreateNyaFloatingScreen(this, PluginConfig.MenuPosition, Quaternion.Euler(PluginConfig.MenuRotation));
-            _floatingScreen.gameObject.name = "NyaGameFloatingScreen";
-            
-            _floatingScreen.gameObject.SetActive(false);
-            _floatingScreen.HandleReleased += FloatingScreen_HandleReleased;
+            if (_floatingScreenUtils.GameFloatingScreen == null)
+            {
+                _floatingScreenUtils.CreateNyaFloatingScreen(this, FloatingScreenUtils.FloatingScreenType.Game);
+            }
+
+            _floatingScreenUtils.GameFloatingScreen!.gameObject.SetActive(false);
+            _floatingScreenUtils.GameFloatingScreen!.HandleGrabbed += FloatingScreen_HandleReleased;
+
             _gamePause.didPauseEvent += GamePause_didPauseEvent;
             _gamePause.willResumeEvent += GamePause_didResumeEvent;
         }
@@ -44,15 +45,15 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
         {
             _gamePause.didPauseEvent -= GamePause_didPauseEvent;
             _gamePause.willResumeEvent -= GamePause_didResumeEvent;
-            _floatingScreen!.HandleReleased -= FloatingScreen_HandleReleased;
+            _floatingScreenUtils.GameFloatingScreen!.HandleReleased -= FloatingScreen_HandleReleased;
             _settingsModalGameController.HideModal();
-            _floatingScreen.gameObject.SetActive(false);
-            _timeTweeningManager.KillAllTweens(_floatingScreen);
+            _floatingScreenUtils.GameFloatingScreen.gameObject.SetActive(false);
+            _timeTweeningManager.KillAllTweens(_floatingScreenUtils.GameFloatingScreen);
         }
 
         private void GamePause_didPauseEvent()
         {
-            _floatingScreen!.gameObject.SetActive(true);
+            _floatingScreenUtils.GameFloatingScreen!.gameObject.SetActive(true);
         }
 
         private void GamePause_didResumeEvent()
@@ -64,12 +65,12 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
                 NyaButton.interactable = true;
             }
             _settingsModalGameController.HideModal();
-            _floatingScreen!.gameObject.SetActive(false);
+            _floatingScreenUtils.GameFloatingScreen!.gameObject.SetActive(false);
         }
 
         private void FloatingScreen_HandleReleased(object sender, FloatingScreenHandleEventArgs args)
         {
-            var transform = _floatingScreen!.transform;
+            var transform = _floatingScreenUtils.GameFloatingScreen!.transform;
 
             if (PluginConfig.SeparatePositions)
             {

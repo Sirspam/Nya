@@ -19,6 +19,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         private UIUtils _uiUtils = null!;
         private PluginConfig _pluginConfig = null!;
         private PluginMetadata _pluginMetadata = null!;
+        private FloatingScreenUtils _floatingScreenUtils = null!;
         private TimeTweeningManager _timeTweeningManager = null!;
         private GitHubPageModalController _gitHubPageModalController = null!;
         private NyaSettingsMainViewController _nyaSettingsMainViewController = null!;
@@ -26,11 +27,12 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         private bool _visible;
 
         [Inject]
-        public void Constructor(UIUtils uiUtils, PluginConfig pluginConfig, UBinder<Plugin, PluginMetadata> pluginMetadata, TimeTweeningManager timeTweeningManager, GitHubPageModalController gitHubPageModalController, NyaSettingsMainViewController nyaSettingsMainViewController)
+        public void Constructor(UIUtils uiUtils, PluginConfig pluginConfig, UBinder<Plugin, PluginMetadata> pluginMetadata, FloatingScreenUtils floatingScreenUtils, TimeTweeningManager timeTweeningManager, GitHubPageModalController gitHubPageModalController, NyaSettingsMainViewController nyaSettingsMainViewController)
         {
             _uiUtils = uiUtils;
             _pluginConfig = pluginConfig;
             _pluginMetadata = pluginMetadata.Value;
+            _floatingScreenUtils = floatingScreenUtils;
             _timeTweeningManager = timeTweeningManager;
             _gitHubPageModalController = gitHubPageModalController;
             _nyaSettingsMainViewController = nyaSettingsMainViewController;
@@ -71,7 +73,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
             {
                 _rainbowText.SetText("<#FF0000>R<#FF7F00>A<#FFFF00>I<#00FF00>N<#0000FF>B<#4B0082>O<#9400D3>W\n<#FFFFFF>Enabled");
                 KindlyAskRainbowTextToShowUpThenHaveItSodOffAfterTwoSeconds();
-                _uiUtils.ToggleRainbowNyaBg(true);
+                _floatingScreenUtils.ToggleRainbowNyaBg(true);
                 _pluginConfig.RainbowBackgroundColor = true;
                 _pluginConfig.BackgroundColor = _nyaSettingsMainViewController.BgColorSetting.CurrentColor;
                 _nyaSettingsMainViewController.BgColorSetting.interactable = false;
@@ -81,7 +83,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
             {
                 _rainbowText.SetText("<#FF0000>R<#FF7F00>A<#FFFF00>I<#00FF00>N<#0000FF>B<#4B0082>O<#9400D3>W\n<#FFFFFF>Disabled");
                 KindlyAskRainbowTextToShowUpThenHaveItSodOffAfterTwoSeconds();
-                _uiUtils.ToggleRainbowNyaBg(false);
+                _floatingScreenUtils.ToggleRainbowNyaBg(false);
                 _pluginConfig.RainbowBackgroundColor = false;
                 _nyaSettingsMainViewController.BgColorSetting.interactable = true;
                 _nyaSettingsMainViewController.BgColorDefaultButton.interactable = true;
