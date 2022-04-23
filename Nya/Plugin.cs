@@ -30,9 +30,11 @@ namespace Nya
             var folderPath = Path.Combine(UnityGame.UserDataPath, "Nya");
             Directory.CreateDirectory(Path.Combine(folderPath, "sfw"));
             Directory.CreateDirectory(Path.Combine(folderPath, "nsfw"));
-            
+
             if (!config.RememberNsfw)
+            {
                 config.Nsfw = false;
+            }
         }
     }
 }

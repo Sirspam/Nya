@@ -41,8 +41,10 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
             _gamePause.willResumeEvent += GamePause_didResumeEvent;
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
+            base.Dispose();
+            
             _gamePause.didPauseEvent -= GamePause_didPauseEvent;
             _gamePause.willResumeEvent -= GamePause_didResumeEvent;
             _floatingScreenUtils.GameFloatingScreen!.HandleReleased -= FloatingScreen_HandleReleased;
@@ -54,6 +56,12 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
         private void GamePause_didPauseEvent()
         {
             _floatingScreenUtils.GameFloatingScreen!.gameObject.SetActive(true);
+            
+            if (ImageUtils.AutoNyaActive)
+            {
+                AutoNyaToggle = false;
+                AutoNya();
+            }
         }
 
         private void GamePause_didResumeEvent()

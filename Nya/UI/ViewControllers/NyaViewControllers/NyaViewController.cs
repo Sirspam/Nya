@@ -12,13 +12,12 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
 {
     internal abstract class NyaViewController
     {
-        protected readonly PluginConfig PluginConfig;
-        protected readonly ImageUtils ImageUtils;
-
-        private static readonly SemaphoreSlim Semaphore = new SemaphoreSlim(1);
-
         protected bool AutoNyaToggle;
-        protected bool AutoNyaCooldown;
+        private bool _autoNyaCooldown;
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
+
+        protected readonly ImageUtils ImageUtils;
+        protected readonly PluginConfig PluginConfig;
 
         protected NyaViewController(PluginConfig pluginConfig, ImageUtils imageUtils)
         {
@@ -70,42 +69,48 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
         [UIAction("nya-auto-clicked")]
         protected async void AutoNya()
         {
-            if (AutoNyaCooldown)
+            if (_autoNyaCooldown)
             {
                 return;
             }
 
-            AutoNyaCooldown = true;
-
+            _autoNyaCooldown = true;
             AutoNyaToggle = !AutoNyaToggle;
+            ImageUtils.AutoNyaActive = AutoNyaToggle;
+            
             if (AutoNyaToggle)
             {
-                AutoNyaCooldownHandler(); // This isn't suppoed to be awaited I swear, please Mr green swiggly line go away you're scaring me
+                AutoNyaCooldownHandler();
                 NyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = Color.green;
                 NyaButton.interactable = false;
+                
                 while (AutoNyaToggle)
                 {
-                    await Semaphore.WaitAsync();
-                    ImageUtils.LoadNewNyaImage(NyaImage, null);
+                    await _semaphore.WaitAsync();
+                    await Task.Run(() => ImageUtils.LoadNewNyaImage(NyaImage, null));
                     await Task.Delay(PluginConfig.AutoNyaWait * 1000);
-                    Semaphore.Release();
+                    _semaphore.Release();
                 }
             }
             else
             {
                 NyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = new Color(1f, 1f, 1f, 0.502f); // Beatgames why 0.502
-                NyaAutoText.text = "Auto Nya";
                 NyaButton.interactable = true;
-                AutoNyaCooldown = false;
+                _autoNyaCooldown = false;
             }
         }
 
         private async void AutoNyaCooldownHandler()
         {
             await Task.Delay(1000);
-            AutoNyaCooldown = false;
+            _autoNyaCooldown = false;
         }
 
         #endregion actions
+
+        public virtual void Dispose()
+        {
+            _semaphore.Dispose();
+        }
     }
 }

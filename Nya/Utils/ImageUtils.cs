@@ -18,22 +18,28 @@ namespace Nya.Utils
 {
     internal class ImageUtils
     {
-        private readonly SiraLog _siraLog;
-        private readonly IHttpService _httpService;
-        private readonly PluginConfig _pluginConfig;
-        private readonly Random _random;
-
+        private bool _autoNyaActive;
         private byte[]? _nyaImageBytes;
         private string? _nyaImageEndpoint;
         private string? _nyaImageURL;
 
+        private readonly Random _random;
+        private readonly SiraLog _siraLog;
+        private readonly IHttpService _httpService;
+        private readonly PluginConfig _pluginConfig;
+
         public ImageUtils(SiraLog siraLog, IHttpService httpService, PluginConfig pluginConfig)
         {
+            _random = new Random();
             _siraLog = siraLog;
             _httpService = httpService;
             _pluginConfig = pluginConfig;
+        }
 
-            _random = new Random();
+        public bool AutoNyaActive
+        {
+            get => _pluginConfig.PersistantAutoNya && _autoNyaActive;
+            set => _autoNyaActive = value;
         }
 
         public void DownloadNyaImage()
@@ -187,7 +193,8 @@ namespace Nya.Utils
             {
                 ShouldScale = _pluginConfig.ScaleValue != 0,
                 MaintainRatio = true,
-                Width = _pluginConfig.ScaleRatio,
+                Width = _pluginConfig.ScaleValue,
+                Height = _pluginConfig.ScaleValue
             };
             image.SetImage(_nyaImageURL, false, options, () => callback?.Invoke());
         }

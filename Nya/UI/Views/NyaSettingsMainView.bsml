@@ -18,6 +18,7 @@
 		<tab tab-name="Behaviour" tags="settings-tab" horizontal-fit="PreferredSize" vertical-fit="PreferredSize">
 			<vertical child-expand-width="true" horizontal-fit="PreferredSize" vertical-fit="PreferredSize" anchor-pos-y="10">
 				<slider-setting id="auto-wait-slider" text="Auto Nya wait time" hover-hint="How many seconds Auto Nya will wait for before getting a new image" increment="1" min="4" max="30" integer-only="true" value="auto-wait-value" bind-value="true" apply-on-change="true"/>
+				<checkbox-setting text="Persistant Auto Nya" hover-hint="Auto Nya will re-enable whenever Nya is active" value="persistant-auto-nya" bind-value="true" apply-on-change="true"/>
 				<checkbox-setting id="remember-NSFW-checkbox" text="Remember NSFW setting" hover-hint="If disabled Nya will always be set to SFW on start-up" value="remember-NSFW" bind-value="true" apply-on-change="true"/>
 				<checkbox-setting id="skip-NSFW-checkbox" text="Skip NSFW confirmation" hover-hint="You horny pastry puffer" value="skip-NSFW" bind-value="true" apply-on-change="true"/>
 				<dropdown-list-setting id="scale-dropdown" text="Downscale images" hover-hint="Image downscaling helps reduce the stutter whenever loading a new image. It's recommended to keep this enabled" value="scaling-value" choices="scaling-choices" bind-value="true" apply-on-change="true"/>
@@ -42,8 +43,11 @@
 			</vertical>
 		</tab>
 	</vertical>
+
+	<vertical anchor-pos-y="-26.5">
+		<text active="~restart-required" text="Applying these settings will require the game to internally restart" hover-hint="You know, that annoying thing where the whole screen goes black for awhile then you have to wait for everything to load again" anchor-pos-x="55" anchor-pos-y="-47" font-size="5" italics="true" color="red" align="Center"/>
+	</vertical>
 	
-	<text active="~restart-required" text="Applying these settings will require the game to soft restart" anchor-pos-x="55" anchor-pos-y="-47" font-size="5" italics="true" color="red"/>
 	<horizontal horizontal-fit="PreferredSize" child-control-height="false" child-expand-height="false" child-align="MiddleCenter" anchor-min-x="0.5" anchor-max-x="0.5" anchor-min-y="0" anchor-max-y="0" size-delta-x="120" size-delta-y="10" pivot-y="0" spacing="2">
 		<button text="Cancel" pref-width="34" pref-height="10" on-click="cancel-clicked"/>
 		<action-button text="Ok" pref-width="34" pref-height="10" on-click="ok-clicked"/>

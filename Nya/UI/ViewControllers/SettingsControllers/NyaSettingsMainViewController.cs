@@ -22,7 +22,7 @@ using Zenject;
 
 namespace Nya.UI.ViewControllers.SettingsControllers
 {
-    [HotReload(RelativePathToLayout = @"..\Views\NyaSettingsMainView.bsml")]
+    [HotReload(RelativePathToLayout = @"..\..\Views\NyaSettingsMainView.bsml")]
     [ViewDefinition("Nya.UI.Views.NyaSettingsMainView.bsml")]
     internal class NyaSettingsMainViewController : BSMLAutomaticViewController
     {
@@ -35,12 +35,10 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         private bool _rememberNsfw;
         private bool _skipNsfw;
         private int _autoNyaWait;
-        private int _scaleRatio;
+        private bool _persistantAutoNya;
+        private int _scaleValue;
         private bool _separatePositions;
         private bool _easterEggs;
-        private bool _nyaCommandEnabled;
-        private int _nyaCommandCooldown;
-        private bool _currentNyaCommandEnabled;
         private bool _useBackgroundColor;
         private Vector3 _menuPosition;
         private Vector3 _menuRotation;
@@ -56,7 +54,6 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         private TimeTweeningManager _timeTweeningManager = null!;
         private MainFlowCoordinator _mainFlowCoordinator = null!;
         private MenuTransitionsHelper _menuTransitionsHelper = null!;
-        private NyaSettingsRightViewController _nyaSettingsRightViewController = null!;
 
         [Inject]
         public void Constructor(SiraLog siraLog, UIUtils uiUtils, PluginConfig pluginConfig, UBinder<Plugin, PluginMetadata> pluginMetadata, ISiraSyncService siraSyncService, FloatingScreenUtils floatingScreenUtils, TimeTweeningManager timeTweeningManager, MainFlowCoordinator mainFlowCoordinator, MenuTransitionsHelper menuTransitionsHelper)
@@ -70,7 +67,6 @@ namespace Nya.UI.ViewControllers.SettingsControllers
             _timeTweeningManager = timeTweeningManager;
             _mainFlowCoordinator = mainFlowCoordinator;
             _menuTransitionsHelper = menuTransitionsHelper;
-            _nyaSettingsRightViewController = nyaSettingsRightViewController;
         }
 
         protected override async void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
@@ -192,6 +188,17 @@ namespace Nya.UI.ViewControllers.SettingsControllers
                 NotifyPropertyChanged();
             }
         }
+        
+        [UIValue("persistant-auto-nya")]
+        private bool PersistantAutoNya
+        {
+            get => _persistantAutoNya;
+            set
+            {
+                _persistantAutoNya = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         [UIValue("scaling-choices")] 
         private List<object> _scalingChoices = new List<object> { "Disabled", 128, 256, 512, 1024 };
@@ -201,20 +208,20 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         {
             get
             {
-                if (_scaleRatio == 0)
+                if (_scaleValue == 0)
                     return "Disabled";
-                return _scaleRatio;
+                return _scaleValue;
             }
             set
             {
                 if (value.ToString() == "Disabled")
                 {
-                    _scaleRatio = 0;
+                    _scaleValue = 0;
                     NotifyPropertyChanged();
                     return;
                 }
                 
-                _scaleRatio = (int) value;
+                _scaleValue = (int) value;
                 NotifyPropertyChanged();
 
             }
@@ -249,40 +256,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
                 NotifyPropertyChanged();
             }
         }
-
-        [UIValue("nya-command-enabled")]
-        private bool NyaCommandEnabled
-        {
-            get => _nyaCommandEnabled;
-            set
-            {
-                _nyaCommandEnabled = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        [UIValue("nya-command-cooldown")]
-        private int NyaCommandCooldown
-        {
-            get => _nyaCommandCooldown;
-            set
-            {
-                _nyaCommandCooldown = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        [UIValue("current-nya-command-enabled")]
-        private bool CurrentNyaCommandEnabled
-        {
-            get => _currentNyaCommandEnabled;
-            set
-            {
-                _currentNyaCommandEnabled = value;
-                NotifyPropertyChanged();
-            }
-        }
-
+        
         [UIComponent("update-text")] 
         private readonly TextMeshProUGUI _updateText = null!;
         
@@ -368,7 +342,9 @@ namespace Nya.UI.ViewControllers.SettingsControllers
             BackgroundColor = _pluginConfig.BackgroundColor;
             RememberNsfw = _pluginConfig.RememberNsfw;
             SkipNsfw = _pluginConfig.SkipNsfw;
-            ScalingValue = _pluginConfig.ScaleRatio;
+            AutoNyaWait = _pluginConfig.AutoNyaWait;
+            PersistantAutoNya = _pluginConfig.PersistantAutoNya;
+            ScalingValue = _pluginConfig.ScaleValue;
             SeparatePositions = _pluginConfig.SeparatePositions;
             EasterEggs = _pluginConfig.EasterEggs;
             _useBackgroundColor = _pluginConfig.UseBackgroundColor;
@@ -386,7 +362,8 @@ namespace Nya.UI.ViewControllers.SettingsControllers
             _pluginConfig.RememberNsfw = RememberNsfw;
             _pluginConfig.SkipNsfw = SkipNsfw;
             _pluginConfig.AutoNyaWait = AutoNyaWait;
-            _pluginConfig.ScaleRatio = _scaleRatio;
+            _pluginConfig.PersistantAutoNya = PersistantAutoNya;
+            _pluginConfig.ScaleValue = _scaleValue;
             _pluginConfig.SeparatePositions = SeparatePositions;
             _pluginConfig.MenuPosition = _menuPosition;
             _pluginConfig.MenuRotation = _menuRotation;

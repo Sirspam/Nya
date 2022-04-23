@@ -27,8 +27,9 @@ namespace Nya.Configuration
         public virtual bool UseBackgroundColor { get; set; } = false;
         public virtual Color BackgroundColor { get; set; } = new Color(0.745f, 0.745f, 0.745f);
         public virtual bool RainbowBackgroundColor { get; set; } = false;
+        public virtual bool PersistantAutoNya { get; set; } = false;
         public virtual int AutoNyaWait { get; set; } = 4;
-        public virtual int ScaleRatio { get; set; } = 512; // 0 means scaling disabled
+        public virtual int ScaleValue { get; set; } = 512; // 0 means scaling disabled
         public virtual bool EasterEggs { get; set; } = true;
         public virtual string SelectedAPI { get; set; } = ImageSources.Sources.Keys.First();
 

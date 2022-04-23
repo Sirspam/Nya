@@ -15,15 +15,13 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
 {
     internal class NyaViewMenuController : NyaViewController, IInitializable, IDisposable
     {
-        private readonly UIUtils _uiUtils;
         private readonly FloatingScreenUtils _floatingScreenUtils;
         private readonly GameplaySetupViewController _gameplaySetupViewController;
         private readonly SettingsModalMenuController _settingsModalMenuController;
         
-        public NyaViewMenuController(PluginConfig pluginConfig, ImageUtils imageUtils, UIUtils uiUtils, FloatingScreenUtils floatingScreenUtils, GameplaySetupViewController gameplaySetupViewController, SettingsModalMenuController settingsModalMenuController)
+        public NyaViewMenuController(PluginConfig pluginConfig, ImageUtils imageUtils, FloatingScreenUtils floatingScreenUtils, GameplaySetupViewController gameplaySetupViewController, SettingsModalMenuController settingsModalMenuController)
             : base(pluginConfig, imageUtils)
         {
-            _uiUtils = uiUtils;
             _floatingScreenUtils = floatingScreenUtils;
             _gameplaySetupViewController = gameplaySetupViewController;
             _settingsModalMenuController = settingsModalMenuController;
@@ -60,8 +58,10 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
             }
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
+            base.Dispose();
+            
             if (GameplaySetup.IsSingletonAvailable)
             {
                 GameplaySetup.instance.RemoveTab("Nya");
@@ -99,7 +99,7 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
                 NyaButton.interactable = true;
                 if (ImageUtils.AutoNyaActive)
                 {
-                    AutoNyaToggle = true;
+                    AutoNyaToggle = false;
                     AutoNya();
                 }
             });
