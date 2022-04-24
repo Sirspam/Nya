@@ -285,7 +285,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         {
             if ((!_useBackgroundColor || !_pluginConfig.UseBackgroundColor) && _pluginConfig.InMenu && _floatingScreenUtils.MenuFloatingScreen != null)
             { 
-                _floatingScreenUtils.MenuFloatingScreen.gameObject.transform.GetChild(0).GetComponent<ImageView>().material = Resources.FindObjectsOfTypeAll<Material>().Last(x => x.name == "UIFogBG");
+                _floatingScreenUtils.SetStandardMaterial();
             }
         }
         
@@ -307,10 +307,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         {
             _uiUtils.ButtonUnderlineClick(BgColorDefaultButton.gameObject);
             _pluginConfig.UseBackgroundColor = false;
-            if (_pluginConfig.InMenu && _floatingScreenUtils.MenuFloatingScreen != null)
-            {
-                _floatingScreenUtils.MenuFloatingScreen.gameObject.transform.GetChild(0).GetComponent<ImageView>().material = Resources.FindObjectsOfTypeAll<Material>().Last(x => x.name == "UIFogBG");
-            }
+            _floatingScreenUtils.SetStandardMaterial();
         }
 
         [UIAction("reset-menu-clicked")]
@@ -390,6 +387,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         {
             if (!_useBackgroundColor)
             {
+                _pluginConfig.UseBackgroundColor = false;
                 BgColorSettingCancelled();
             }
             else

@@ -16,6 +16,7 @@ namespace Nya.Utils
 		
 		public Vector3 HandleScale;
 		private Material? _uiFogBg;
+		private bool _usingNyaMaterial = false;
 		private Material? _nyaBgMaterial;
 		public FloatingScreen? MenuFloatingScreen;
 		public FloatingScreen? GameFloatingScreen;
@@ -149,7 +150,48 @@ namespace Nya.Utils
         {
             color.a = 0.6f;
             NyaBgMaterial.color = color;
+            SetNyaMaterial();
         }
+
+		public void SetStandardMaterial()
+		{
+			_usingNyaMaterial = false;
+			
+			if (_uiFogBg == null)
+			{
+				_uiFogBg = Resources.FindObjectsOfTypeAll<Material>().Last(x => x.name == "UIFogBG");
+			}
+	                
+			if (MenuFloatingScreen != null)
+			{
+				MenuFloatingScreen.transform.GetChild(0).GetComponent<ImageView>().material = _uiFogBg;
+			}
+                    
+			if (GameFloatingScreen != null)
+			{
+				GameFloatingScreen.transform.GetChild(0).GetComponent<ImageView>().material = _uiFogBg;
+			}
+		}
+
+		private void SetNyaMaterial()
+		{
+			if (_usingNyaMaterial)
+			{
+				return;
+			}
+			
+			if (MenuFloatingScreen != null)
+			{
+				MenuFloatingScreen.transform.GetChild(0).GetComponent<ImageView>().material = NyaBgMaterial;
+			}
+                    
+			if (GameFloatingScreen != null)
+			{
+				GameFloatingScreen.transform.GetChild(0).GetComponent<ImageView>().material = NyaBgMaterial;
+			}
+
+			_usingNyaMaterial = true;
+		}
         
         public void ToggleRainbowNyaBg(bool active)
         {
@@ -162,20 +204,7 @@ namespace Nya.Utils
                 }
                 else
                 {
-	                if (_uiFogBg == null)
-	                {
-		                _uiFogBg = Resources.FindObjectsOfTypeAll<Material>().Last(x => x.name == "UIFogBG");
-	                }
-	                
-	                if (MenuFloatingScreen != null)
-	                {
-		                MenuFloatingScreen.transform.GetChild(0).GetComponent<ImageView>().material = _uiFogBg;
-	                }
-                    
-                    if (GameFloatingScreen != null)
-                    {
-	                    GameFloatingScreen.transform.GetChild(0).GetComponent<ImageView>().material = _uiFogBg;
-                    }
+					SetStandardMaterial();
                 }
                 
                 return;
@@ -183,15 +212,7 @@ namespace Nya.Utils
 
             if (!_pluginConfig.UseBackgroundColor)
             {
-	            if (MenuFloatingScreen != null)
-	            {
-		            MenuFloatingScreen.transform.GetChild(0).GetComponent<ImageView>().material = NyaBgMaterial;
-	            }
-                    
-	            if (GameFloatingScreen != null)
-	            {
-		            GameFloatingScreen.transform.GetChild(0).GetComponent<ImageView>().material = NyaBgMaterial;
-	            }
+	            SetNyaMaterial();
             }
             
             var tween = new FloatTween(0f, 1, val => SetNyaMaterialColor(Color.HSVToRGB(val, 1f, 1f)), 6f, EaseType.Linear)
@@ -203,7 +224,7 @@ namespace Nya.Utils
 
         private Material InstantiateNyaMaterial()
         {
-            var material = Object.Instantiate(new Material(Resources.FindObjectsOfTypeAll<Material>().Last(x => x.name == "UINoGlow"))); // UIFogBG, UINoGlow
+            var material = Object.Instantiate(new Material(Resources.FindObjectsOfTypeAll<Material>().Last(x => x.name == "UINoGlow")));
             var color = _pluginConfig.BackgroundColor;
             color.a = 0.5f;
             material.color = color;
