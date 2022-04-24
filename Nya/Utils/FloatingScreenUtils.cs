@@ -110,7 +110,7 @@ namespace Nya.Utils
 			return null;
 		}
 		
-		public void TransitionToDefaultPosition()
+		public void TransitionToDefaultPosition(bool saveValuesToConfig = true)
 		{
 			var floatingScreen = GetActiveFloatingScreen();
 
@@ -127,6 +127,12 @@ namespace Nya.Utils
 			var rotationTween = new FloatTween(0f, 1f, val => transform.rotation = Quaternion.Lerp(oldRotation, DefaultRotation, val), 0.5f, EaseType.OutQuart);
 			_timeTweeningManager.AddTween(positionTween, floatingScreen);
 			_timeTweeningManager.AddTween(rotationTween, floatingScreen);
+
+			if (!saveValuesToConfig)
+			{
+				return;
+			}
+			
 			if (floatingScreen.gameObject.name == "NyaGameFloatingScreen" && _pluginConfig.SeparatePositions)
 			{
 				_pluginConfig.PausePosition = DefaultPosition;

@@ -321,7 +321,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
             _menuRotation = FloatingScreenUtils.DefaultRotation.eulerAngles;
             if (_pluginConfig.InMenu && _floatingScreenUtils.MenuFloatingScreen != null)
             {
-                _floatingScreenUtils.TransitionToDefaultPosition();
+                _floatingScreenUtils.TransitionToDefaultPosition(false);
             }
         }
 
@@ -375,17 +375,19 @@ namespace Nya.UI.ViewControllers.SettingsControllers
             var restartRequired = RestartRequired;
             SaveValuesToConfig();
 
-            if (restartRequired) 
+            if (restartRequired)
+            {
                 _menuTransitionsHelper.RestartGame();
-            else 
+            }
+            else
+            {
                 parentFlowCoordinator.DismissFlowCoordinator(_mainFlowCoordinator.YoungestChildFlowCoordinatorOrSelf(), animationDirection: AnimationDirection.Vertical);
+            }
         }
 
         [UIAction("cancel-clicked")]
         private void CancelClicked()
         {
-            _siraLog.Info(_useBackgroundColor);
-            _siraLog.Info(_pluginConfig.UseBackgroundColor);
             if (!_useBackgroundColor)
             {
                 BgColorSettingCancelled();
@@ -398,8 +400,8 @@ namespace Nya.UI.ViewControllers.SettingsControllers
             if (_pluginConfig.InMenu && _floatingScreenUtils.MenuFloatingScreen != null)
             {
                 var floatingScreen = _floatingScreenUtils.MenuFloatingScreen;
-                floatingScreen.transform.position = _menuPosition;
-                floatingScreen.transform.rotation = Quaternion.Euler(_menuRotation);
+                floatingScreen.transform.position = _pluginConfig.MenuPosition;
+                floatingScreen.transform.rotation = Quaternion.Euler(_pluginConfig.MenuRotation);
             }
             
             parentFlowCoordinator.DismissFlowCoordinator(_mainFlowCoordinator.YoungestChildFlowCoordinatorOrSelf(), animationDirection: AnimationDirection.Vertical);
