@@ -69,6 +69,11 @@ namespace Nya.Configuration
             {
                 AutoNyaWait = 4;
             }
+
+            if (RainbowBackgroundColor && !UseBackgroundColor)
+            {
+                UseBackgroundColor = true;
+            }
             
             if (SelectedEndpoints.Count == ImageSources.Sources.Count)
             {
