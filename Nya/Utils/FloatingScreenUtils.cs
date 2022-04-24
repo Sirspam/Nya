@@ -11,8 +11,8 @@ namespace Nya.Utils
 {
 	internal class FloatingScreenUtils
 	{
-		public static Vector3 DefaultPosition = new Vector3(0f, 3.65f, 4f);
-		public static Quaternion DefaultRotation = Quaternion.Euler(335f, 0f, 0f);
+		public static Vector3 DefaultPosition = new Vector3(0f, 3.75f, 4f);
+		public static Quaternion DefaultRotation = Quaternion.Euler(332f, 0f, 0f);
 		
 		public Vector3 HandleScale;
 		private Material? _uiFogBg;
