@@ -283,9 +283,9 @@ namespace Nya.UI.ViewControllers.SettingsControllers
 
         private void BgColorSettingCancelled()
         {
-            if ((!_useBackgroundColor || !_pluginConfig.UseBackgroundColor) && _pluginConfig.InMenu)
-            {
-                GameObject.Find("NyaMenuFloatingScreen").gameObject.transform.GetChild(0).GetComponent<ImageView>().material = Resources.FindObjectsOfTypeAll<Material>().Last(x => x.name == "UIFogBG");
+            if ((!_useBackgroundColor || !_pluginConfig.UseBackgroundColor) && _pluginConfig.InMenu && _floatingScreenUtils.MenuFloatingScreen != null)
+            { 
+                _floatingScreenUtils.MenuFloatingScreen.gameObject.transform.GetChild(0).GetComponent<ImageView>().material = Resources.FindObjectsOfTypeAll<Material>().Last(x => x.name == "UIFogBG");
             }
         }
         
@@ -307,9 +307,9 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         {
             _uiUtils.ButtonUnderlineClick(BgColorDefaultButton.gameObject);
             _pluginConfig.UseBackgroundColor = false;
-            if (_pluginConfig.InMenu)
+            if (_pluginConfig.InMenu && _floatingScreenUtils.MenuFloatingScreen != null)
             {
-                GameObject.Find("NyaMenuFloatingScreen").gameObject.transform.GetChild(0).GetComponent<ImageView>().material = Resources.FindObjectsOfTypeAll<Material>().Last(x => x.name == "UIFogBG");
+                _floatingScreenUtils.MenuFloatingScreen.gameObject.transform.GetChild(0).GetComponent<ImageView>().material = Resources.FindObjectsOfTypeAll<Material>().Last(x => x.name == "UIFogBG");
             }
         }
 
@@ -395,9 +395,9 @@ namespace Nya.UI.ViewControllers.SettingsControllers
                 _floatingScreenUtils.SetNyaMaterialColor(_pluginConfig.BackgroundColor);   
             }
             
-            if (_pluginConfig.InMenu)
+            if (_pluginConfig.InMenu && _floatingScreenUtils.MenuFloatingScreen != null)
             {
-                var floatingScreen = GameObject.Find("NyaMenuFloatingScreen");
+                var floatingScreen = _floatingScreenUtils.MenuFloatingScreen;
                 floatingScreen.transform.position = _menuPosition;
                 floatingScreen.transform.rotation = Quaternion.Euler(_menuRotation);
             }
