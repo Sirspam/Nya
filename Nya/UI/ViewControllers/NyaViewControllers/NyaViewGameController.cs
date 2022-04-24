@@ -35,7 +35,7 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
             }
 
             _floatingScreenUtils.GameFloatingScreen!.gameObject.SetActive(false);
-            _floatingScreenUtils.GameFloatingScreen!.HandleGrabbed += FloatingScreen_HandleReleased;
+            _floatingScreenUtils.GameFloatingScreen!.HandleReleased += FloatingScreen_HandleReleased;
 
             _gamePause.didPauseEvent += GamePause_didPauseEvent;
             _gamePause.willResumeEvent += GamePause_didResumeEvent;

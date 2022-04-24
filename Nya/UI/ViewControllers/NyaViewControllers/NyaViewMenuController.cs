@@ -36,7 +36,7 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
                     _floatingScreenUtils.CreateNyaFloatingScreen(this, FloatingScreenUtils.FloatingScreenType.Menu);
                 }
 
-                _floatingScreenUtils.MenuFloatingScreen!.HandleGrabbed += FloatingScreen_HandleReleased;
+                _floatingScreenUtils.MenuFloatingScreen!.HandleReleased += FloatingScreen_HandleReleased;
             }
             else
             {
@@ -87,7 +87,9 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
         private void MenuActivated()
         {
             // in case game Game floating screen got moved
-            if (PluginConfig.InMenu && (_floatingScreenUtils.MenuFloatingScreen!.transform.position != PluginConfig.MenuPosition || _floatingScreenUtils.MenuFloatingScreen.transform.rotation.eulerAngles != PluginConfig.MenuRotation))
+            if (PluginConfig.InMenu &&
+                (_floatingScreenUtils.MenuFloatingScreen!.transform.position != PluginConfig.MenuPosition ||
+                 _floatingScreenUtils.MenuFloatingScreen.transform.rotation.eulerAngles != PluginConfig.MenuRotation))
             {
                 _floatingScreenUtils.MenuFloatingScreen.transform.position = PluginConfig.MenuPosition;
                 _floatingScreenUtils.MenuFloatingScreen.transform.rotation = Quaternion.Euler(PluginConfig.MenuRotation);
