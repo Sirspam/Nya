@@ -9,6 +9,7 @@ using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Components.Settings;
+using BeatSaberMarkupLanguage.FloatingScreen;
 using BeatSaberMarkupLanguage.Parser;
 using HMUI;
 using IPA.Utilities;
@@ -341,26 +342,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
         protected void DefaultPositionClicked()
         {
             _uiUtils.ButtonUnderlineClick(DefaultPositionButton.gameObject);
-            _timeTweeningManager.KillAllTweens(RootTransform);
-            var transform = RootTransform.root.gameObject.transform;
-            var oldPosition = transform.position;
-            var newPosition = new Vector3(0f, 3.65f, 4f);
-            var oldRotation = transform.rotation;
-            var newRotation = Quaternion.Euler(new Vector3(335f, 0f, 0f));
-            var positionTween = new FloatTween(0f, 1f, val => transform.position = Vector3.Lerp(oldPosition, newPosition, val), 0.5f, EaseType.OutQuart);
-            var rotationTween = new FloatTween(0f, 1f, val => transform.rotation = Quaternion.Lerp(oldRotation, newRotation, val), 0.5f, EaseType.OutQuart);
-            _timeTweeningManager.AddTween(positionTween, RootTransform);
-            _timeTweeningManager.AddTween(rotationTween, RootTransform);
-            if (RootTransform.root.name == "NyaGameFloatingScreen" && PluginConfig.SeparatePositions)
-            {
-                PluginConfig.PausePosition = newPosition;
-                PluginConfig.PauseRotation = newRotation.eulerAngles;
-            }
-            else
-            {
-                PluginConfig.MenuPosition = newPosition;
-                PluginConfig.MenuRotation = newRotation.eulerAngles;
-            }
+            _floatingScreenUtils.TransitionToDefaultPosition();
         }
 
         [UIAction("show-handle-changed")]

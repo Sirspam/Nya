@@ -5,7 +5,6 @@ using HMUI;
 using Nya.Components;
 using Nya.Configuration;
 using Nya.Utils;
-using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
@@ -15,11 +14,13 @@ namespace Nya.UI.ViewControllers.SettingsControllers
 	{
 		private readonly UIUtils _uiUtils;
 		private readonly PluginConfig _pluginConfig;
+		private readonly FloatingScreenUtils _floatingScreenUtils;
 
-		public NyaModSettingsViewController(UIUtils uiUtils, PluginConfig pluginConfig)
+		public NyaModSettingsViewController(UIUtils uiUtils, PluginConfig pluginConfig, FloatingScreenUtils floatingScreenUtils)
 		{
 			_uiUtils = uiUtils;
 			_pluginConfig = pluginConfig;
+			_floatingScreenUtils = floatingScreenUtils;
 		}
 
 		public void Initialize()
@@ -58,16 +59,18 @@ namespace Nya.UI.ViewControllers.SettingsControllers
 		private void ResetPositionClicked()
 		{
 			_uiUtils.ButtonUnderlineClick(_resetButton.gameObject);
-			_pluginConfig.PausePosition = new Vector3(-2f, 1.5f, 0f);
-			_pluginConfig.PauseRotation = new Vector3(0f, 270f, 0f);
-			_pluginConfig.MenuPosition = new Vector3(0f, 3.65f, 4f);
-			_pluginConfig.MenuRotation = new Vector3(335f, 0f, 0f);
-			if (_pluginConfig.InMenu)
+			_pluginConfig.PausePosition = FloatingScreenUtils.DefaultPosition;
+			_pluginConfig.PauseRotation = FloatingScreenUtils.DefaultRotation.eulerAngles;
+			
+			if (_pluginConfig.InMenu && _floatingScreenUtils.MenuFloatingScreen != null)
 			{
-				var floatingScreen = GameObject.Find("NyaMenuFloatingScreen");
-				floatingScreen.transform.position = new Vector3(0f, 3.65f, 4f);
-				floatingScreen.transform.rotation = Quaternion.Euler(new Vector3(335f, 0f, 0f));
+				// TransitionToDefault saves position to config
+				_floatingScreenUtils.TransitionToDefaultPosition();
+				return;
 			}
+			
+			_pluginConfig.MenuPosition = FloatingScreenUtils.DefaultPosition;
+			_pluginConfig.MenuRotation = FloatingScreenUtils.DefaultRotation.eulerAngles;
 		}
 	}
 }

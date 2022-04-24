@@ -317,13 +317,11 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         private void ResetMenuPosition()
         {
             _uiUtils.ButtonUnderlineClick(_resetMenuPositionButton.gameObject);
-            _menuPosition = new Vector3(0f, 3.65f, 4f);
-            _menuRotation = new Vector3(335f, 0f, 0f);
-            if (_pluginConfig.InMenu)
+            _menuPosition = FloatingScreenUtils.DefaultPosition;
+            _menuRotation = FloatingScreenUtils.DefaultRotation.eulerAngles;
+            if (_pluginConfig.InMenu && _floatingScreenUtils.MenuFloatingScreen != null)
             {
-                var floatingScreen = GameObject.Find("NyaMenuFloatingScreen");
-                floatingScreen.transform.position = new Vector3(0f, 3.65f, 4f);
-                floatingScreen.transform.rotation = Quaternion.Euler(new Vector3(335f, 0f, 0f));
+                _floatingScreenUtils.TransitionToDefaultPosition();
             }
         }
 
@@ -331,8 +329,8 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         private void ResetPausePosition()
         {
             _uiUtils.ButtonUnderlineClick(_resetPausePositionButton.gameObject);
-            _pausePosition = new Vector3(-2f, 1.5f, 0f);
-            _pauseRotation = new Vector3(0f, 270f, 0f);
+            _pausePosition = FloatingScreenUtils.DefaultPosition;
+            _pauseRotation = FloatingScreenUtils.DefaultRotation.eulerAngles;
         }
 
         private void AssignValues()

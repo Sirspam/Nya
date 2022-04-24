@@ -11,6 +11,9 @@ namespace Nya.Utils
 {
 	internal class FloatingScreenUtils
 	{
+		public static Vector3 DefaultPosition = new Vector3(0f, 3.65f, 4f);
+		public static Quaternion DefaultRotation = Quaternion.Euler(335f, 0f, 0f);
+		
 		public Vector3 HandleScale;
 		private Material? _uiFogBg;
 		private Material? _nyaBgMaterial;
@@ -91,6 +94,49 @@ namespace Nya.Utils
 			}
 
 			return floatingScreen;
+		}
+
+		public FloatingScreen? GetActiveFloatingScreen()
+		{
+			if (MenuFloatingScreen != null && MenuFloatingScreen.gameObject.activeInHierarchy)
+			{
+				return MenuFloatingScreen;
+			}
+			if (GameFloatingScreen != null && GameFloatingScreen.gameObject.activeInHierarchy)
+			{
+				return GameFloatingScreen;
+			}
+
+			return null;
+		}
+		
+		public void TransitionToDefaultPosition()
+		{
+			var floatingScreen = GetActiveFloatingScreen();
+
+			if (floatingScreen == null)
+			{
+				return;
+			}
+			
+			_timeTweeningManager.KillAllTweens(floatingScreen);
+			var transform = floatingScreen.gameObject.transform;
+			var oldPosition = transform.position;
+			var oldRotation = transform.rotation;
+			var positionTween = new FloatTween(0f, 1f, val => transform.position = Vector3.Lerp(oldPosition, DefaultPosition, val), 0.5f, EaseType.OutQuart);
+			var rotationTween = new FloatTween(0f, 1f, val => transform.rotation = Quaternion.Lerp(oldRotation, DefaultRotation, val), 0.5f, EaseType.OutQuart);
+			_timeTweeningManager.AddTween(positionTween, floatingScreen);
+			_timeTweeningManager.AddTween(rotationTween, floatingScreen);
+			if (floatingScreen.gameObject.name == "NyaGameFloatingScreen" && _pluginConfig.SeparatePositions)
+			{
+				_pluginConfig.PausePosition = DefaultPosition;
+				_pluginConfig.PauseRotation = DefaultRotation.eulerAngles;
+			}
+			else
+			{
+				_pluginConfig.MenuPosition = DefaultPosition;
+				_pluginConfig.MenuRotation = DefaultRotation.eulerAngles;
+			}
 		}
 		
 		public void SetNyaMaterialColor(Color color)
