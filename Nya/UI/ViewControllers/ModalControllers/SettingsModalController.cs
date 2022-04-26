@@ -415,6 +415,8 @@ namespace Nya.UI.ViewControllers.ModalControllers
             NsfwDropDownListSetting.values = ImageSources.Sources[APIValue].NsfwEndpoints.Cast<object>().ToList();
             SfwDropDownListSetting.UpdateChoices();
             NsfwDropDownListSetting.UpdateChoices();
+            SfwDropDownListSetting.Value = SfwValue;
+            NsfwDropDownListSetting.Value = NsfwValue;
         }
     }
 }
