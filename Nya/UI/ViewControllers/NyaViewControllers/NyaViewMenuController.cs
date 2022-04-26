@@ -15,15 +15,15 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
 {
     internal class NyaViewMenuController : NyaViewController, IInitializable, IDisposable
     {
+        private readonly GameScenesManager _gameScenesManager;
         private readonly FloatingScreenUtils _floatingScreenUtils;
-        private readonly GameplaySetupViewController _gameplaySetupViewController;
         private readonly SettingsModalMenuController _settingsModalMenuController;
         
-        public NyaViewMenuController(PluginConfig pluginConfig, ImageUtils imageUtils, FloatingScreenUtils floatingScreenUtils, GameplaySetupViewController gameplaySetupViewController, SettingsModalMenuController settingsModalMenuController)
+        public NyaViewMenuController(PluginConfig pluginConfig, ImageUtils imageUtils, GameScenesManager gameScenesManager, FloatingScreenUtils floatingScreenUtils, SettingsModalMenuController settingsModalMenuController)
             : base(pluginConfig, imageUtils)
         {
+            _gameScenesManager = gameScenesManager;
             _floatingScreenUtils = floatingScreenUtils;
-            _gameplaySetupViewController = gameplaySetupViewController;
             _settingsModalMenuController = settingsModalMenuController;
         }
 
@@ -50,11 +50,13 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
         {
             if (nextScene.name == "MainMenu")
             {
-                MenuActivated();
+                _gameScenesManager.transitionDidFinishEvent -= MenuActivated;
+                _gameScenesManager.transitionDidFinishEvent += MenuActivated;
             }
             else
             {
-                MenuDeactivated();
+                _gameScenesManager.transitionDidFinishEvent -= MenuDeactivated;
+                _gameScenesManager.transitionDidFinishEvent += MenuDeactivated;
             }
         }
 
@@ -73,28 +75,22 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
                 Object.Destroy(_floatingScreenUtils.MenuFloatingScreen);
             }
 
-            _gameplaySetupViewController.didActivateEvent -= GameplaySetupViewController_didActivateEvent;
+            SceneManager.activeSceneChanged -= SceneManagerOnactiveSceneChanged;
         }
 
-        private void GameplaySetupViewController_didActivateEvent(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
+        private void MenuActivated(ScenesTransitionSetupDataSO transitionSetupData, DiContainer diContainer)
         {
-            if (!firstActivation)
-            {
-                MenuActivated();
-            }
-        }
-
-        private void MenuActivated()
-        {
-            // in case game Game floating screen got moved
-            if (PluginConfig.InMenu &&
+            _gameScenesManager.transitionDidFinishEvent -= MenuActivated;
+            
+            if (_floatingScreenUtils.MenuFloatingScreen != null &&
+                _floatingScreenUtils.MenuFloatingScreen.isActiveAndEnabled &&
                 (_floatingScreenUtils.MenuFloatingScreen!.transform.position != PluginConfig.MenuPosition ||
                  _floatingScreenUtils.MenuFloatingScreen.transform.rotation.eulerAngles != PluginConfig.MenuRotation))
             {
                 _floatingScreenUtils.MenuFloatingScreen.transform.position = PluginConfig.MenuPosition;
                 _floatingScreenUtils.MenuFloatingScreen.transform.rotation = Quaternion.Euler(PluginConfig.MenuRotation);
             }
-            
+
             NyaButton.interactable = false;
             ImageUtils.LoadCurrentNyaImage(NyaImage, () =>
             {
@@ -107,8 +103,10 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
             });
         }
         
-        private void MenuDeactivated()
+        private void MenuDeactivated(ScenesTransitionSetupDataSO transitionSetupData, DiContainer diContainer)
         {
+            _gameScenesManager.transitionDidFinishEvent -= MenuDeactivated;
+            
             if (AutoNyaToggle)
             {
                 AutoNyaToggle = false;
