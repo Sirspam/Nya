@@ -5,6 +5,7 @@ using HMUI;
 using Nya.Configuration;
 using Nya.UI.ViewControllers.ModalControllers;
 using Nya.Utils;
+using SiraUtil.Logging;
 using Tweening;
 using UnityEngine;
 using Zenject;
@@ -18,8 +19,8 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
         private readonly TimeTweeningManager _timeTweeningManager;
         private readonly SettingsModalGameController _settingsModalGameController;
         
-        public NyaViewGameController(PluginConfig pluginConfig, ImageUtils imageUtils, IGamePause gamePause, FloatingScreenUtils floatingScreenUtils, TimeTweeningManager timeTweeningManager, SettingsModalGameController settingsModalGameController)
-            : base(pluginConfig, imageUtils)
+        public NyaViewGameController(ImageUtils imageUtils, PluginConfig pluginConfig, TickableManager tickableManager, IGamePause gamePause, FloatingScreenUtils floatingScreenUtils, TimeTweeningManager timeTweeningManager, SettingsModalGameController settingsModalGameController)
+            : base(imageUtils, pluginConfig, tickableManager)
         {
             _gamePause = gamePause;
             _floatingScreenUtils = floatingScreenUtils;
@@ -41,15 +42,17 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
             _gamePause.willResumeEvent += GamePause_didResumeEvent;
         }
 
-        public override void Dispose()
+        public void Dispose()
         {
-            base.Dispose();
+            if (AutoNyaActive)
+            {
+                ToggleAutoNya(false);
+            }
             
             _gamePause.didPauseEvent -= GamePause_didPauseEvent;
             _gamePause.willResumeEvent -= GamePause_didResumeEvent;
             _floatingScreenUtils.GameFloatingScreen!.HandleReleased -= FloatingScreen_HandleReleased;
             _settingsModalGameController.HideModal();
-            _floatingScreenUtils.GameFloatingScreen.gameObject.SetActive(false);
             _timeTweeningManager.KillAllTweens(_floatingScreenUtils.GameFloatingScreen);
         }
 
@@ -57,21 +60,19 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
         {
             _floatingScreenUtils.GameFloatingScreen!.gameObject.SetActive(true);
             
-            if (ImageUtils.AutoNyaActive)
+            if (PluginConfig.PersistantAutoNya && AutoNyaButtonToggle && !AutoNyaActive)
             {
-                AutoNyaToggle = false;
-                AutoNya();
+                ToggleAutoNya(true);   
             }
         }
 
         private void GamePause_didResumeEvent()
         {
-            if (AutoNyaToggle)
+            if (AutoNyaActive)
             {
-                AutoNyaToggle = false;
-                NyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = new Color(1f, 1f, 1f, 0.502f);
-                NyaButton.interactable = true;
+                ToggleAutoNya(false);
             }
+            
             _settingsModalGameController.HideModal();
             _floatingScreenUtils.GameFloatingScreen!.gameObject.SetActive(false);
         }
@@ -95,9 +96,9 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
         [UIAction("settings-button-clicked")]
         protected void SettingsButtonClicked()
         {
-            if (AutoNyaToggle)
+            if (AutoNyaActive)
             {
-                AutoNya();
+                ToggleAutoNya(false);
             }
             _settingsModalGameController.ShowModal(SettingsButtonTransform);
         }

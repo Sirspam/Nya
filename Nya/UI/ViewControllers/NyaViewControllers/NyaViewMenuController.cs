@@ -6,6 +6,7 @@ using HMUI;
 using Nya.Configuration;
 using Nya.UI.ViewControllers.ModalControllers;
 using Nya.Utils;
+using SiraUtil.Logging;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
@@ -19,8 +20,8 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
         private readonly FloatingScreenUtils _floatingScreenUtils;
         private readonly SettingsModalMenuController _settingsModalMenuController;
         
-        public NyaViewMenuController(PluginConfig pluginConfig, ImageUtils imageUtils, GameScenesManager gameScenesManager, FloatingScreenUtils floatingScreenUtils, SettingsModalMenuController settingsModalMenuController)
-            : base(pluginConfig, imageUtils)
+        public NyaViewMenuController(ImageUtils imageUtils, PluginConfig pluginConfig,  TickableManager tickableManager, GameScenesManager gameScenesManager, FloatingScreenUtils floatingScreenUtils, SettingsModalMenuController settingsModalMenuController)
+            : base(imageUtils, pluginConfig, tickableManager)
         {
             _gameScenesManager = gameScenesManager;
             _floatingScreenUtils = floatingScreenUtils;
@@ -60,10 +61,8 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
             }
         }
 
-        public override void Dispose()
+        public void Dispose()
         {
-            base.Dispose();
-            
             if (GameplaySetup.IsSingletonAvailable)
             {
                 GameplaySetup.instance.RemoveTab("Nya");
@@ -95,10 +94,9 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
             ImageUtils.LoadCurrentNyaImage(NyaImage, () =>
             {
                 NyaButton.interactable = true;
-                if (ImageUtils.AutoNyaActive)
+                if (PluginConfig.PersistantAutoNya && AutoNyaButtonToggle && !AutoNyaActive)
                 {
-                    AutoNyaToggle = false;
-                    AutoNya();
+                    ToggleAutoNya(true);
                 }
             });
         }
@@ -107,11 +105,9 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
         {
             _gameScenesManager.transitionDidFinishEvent -= MenuDeactivated;
             
-            if (AutoNyaToggle)
+            if (AutoNyaActive)
             {
-                AutoNyaToggle = false;
-                NyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = new Color(1f, 1f, 1f, 0.502f);
-                NyaButton.interactable = true;
+                ToggleAutoNya(false);
             }
             
             _settingsModalMenuController.HideModal();
@@ -127,9 +123,9 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
         [UIAction("settings-button-clicked")]
         protected void SettingsButtonClicked()
         {
-            if (AutoNyaToggle)
+            if (AutoNyaActive)
             {
-                AutoNya();
+                ToggleAutoNya(false);
             }
 
             _settingsModalMenuController.ShowModal(SettingsButtonTransform);

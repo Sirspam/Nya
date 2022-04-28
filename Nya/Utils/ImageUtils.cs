@@ -18,7 +18,6 @@ namespace Nya.Utils
 {
     internal class ImageUtils
     {
-        private bool _autoNyaActive;
         private byte[]? _nyaImageBytes;
         private string? _nyaImageEndpoint;
         private string? _nyaImageURL;
@@ -35,13 +34,7 @@ namespace Nya.Utils
             _httpService = httpService;
             _pluginConfig = pluginConfig;
         }
-
-        public bool AutoNyaActive
-        {
-            get => _pluginConfig.PersistantAutoNya && _autoNyaActive;
-            set => _autoNyaActive = value;
-        }
-
+        
         public void DownloadNyaImage()
         {
             if (_nyaImageEndpoint == null || _nyaImageBytes == null)
@@ -144,7 +137,7 @@ namespace Nya.Utils
                             switch (files.Length)
                             {
                                 case 0:
-                                    _siraLog.Warn($"No local files for type: {type}");
+                                    _siraLog.Error($"No local files for type: {type}");
                                     LoadErrorSprite(image);
                                     return;
                                 case 1 when oldImageURL != null:

@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
+﻿using System;
 using BeatSaberMarkupLanguage.Attributes;
 using HMUI;
 using Nya.Configuration;
@@ -7,22 +6,26 @@ using Nya.Utils;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 namespace Nya.UI.ViewControllers.NyaViewControllers
 {
     internal abstract class NyaViewController
     {
-        protected bool AutoNyaToggle;
-        private bool _autoNyaCooldown;
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
+        protected static bool AutoNyaActive;
+        protected static bool AutoNyaButtonToggle;
 
         protected readonly ImageUtils ImageUtils;
         protected readonly PluginConfig PluginConfig;
+        private readonly AutoNyaManager _autoNyaManager;
+        private readonly TickableManager _tickableManager;
 
-        protected NyaViewController(PluginConfig pluginConfig, ImageUtils imageUtils)
+        protected NyaViewController(ImageUtils imageUtils, PluginConfig pluginConfig, TickableManager tickableManager)
         {
-            PluginConfig = pluginConfig;
             ImageUtils = imageUtils;
+            PluginConfig = pluginConfig;
+            _autoNyaManager = new AutoNyaManager(ImageUtils, PluginConfig, this);
+            _tickableManager = tickableManager;
         }
 
         #region components
@@ -67,50 +70,74 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
         }
 
         [UIAction("nya-auto-clicked")]
-        protected async void AutoNya()
+        protected void AutoNyaClicked()
         {
-            if (_autoNyaCooldown)
-            {
-                return;
-            }
-
-            _autoNyaCooldown = true;
-            AutoNyaToggle = !AutoNyaToggle;
-            ImageUtils.AutoNyaActive = AutoNyaToggle;
-            
-            if (AutoNyaToggle)
-            {
-                AutoNyaCooldownHandler();
-                NyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = Color.green;
-                NyaButton.interactable = false;
-                
-                while (AutoNyaToggle)
-                {
-                    await _semaphore.WaitAsync();
-                    await Task.Run(() => ImageUtils.LoadNewNyaImage(NyaImage, null));
-                    await Task.Delay(PluginConfig.AutoNyaWait * 1000);
-                    _semaphore.Release();
-                }
-            }
-            else
-            {
-                NyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = new Color(1f, 1f, 1f, 0.502f); // Beatgames why 0.502
-                NyaButton.interactable = true;
-                _autoNyaCooldown = false;
-            }
+            AutoNyaButtonToggle = !AutoNyaActive;
+            ToggleAutoNya(AutoNyaButtonToggle);
         }
 
-        private async void AutoNyaCooldownHandler()
+        protected void ToggleAutoNya(bool active)
         {
-            await Task.Delay(1000);
-            _autoNyaCooldown = false;
+            switch (active)
+            {
+                case true when !AutoNyaActive:
+                    AutoNyaActive = true;
+                    _tickableManager.AddLate(_autoNyaManager);
+                
+                    NyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = Color.green;
+                    NyaButton.interactable = false;
+                    break;
+                case false when AutoNyaActive:
+                {
+                    AutoNyaActive = false;
+                    _tickableManager.RemoveLate(_autoNyaManager);
+
+                    if (!_autoNyaManager.DoingDaThing)
+                    {
+                        NyaButton.interactable = true;
+                    }
+
+                    NyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = new Color(1f, 1f, 1f, 0.502f); // Beatgames why 0.502
+                    break;
+                }
+            }
         }
 
         #endregion actions
 
-        public virtual void Dispose()
+        private class AutoNyaManager : ILateTickable
         {
-            _semaphore.Dispose();
+            public bool DoingDaThing;
+            private static DateTime _lastNyaTime;
+            private readonly ImageUtils _imageUtils;
+            private readonly PluginConfig _pluginConfig;
+            private readonly NyaViewController _nyaViewController;
+
+            public AutoNyaManager(ImageUtils imageUtils, PluginConfig pluginConfig, NyaViewController nyaViewController)
+            {
+                _lastNyaTime = DateTime.Now;
+                _imageUtils = imageUtils;
+                _pluginConfig = pluginConfig;
+                _nyaViewController = nyaViewController;
+            }
+
+            public void LateTick()
+            {
+                if (_lastNyaTime.TimeOfDay < DateTime.Now.TimeOfDay && !DoingDaThing)
+                {
+                    DoingDaThing = true;
+                    _imageUtils.LoadNewNyaImage(_nyaViewController.NyaImage, () =>
+                    {
+                        _lastNyaTime = DateTime.Now.AddSeconds(_pluginConfig.AutoNyaWait);
+                        DoingDaThing = false;
+
+                        if (!AutoNyaActive)
+                        {
+                            _nyaViewController.NyaButton.interactable = true;
+                        }
+                    });
+                }
+            }
         }
     }
 }
