@@ -1,5 +1,4 @@
-﻿using System.Dynamic;
-using BeatSaberMarkupLanguage;
+﻿using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using HMUI;
 using Nya.Configuration;

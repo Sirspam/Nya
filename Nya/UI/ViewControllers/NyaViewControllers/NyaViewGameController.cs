@@ -1,13 +1,10 @@
 ﻿using System;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.FloatingScreen;
-using HMUI;
 using Nya.Configuration;
 using Nya.UI.ViewControllers.ModalControllers;
 using Nya.Utils;
-using SiraUtil.Logging;
 using Tweening;
-using UnityEngine;
 using Zenject;
 
 namespace Nya.UI.ViewControllers.NyaViewControllers

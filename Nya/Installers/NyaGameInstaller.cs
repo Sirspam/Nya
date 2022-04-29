@@ -1,5 +1,4 @@
 ﻿using Nya.Configuration;
-using Nya.UI.ViewControllers;
 using Nya.UI.ViewControllers.ModalControllers;
 using Nya.UI.ViewControllers.NyaViewControllers;
 using Zenject;

@@ -2,11 +2,9 @@
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.FloatingScreen;
 using BeatSaberMarkupLanguage.GameplaySetup;
-using HMUI;
 using Nya.Configuration;
 using Nya.UI.ViewControllers.ModalControllers;
 using Nya.Utils;
-using SiraUtil.Logging;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;

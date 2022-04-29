@@ -1,6 +1,4 @@
 ﻿using HMUI;
-using Nya.Configuration;
-using Nya.UI.ViewControllers;
 using Nya.UI.ViewControllers.SettingsControllers;
 using Zenject;
 

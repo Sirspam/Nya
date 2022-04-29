@@ -1,12 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Parser;
 using HMUI;
-using IPA.Loader;
-using JetBrains.Annotations;
 using UnityEngine;
 using Component = UnityEngine.Component;
 
@@ -20,7 +17,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
 		
 		public event PropertyChangedEventHandler? PropertyChanged;
 
-		[UIComponent("modal")] private ModalView _modalView = null!;
+		[UIComponent("modal")] private readonly ModalView _modalView = null!;
 
 		[UIParams] private readonly BSMLParserParams _parserParams = null!;
 

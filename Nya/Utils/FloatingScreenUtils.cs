@@ -16,7 +16,7 @@ namespace Nya.Utils
 		
 		public Vector3 HandleScale;
 		private Material? _uiFogBg;
-		private bool _usingNyaMaterial = false;
+		private bool _usingNyaMaterial;
 		private Material? _nyaBgMaterial;
 		public FloatingScreen? MenuFloatingScreen;
 		public FloatingScreen? GameFloatingScreen;

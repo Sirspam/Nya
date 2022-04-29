@@ -1,55 +1,55 @@
 ﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
-	<vertical ignore-layout="true" anchor-pos-y="13">
-		<text id="update-text" active="~update-available" color="#FFEE00"/>
-	</vertical>
-	
-	<horizontal id="top-panel" background="panel-top" anchor-min-y="1" pad-left="5" pad-right="5" pad-top="1" pad-bottom="1" horizontal-fit="PreferredSize" spacing="5">
-		<!-- These images are an requirement, I will fight you if you remove them. -->
-		<image id="chocola-image" src="Nya.Resources.Chocola_Mini_Sitting.png" preserve-aspect="true" pref-width="12" pref-height="12"/>
-		<text text="Nya" align="Center" font-size="8" italics="true"/>
-		<image id="vanilla-image" src="Nya.Resources.Vanilla_Mini_Sitting.png" preserve-aspect="true" pref-width="12" pref-height="12"/>
-	</horizontal>
+    <vertical ignore-layout="true" anchor-pos-y="13">
+        <text id="update-text" active="~update-available" color="#FFEE00"/>
+    </vertical>
 
-	<vertical anchor-pos-y="11">
-		<horizontal vertical-fit="PreferredSize" horizontal-fit="PreferredSize" pref-height="7" pref-width="82">
-			<tab-selector tab-tag="settings-tab" child-expand-width="true" child-control-width="true"/>
-		</horizontal>
+    <horizontal id="top-panel" background="panel-top" anchor-min-y="1" pad-left="5" pad-right="5" pad-top="1" pad-bottom="1" horizontal-fit="PreferredSize" spacing="5">
+        <!-- These images are an requirement, I will fight you if you remove them. -->
+        <image id="chocola-image" src="Nya.Resources.Chocola_Mini_Sitting.png" preserve-aspect="true" pref-width="12" pref-height="12"/>
+        <text text="Nya" align="Center" font-size="8" italics="true"/>
+        <image id="vanilla-image" src="Nya.Resources.Vanilla_Mini_Sitting.png" preserve-aspect="true" pref-width="12" pref-height="12"/>
+    </horizontal>
 
-		<tab tab-name="Behaviour" tags="settings-tab" horizontal-fit="PreferredSize" vertical-fit="PreferredSize">
-			<vertical child-expand-width="true" horizontal-fit="PreferredSize" vertical-fit="PreferredSize" anchor-pos-y="10">
-				<slider-setting id="auto-wait-slider" text="Auto Nya wait time" hover-hint="How many seconds Auto Nya will wait for before getting a new image" increment="1" min="4" max="30" integer-only="true" value="auto-wait-value" bind-value="true" apply-on-change="true"/>
-				<checkbox-setting text="Persistant Auto Nya" hover-hint="Auto Nya will re-enable whenever Nya is active" value="persistant-auto-nya" bind-value="true" apply-on-change="true"/>
-				<checkbox-setting id="remember-NSFW-checkbox" text="Remember NSFW setting" hover-hint="If disabled Nya will always be set to SFW on start-up" value="remember-NSFW" bind-value="true" apply-on-change="true"/>
-				<checkbox-setting id="skip-NSFW-checkbox" text="Skip NSFW confirmation" hover-hint="You horny pastry puffer" value="skip-NSFW" bind-value="true" apply-on-change="true"/>
-				<dropdown-list-setting id="scale-dropdown" text="Downscale images" hover-hint="Image downscaling helps reduce the stutter whenever loading a new image. It's recommended to keep this enabled" value="scaling-value" choices="scaling-choices" bind-value="true" apply-on-change="true"/>
-				<checkbox-setting id="easter-eggs-checkbox" text="Easter Eggs" hover-hint="They're funny please I swear" value="easter-eggs" bind-value="true" apply-on-change="true"/>
-			</vertical>
-		</tab>
-		
-		<tab tab-name="Floating Screen" tags="settings-tab" horizontal-fit="PreferredSize" vertical-fit="PreferredSize">
-			<vertical child-expand-width="true" horizontal-fit="PreferredSize" vertical-fit="PreferredSize" anchor-pos-y="10">
-				<checkbox-setting id="in-menu-checkbox" text="Detach Nya in the menu" value="in-menu" bind-value="true" apply-on-change="true"/>
-				<checkbox-setting id="in-pause-checkbox" text="Show Nya in the pause menu" value="in-pause" bind-value="true" apply-on-change="true"/>
-				<checkbox-setting id="separate-positions-checkbox" text="Separate menu Nya's and pause Nya's positions" value="separate-positions" bind-value="true" apply-on-change="true"/>
-				<horizontal>
-					<button active="~separate-positions-but-opposite" text="Reset Nya's position" hover-hint="Resets Nya's screen to it's default position" on-click="reset-menu-clicked"/>
-					<button id="reset-menu-position" active="~separate-positions" text="Reset menu Nya's position" hover-hint="Resets the menu Nya screen to it's default position" on-click="reset-menu-clicked"/>
-					<button id="reset-pause-position" active="~separate-positions" text="Reset pause Nya's position" hover-hint="Resets the pause Nya screen to it's default position" on-click="reset-pause-clicked"/>
-				</horizontal>
-				<horizontal>
-					<color-setting id="bg-color-setting" text="Nya background color" value="bg-color" on-change="bg-color-setting-changed" pref-width="70" bind-value="true" apply-on-change="true"/>
-					<button id="bg-color-default" text="Default" on-click="bg-color-default-clicked" font-size="4"/>
-				</horizontal>
-			</vertical>
-		</tab>
-	</vertical>
+    <vertical anchor-pos-y="11">
+        <horizontal vertical-fit="PreferredSize" horizontal-fit="PreferredSize" pref-height="7" pref-width="82">
+            <tab-selector tab-tag="settings-tab" child-expand-width="true" child-control-width="true"/>
+        </horizontal>
 
-	<vertical anchor-pos-y="-26.5">
-		<text active="~restart-required" text="Applying these settings will require the game to internally restart" hover-hint="You know, that annoying thing where the whole screen goes black for awhile then you have to wait for everything to load again" anchor-pos-x="55" anchor-pos-y="-47" font-size="5" italics="true" color="red" align="Center"/>
-	</vertical>
-	
-	<horizontal horizontal-fit="PreferredSize" child-control-height="false" child-expand-height="false" child-align="MiddleCenter" anchor-min-x="0.5" anchor-max-x="0.5" anchor-min-y="0" anchor-max-y="0" size-delta-x="120" size-delta-y="10" pivot-y="0" spacing="2">
-		<button text="Cancel" pref-width="34" pref-height="10" on-click="cancel-clicked"/>
-		<action-button text="Ok" pref-width="34" pref-height="10" on-click="ok-clicked"/>
-	</horizontal>
+        <tab tab-name="Behaviour" tags="settings-tab" horizontal-fit="PreferredSize" vertical-fit="PreferredSize">
+            <vertical child-expand-width="true" horizontal-fit="PreferredSize" vertical-fit="PreferredSize" anchor-pos-y="10">
+                <slider-setting id="auto-wait-slider" text="Auto Nya wait time" hover-hint="How many seconds Auto Nya will wait for before getting a new image" increment="1" min="4" max="30" integer-only="true" value="auto-wait-value" bind-value="true" apply-on-change="true"/>
+                <checkbox-setting text="Persistant Auto Nya" hover-hint="Auto Nya will re-enable whenever Nya is active" value="persistant-auto-nya" bind-value="true" apply-on-change="true"/>
+                <checkbox-setting id="remember-NSFW-checkbox" text="Remember NSFW setting" hover-hint="If disabled Nya will always be set to SFW on start-up" value="remember-NSFW" bind-value="true" apply-on-change="true"/>
+                <checkbox-setting id="skip-NSFW-checkbox" text="Skip NSFW confirmation" hover-hint="You horny pastry puffer" value="skip-NSFW" bind-value="true" apply-on-change="true"/>
+                <dropdown-list-setting id="scale-dropdown" text="Downscale images" hover-hint="Image downscaling helps reduce the stutter whenever loading a new image. It's recommended to keep this enabled" value="scaling-value" choices="scaling-choices" bind-value="true" apply-on-change="true"/>
+                <checkbox-setting id="easter-eggs-checkbox" text="Easter Eggs" hover-hint="They're funny please I swear" value="easter-eggs" bind-value="true" apply-on-change="true"/>
+            </vertical>
+        </tab>
+
+        <tab tab-name="Floating Screen" tags="settings-tab" horizontal-fit="PreferredSize" vertical-fit="PreferredSize">
+            <vertical child-expand-width="true" horizontal-fit="PreferredSize" vertical-fit="PreferredSize" anchor-pos-y="10">
+                <checkbox-setting id="in-menu-checkbox" text="Detach Nya in the menu" value="in-menu" bind-value="true" apply-on-change="true"/>
+                <checkbox-setting id="in-pause-checkbox" text="Show Nya in the pause menu" value="in-pause" bind-value="true" apply-on-change="true"/>
+                <checkbox-setting id="separate-positions-checkbox" text="Separate menu Nya's and pause Nya's positions" value="separate-positions" bind-value="true" apply-on-change="true"/>
+                <horizontal>
+                    <button active="~separate-positions-but-opposite" text="Reset Nya's position" hover-hint="Resets Nya's screen to it's default position" on-click="reset-menu-clicked"/>
+                    <button id="reset-menu-position" active="~separate-positions" text="Reset menu Nya's position" hover-hint="Resets the menu Nya screen to it's default position" on-click="reset-menu-clicked"/>
+                    <button id="reset-pause-position" active="~separate-positions" text="Reset pause Nya's position" hover-hint="Resets the pause Nya screen to it's default position" on-click="reset-pause-clicked"/>
+                </horizontal>
+                <horizontal>
+                    <color-setting id="bg-color-setting" text="Nya background color" value="bg-color" on-change="bg-color-setting-changed" pref-width="70" bind-value="true" apply-on-change="true"/>
+                    <button id="bg-color-default" text="Default" on-click="bg-color-default-clicked" font-size="4"/>
+                </horizontal>
+            </vertical>
+        </tab>
+    </vertical>
+
+    <vertical anchor-pos-y="-26.5">
+        <text active="~restart-required" text="Applying these settings will require the game to internally restart" hover-hint="You know, that annoying thing where the whole screen goes black for awhile then you have to wait for everything to load again" anchor-pos-x="55" anchor-pos-y="-47" font-size="5" italics="true" color="red" align="Center"/>
+    </vertical>
+
+    <horizontal horizontal-fit="PreferredSize" child-control-height="false" child-expand-height="false" child-align="MiddleCenter" anchor-min-x="0.5" anchor-max-x="0.5" anchor-min-y="0" anchor-max-y="0" size-delta-x="120" size-delta-y="10" pivot-y="0" spacing="2">
+        <button text="Cancel" pref-width="34" pref-height="10" on-click="cancel-clicked"/>
+        <action-button text="Ok" pref-width="34" pref-height="10" on-click="ok-clicked"/>
+    </horizontal>
 </bg>

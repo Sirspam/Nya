@@ -8,7 +8,6 @@ using SiraUtil.Zenject;
 using TMPro;
 using Tweening;
 using Zenject;
-using UnityEngine;
 
 namespace Nya.UI.ViewControllers.SettingsControllers
 {

@@ -24,7 +24,7 @@ namespace Nya.Configuration
         public virtual Vector3 MenuRotation { get; set; } = FloatingScreenUtils.DefaultRotation.eulerAngles;
         public virtual Vector3 PausePosition { get; set; } = FloatingScreenUtils.DefaultPosition;
         public virtual Vector3 PauseRotation { get; set; } = FloatingScreenUtils.DefaultRotation.eulerAngles;
-        public virtual bool UseBackgroundColor { get; set; } = false;
+        public virtual bool UseBackgroundColor { get; set; }
         public virtual Color BackgroundColor { get; set; } = new Color(0.745f, 0.745f, 0.745f);
         public virtual bool RainbowBackgroundColor { get; set; } = false;
         public virtual bool PersistantAutoNya { get; set; } = false;

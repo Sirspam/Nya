@@ -1,39 +1,39 @@
-﻿<bg id="root" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
-	<modal id="modal" show-event="open-modal" hide-event="close-modal" clickerino-offerino-closerino="true" size-delta-x="71" size-delta-y="50" move-to-center="true">
-		<vertical anchor-pos-y="10.3">
-			
-			<horizontal vertical-fit="PreferredSize" horizontal-fit="PreferredSize" pref-height="7" pref-width="70">
-				<tab-selector id="settings-modal-tab-selector" tab-tag="settings-modal-tab" child-expand-width="true" child-control-width="true"/>
-			</horizontal>
-			
-			<tab id="nya-tab" tab-name="Nya" tags="settings-modal-tab">
-				<vertical horizontal-fit="PreferredSize" vertical-fit="PreferredSize" preferred-width="60" preferred-height="40" spacing="1">
-					<button id="nya-download-button" text="Download Nya" on-click="nya-download-clicked" active="true" min-height="11" min-width="25"/>
-					<button id="nya-open-button" text="Open Nya" on-click="nya-open-clicked" active="true" min-height="11" min-width="25"/>
-					<checkbox-setting id="nsfw-checkbox" text="NSFW Nya" value="nya-nsfw-check" on-change="nya-nsfw-changed" bind-value="true"/>
-				</vertical>
-			</tab>
-			<tab id="api-tab" tab-name="Sources" tags="settings-modal-tab">
-				<vertical horizontal-fit="PreferredSize" vertical-fit="PreferredSize" preferred-width="60" preferred-height="45" spacing="-3">
-					<dropdown-list-setting id="api-dropdown" text="API" value="api-value" choices="api-list" on-change="api-change"/>
-					<dropdown-list-setting id="sfw-dropdown" text="SFW endpoint" value="sfw-value" choices="sfw-list" formatter="format-source" on-change="sfw-change" apply-on-change="true" bind-value="true"/>
-					<dropdown-list-setting id="nsfw-dropdown" text="NSFW endpoint" value="nsfw-value" choices="nsfw-list" formatter="format-source" on-change="nsfw-change"/>
-				</vertical>
-			</tab>
-			<tab id="screen-tab" tab-name="Screen" tags="settings-modal-tab">
-				<vertical horizontal-fit="PreferredSize" vertical-fit="PreferredSize" preferred-width="60" preferred-height="45" spacing="-3">
-					<checkbox-setting id="show-handle-checkbox" text="Show Nya's movement handle" value="show-handle" on-change="show-handle-changed" apply-on-change="true"/>
-					<button id="face-headset-button" text="Face Headset" on-click="face-headset-clicked" min-height="10" min-width="32"/>
-					<button id="set-upright-button" text="Set Upright" on-click="set-upright-clicked" min-height="10" min-width="32"/>
-					<button id="default-position-button" text="Default Position" on-click="default-position-clicked" min-height="10" min-width="32"/>
-				</vertical>
-			</tab>
-			<tab id="more-settings-tab" tab-name="➕" tags="settings-modal-tab">
-				<vertical horizontal-fit="PreferredSize" vertical-fit="PreferredSize" preferred-width="50" preferred-height="45">
-					<text text="Click the button below for more Nya settings" word-wrapping="true" align="Center" font-size="6"/>
-					<primary-button text="More Settings" on-click="show-nya-settings" min-height="12" min-width="27" font-size="5"/>
-				</vertical>
-			</tab>
-		</vertical>
-	</modal>
+﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="root" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
+    <modal id="modal" show-event="open-modal" hide-event="close-modal" clickerino-offerino-closerino="true" size-delta-x="71" size-delta-y="50" move-to-center="true">
+        <vertical anchor-pos-y="10.3">
+
+            <horizontal vertical-fit="PreferredSize" horizontal-fit="PreferredSize" pref-height="7" pref-width="70">
+                <tab-selector id="settings-modal-tab-selector" tab-tag="settings-modal-tab" child-expand-width="true" child-control-width="true"/>
+            </horizontal>
+
+            <tab id="nya-tab" tab-name="Nya" tags="settings-modal-tab">
+                <vertical horizontal-fit="PreferredSize" vertical-fit="PreferredSize" preferred-width="60" preferred-height="40" spacing="1">
+                    <button id="nya-download-button" text="Download Nya" on-click="nya-download-clicked" active="true" min-height="11" min-width="25"/>
+                    <button id="nya-open-button" text="Open Nya" on-click="nya-open-clicked" active="true" min-height="11" min-width="25"/>
+                    <checkbox-setting id="nsfw-checkbox" text="NSFW Nya" value="nya-nsfw-check" on-change="nya-nsfw-changed" bind-value="true"/>
+                </vertical>
+            </tab>
+            <tab id="api-tab" tab-name="Sources" tags="settings-modal-tab">
+                <vertical horizontal-fit="PreferredSize" vertical-fit="PreferredSize" preferred-width="60" preferred-height="45" spacing="-3">
+                    <dropdown-list-setting id="api-dropdown" text="API" value="api-value" choices="api-list" on-change="api-change"/>
+                    <dropdown-list-setting id="sfw-dropdown" text="SFW endpoint" value="sfw-value" choices="sfw-list" formatter="format-source" on-change="sfw-change" apply-on-change="true" bind-value="true"/>
+                    <dropdown-list-setting id="nsfw-dropdown" text="NSFW endpoint" value="nsfw-value" choices="nsfw-list" formatter="format-source" on-change="nsfw-change"/>
+                </vertical>
+            </tab>
+            <tab id="screen-tab" tab-name="Screen" tags="settings-modal-tab">
+                <vertical horizontal-fit="PreferredSize" vertical-fit="PreferredSize" preferred-width="60" preferred-height="45" spacing="-3">
+                    <checkbox-setting id="show-handle-checkbox" text="Show Nya's movement handle" value="show-handle" on-change="show-handle-changed" apply-on-change="true"/>
+                    <button id="face-headset-button" text="Face Headset" on-click="face-headset-clicked" min-height="10" min-width="32"/>
+                    <button id="set-upright-button" text="Set Upright" on-click="set-upright-clicked" min-height="10" min-width="32"/>
+                    <button id="default-position-button" text="Default Position" on-click="default-position-clicked" min-height="10" min-width="32"/>
+                </vertical>
+            </tab>
+            <tab id="more-settings-tab" tab-name="➕" tags="settings-modal-tab">
+                <vertical horizontal-fit="PreferredSize" vertical-fit="PreferredSize" preferred-width="50" preferred-height="45">
+                    <text text="Click the button below for more Nya settings" word-wrapping="true" align="Center" font-size="6"/>
+                    <primary-button text="More Settings" on-click="show-nya-settings" min-height="12" min-width="27" font-size="5"/>
+                </vertical>
+            </tab>
+        </vertical>
+    </modal>
 </bg>

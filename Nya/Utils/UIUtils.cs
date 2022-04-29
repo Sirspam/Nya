@@ -1,8 +1,5 @@
 ﻿using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
-using BeatSaberMarkupLanguage;
-using BeatSaberMarkupLanguage.FloatingScreen;
 using HMUI;
 using Nya.Configuration;
 using Tweening;
