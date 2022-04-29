@@ -161,9 +161,9 @@ namespace Nya.UI.ViewControllers.ModalControllers
 
         public void HideModal()
         {
-            if (ModalTransform != null)
+            if (ModalView != null)
             {
-                ModalTransform.GetComponent<ModalView>().Hide(false);
+                ModalView.Hide(false);
                 _nsfwConfirmModalController.HideModal();
             }
         }

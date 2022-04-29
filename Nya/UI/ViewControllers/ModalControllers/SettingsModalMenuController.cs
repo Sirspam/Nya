@@ -1,4 +1,5 @@
-﻿using BeatSaberMarkupLanguage;
+﻿using System.Dynamic;
+using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using HMUI;
 using Nya.Configuration;
@@ -36,7 +37,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
         [UIAction("show-nya-settings")]
         private void ShowNyaSettings()
         {
-            HideModal();
+            ModalView.HandleBlockerButtonClicked();
             if (_nyaSettingsMainViewController.isActiveAndEnabled)
             {
                 return;
