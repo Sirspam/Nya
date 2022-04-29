@@ -49,11 +49,17 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
                 ToggleAutoNya(false);
             }
             
+            _settingsModalGameController.HideModal();
+            _timeTweeningManager.KillAllTweens(_floatingScreenUtils.GameFloatingScreen);
+            
             _gamePause.didPauseEvent -= GamePause_didPauseEvent;
             _gamePause.willResumeEvent -= GamePause_didResumeEvent;
             _floatingScreenUtils.GameFloatingScreen!.HandleReleased -= FloatingScreen_HandleReleased;
-            _settingsModalGameController.HideModal();
-            _timeTweeningManager.KillAllTweens(_floatingScreenUtils.GameFloatingScreen);
+
+            if (_settingsModalGameController.ModalView != null)
+            {
+                _settingsModalGameController.ModalView.blockerClickedEvent -= ModalViewOnBlockerClickedEvent;
+            }
         }
 
         private void GamePause_didPauseEvent()
@@ -92,6 +98,14 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
                 PluginConfig.MenuRotation = transform.eulerAngles;
             }
         }
+        
+        private void ModalViewOnBlockerClickedEvent()
+        {
+            if (PluginConfig.PersistantAutoNya && AutoNyaButtonToggle && !AutoNyaActive)
+            {
+                ToggleAutoNya(true);
+            }
+        }
 
         [UIAction("settings-button-clicked")]
         protected void SettingsButtonClicked()
@@ -100,7 +114,9 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
             {
                 ToggleAutoNya(false);
             }
+            
             _settingsModalGameController.ShowModal(SettingsButtonTransform);
+            _settingsModalGameController.ModalView.blockerClickedEvent += ModalViewOnBlockerClickedEvent;
         }
     }
 }

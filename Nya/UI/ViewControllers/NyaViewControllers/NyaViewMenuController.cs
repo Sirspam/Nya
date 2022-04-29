@@ -44,21 +44,7 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
                 GameplaySetup.instance.AddTab("Nya", "Nya.UI.Views.NyaView.bsml", this);
             }
             
-            SceneManager.activeSceneChanged += SceneManagerOnactiveSceneChanged;
-        }
-
-        private void SceneManagerOnactiveSceneChanged(Scene currentScene, Scene nextScene)
-        {
-            if (nextScene.name == "MainMenu")
-            {
-                _gameScenesManager.transitionDidFinishEvent -= MenuActivated;
-                _gameScenesManager.transitionDidFinishEvent += MenuActivated;
-            }
-            else
-            {
-                _gameScenesManager.transitionDidFinishEvent -= MenuDeactivated;
-                _gameScenesManager.transitionDidFinishEvent += MenuDeactivated;
-            }
+            SceneManager.activeSceneChanged += SceneManagerOnActiveSceneChanged;
         }
 
         public void Dispose()
@@ -74,7 +60,33 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
                 Object.Destroy(_floatingScreenUtils.MenuFloatingScreen);
             }
 
-            SceneManager.activeSceneChanged -= SceneManagerOnactiveSceneChanged;
+            SceneManager.activeSceneChanged -= SceneManagerOnActiveSceneChanged;
+            if (_settingsModalMenuController.ModalView != null)
+            {
+                _settingsModalMenuController.ModalView.blockerClickedEvent -= ModalViewOnBlockerClickedEvent;
+            }
+        }
+
+        private void ModalViewOnBlockerClickedEvent()
+        {
+            if (PluginConfig.PersistantAutoNya && AutoNyaButtonToggle && !AutoNyaActive)
+            {
+                ToggleAutoNya(true);
+            }
+        }
+
+        private void SceneManagerOnActiveSceneChanged(Scene currentScene, Scene nextScene)
+        {
+            if (nextScene.name == "MainMenu")
+            {
+                _gameScenesManager.transitionDidFinishEvent -= MenuActivated;
+                _gameScenesManager.transitionDidFinishEvent += MenuActivated;
+            }
+            else
+            {
+                _gameScenesManager.transitionDidFinishEvent -= MenuDeactivated;
+                _gameScenesManager.transitionDidFinishEvent += MenuDeactivated;
+            }
         }
 
         private void MenuActivated(ScenesTransitionSetupDataSO transitionSetupData, DiContainer diContainer)
@@ -127,8 +139,9 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
             {
                 ToggleAutoNya(false);
             }
-
+            
             _settingsModalMenuController.ShowModal(SettingsButtonTransform);
+            _settingsModalMenuController.ModalView.blockerClickedEvent += ModalViewOnBlockerClickedEvent;
         }
     }
 }

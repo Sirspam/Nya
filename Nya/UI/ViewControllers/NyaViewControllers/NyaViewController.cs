@@ -76,6 +76,8 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
             ToggleAutoNya(AutoNyaButtonToggle);
         }
 
+        #endregion actions
+
         protected void ToggleAutoNya(bool active)
         {
             switch (active)
@@ -102,8 +104,6 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
                 }
             }
         }
-
-        #endregion actions
 
         private class AutoNyaManager : ILateTickable
         {

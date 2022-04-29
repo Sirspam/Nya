@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -9,7 +10,6 @@ using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Components.Settings;
-using BeatSaberMarkupLanguage.FloatingScreen;
 using BeatSaberMarkupLanguage.Parser;
 using HMUI;
 using IPA.Utilities;
@@ -54,8 +54,8 @@ namespace Nya.UI.ViewControllers.ModalControllers
         [UIComponent("root")]
         protected readonly RectTransform RootTransform = null!;
 
-        [UIComponent("modal")]
-        protected readonly ModalView ModalView = null!;
+        [UIComponent("modal")] 
+        public readonly ModalView ModalView = null!;
 
         [UIComponent("modal")]
         protected readonly RectTransform ModalTransform = null!;
@@ -167,12 +167,11 @@ namespace Nya.UI.ViewControllers.ModalControllers
                 _nsfwConfirmModalController.HideModal();
             }
         }
-        
 
         #region NyaTab
 
         #region Values
-        
+
         [UIValue("nya-nsfw-check")]
         protected bool NsfwCheck
         {
@@ -183,7 +182,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
                 PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(NsfwCheck)));
             }
         }
-        
+
         #endregion
 
         #region Actions
@@ -217,7 +216,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
         }
 
         #endregion
-        
+
         #endregion
 
         #region SourcesTab
@@ -286,14 +285,12 @@ namespace Nya.UI.ViewControllers.ModalControllers
         }
 
         #endregion
-        
+
         #endregion
 
         #region ScreenTab
 
         #region Values
-
-        
 
         #endregion
 
@@ -375,13 +372,11 @@ namespace Nya.UI.ViewControllers.ModalControllers
         }
 
         #endregion
-        
+
         #endregion
 
         #region MoreSettingsTab
-        
-        
-        
+
         #endregion
 
         private void NsfwConfirmYes()
