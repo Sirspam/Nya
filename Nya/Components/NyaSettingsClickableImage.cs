@@ -10,6 +10,11 @@ namespace Nya.Components
 		private AudioClip[]? _audioClips;
 		private AudioSource _basicUIAudioManagerAudioSource = null!;
 
+		private void Start()
+		{
+			GetAudioClips();
+		}
+
 		public void OnPointerClick(PointerEventData eventData)
 		{
 			if (_audioClips == null)
