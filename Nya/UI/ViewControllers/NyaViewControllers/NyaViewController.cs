@@ -19,7 +19,7 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
         protected readonly PluginConfig PluginConfig;
         private readonly AutoNyaManager _autoNyaManager;
         private readonly TickableManager _tickableManager;
-
+        
         protected NyaViewController(ImageUtils imageUtils, PluginConfig pluginConfig, TickableManager tickableManager)
         {
             ImageUtils = imageUtils;

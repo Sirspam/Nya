@@ -1,7 +1,6 @@
 ﻿using System;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.FloatingScreen;
-using BeatSaberMarkupLanguage.GameplaySetup;
 using Nya.Configuration;
 using Nya.UI.ViewControllers.ModalControllers;
 using Nya.Utils;
@@ -25,33 +24,21 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
             _floatingScreenUtils = floatingScreenUtils;
             _settingsModalMenuController = settingsModalMenuController;
         }
-
+        
         public void Initialize()
         {
-            if (PluginConfig.InMenu)
+            if (_floatingScreenUtils.MenuFloatingScreen == null)
             {
-                if (_floatingScreenUtils.MenuFloatingScreen == null)
-                {
-                    _floatingScreenUtils.CreateNyaFloatingScreen(this, FloatingScreenUtils.FloatingScreenType.Menu);
-                }
+                _floatingScreenUtils.CreateNyaFloatingScreen(this, FloatingScreenUtils.FloatingScreenType.Menu);
+            }
 
-                _floatingScreenUtils.MenuFloatingScreen!.HandleReleased += FloatingScreen_HandleReleased;
-            }
-            else
-            {
-                GameplaySetup.instance.AddTab("Nya", "Nya.UI.Views.NyaView.bsml", this);
-            }
+            _floatingScreenUtils.MenuFloatingScreen!.HandleReleased += FloatingScreen_HandleReleased;
             
             SceneManager.activeSceneChanged += SceneManagerOnActiveSceneChanged;
         }
 
         public void Dispose()
         {
-            if (GameplaySetup.IsSingletonAvailable)
-            {
-                GameplaySetup.instance.RemoveTab("Nya");
-            }
-
             if (_floatingScreenUtils.MenuFloatingScreen != null)
             {
                 _floatingScreenUtils.MenuFloatingScreen!.HandleReleased -= FloatingScreen_HandleReleased;

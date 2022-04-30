@@ -1,4 +1,5 @@
-﻿using Nya.UI.FlowControllers;
+﻿using Nya.Configuration;
+using Nya.UI.FlowControllers;
 using Nya.UI.ViewControllers.ModalControllers;
 using Nya.UI.ViewControllers.NyaViewControllers;
 using Nya.UI.ViewControllers.SettingsControllers;
@@ -8,9 +9,24 @@ namespace Nya.Installers
 {
     internal class NyaMenuInstaller : Installer
     {
+        private readonly PluginConfig _pluginConfig;
+
+        public NyaMenuInstaller(PluginConfig pluginConfig)
+        {
+            _pluginConfig = pluginConfig;
+        }
+
         public override void InstallBindings()
         {
-            Container.BindInterfacesTo<NyaViewMenuController>().AsSingle();
+            if (_pluginConfig.InMenu)
+            {
+                Container.BindInterfacesTo<NyaViewMenuController>().AsSingle();
+            }
+            else
+            {
+                Container.BindInterfacesAndSelfTo<NyaViewGameplaySetupController>().AsSingle();
+            }
+            
             Container.BindInterfacesAndSelfTo<SettingsModalMenuController>().AsSingle();
             Container.Bind<NsfwConfirmModalController>().AsSingle();
             Container.Bind<GitHubPageModalController>().AsSingle();
