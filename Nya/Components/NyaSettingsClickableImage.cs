@@ -10,18 +10,25 @@ namespace Nya.Components
 		private AudioClip[]? _audioClips;
 		private AudioSource _basicUIAudioManagerAudioSource = null!;
 
-		private void Start()
+		private void Awake()
 		{
-			GetAudioClips();
+			if (_audioClips == null)
+			{
+				GetAudioClips();
+			}
 		}
 
 		public void OnPointerClick(PointerEventData eventData)
 		{
 			if (_audioClips == null)
+			{
 				GetAudioClips();
+			}
 
 			if (_basicUIAudioManagerAudioSource == null)
+			{
 				_basicUIAudioManagerAudioSource = BeatSaberUI.BasicUIAudioManager.GetComponent<AudioSource>();
+			}
 
 			_basicUIAudioManagerAudioSource.PlayOneShot(name == "VanillaImage" ? _audioClips![1] : _audioClips![0]);
 		}
