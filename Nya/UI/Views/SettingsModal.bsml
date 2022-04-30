@@ -8,8 +8,8 @@
 
             <tab id="nya-tab" tab-name="Nya" tags="settings-modal-tab">
                 <vertical horizontal-fit="PreferredSize" vertical-fit="PreferredSize" preferred-width="60" preferred-height="40" spacing="1">
-                    <button id="nya-download-button" text="Download Nya" on-click="nya-download-clicked" active="true" min-height="11" min-width="25"/>
-                    <button id="nya-open-button" text="Open Nya" on-click="nya-open-clicked" active="true" min-height="11" min-width="25"/>
+                    <button id="nya-download-button" text="Download Nya" on-click="nya-download-clicked" active="true" min-height="11" min-width="31"/>
+                    <button id="nya-open-button" text="Open Nya Folder" on-click="nya-open-clicked" active="true" min-height="11" min-width="31"/>
                     <checkbox-setting id="nsfw-checkbox" text="NSFW Nya" value="nya-nsfw-check" on-change="nya-nsfw-changed" bind-value="true"/>
                 </vertical>
             </tab>
