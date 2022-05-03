@@ -149,7 +149,6 @@ namespace Nya.Utils
                         }
                         
                         _nyaImageBytes = File.ReadAllBytes(_nyaImageURL!);
-                        LoadCurrentNyaImage(image, () => callback?.Invoke());
                         break;
                     case DataMode.Unsupported:
                     default:
