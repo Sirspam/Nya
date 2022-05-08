@@ -23,16 +23,20 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
 			_gameplaySetupViewController = gameplaySetupViewController;
 		}
 
-		public void Initialize()
+		public override void Initialize()
 		{
+			base.Initialize();
+			
 			GameplaySetup.instance.AddTab("Nya", "Nya.UI.Views.NyaView.bsml", this);
 
 			_gameplaySetupViewController.didActivateEvent += GameplaySetupViewControllerOnDidActivateEvent;
 			_gameplaySetupViewController.didDeactivateEvent += GameplaySetupViewControllerOnDidDeactivateEvent;
 		}
 
-		public void Dispose()
+		public override void Dispose()
 		{
+			base.Dispose();
+			
 			if (GameplaySetup.IsSingletonAvailable)
 			{
 				GameplaySetup.instance.RemoveTab("Nya");

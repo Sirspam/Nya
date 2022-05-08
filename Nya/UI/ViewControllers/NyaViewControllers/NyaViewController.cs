@@ -78,18 +78,36 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
 
         #endregion actions
 
+        public virtual void Initialize()
+        {
+            ImageUtils.ErrorSpriteLoadedEvent += ImageUtilsOnErrorSpriteLoadedEvent;
+        }
+        
+        public virtual void Dispose()
+        {
+            ImageUtils.ErrorSpriteLoadedEvent -= ImageUtilsOnErrorSpriteLoadedEvent;
+        }
+
+        private void ImageUtilsOnErrorSpriteLoadedEvent()
+        {
+            if (AutoNyaActive)
+            {
+                ToggleAutoNya(false);
+            }
+        }
+
         protected void ToggleAutoNya(bool active)
         {
             switch (active)
             {
-                case true when !AutoNyaActive:
+                case true:
                     AutoNyaActive = true;
                     _tickableManager.AddLate(_autoNyaManager);
                 
                     NyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = Color.green;
                     NyaButton.interactable = false;
                     break;
-                case false when AutoNyaActive:
+                case false:
                 {
                     AutoNyaActive = false;
                     _tickableManager.RemoveLate(_autoNyaManager);
@@ -108,14 +126,13 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
         private class AutoNyaManager : ILateTickable
         {
             public bool DoingDaThing;
-            private static DateTime _lastNyaTime;
             private readonly ImageUtils _imageUtils;
             private readonly PluginConfig _pluginConfig;
+            private static DateTime _lastNyaTime = DateTime.Now;
             private readonly NyaViewController _nyaViewController;
 
             public AutoNyaManager(ImageUtils imageUtils, PluginConfig pluginConfig, NyaViewController nyaViewController)
             {
-                _lastNyaTime = DateTime.Now;
                 _imageUtils = imageUtils;
                 _pluginConfig = pluginConfig;
                 _nyaViewController = nyaViewController;

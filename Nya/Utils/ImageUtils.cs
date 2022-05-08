@@ -18,6 +18,8 @@ namespace Nya.Utils
 {
     internal class ImageUtils
     {
+        public static event Action? ErrorSpriteLoadedEvent;
+        
         private byte[]? _nyaImageBytes;
         private string? _nyaImageEndpoint;
         private string? _nyaImageURL;
@@ -200,6 +202,7 @@ namespace Nya.Utils
                 image.sprite = Utilities.LoadSpriteRaw(data);
             });
             _siraLog.Warn("Error sprite loaded");
+            ErrorSpriteLoadedEvent?.Invoke();
         }
     }
 }

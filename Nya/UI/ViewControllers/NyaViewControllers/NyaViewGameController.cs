@@ -25,8 +25,10 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
             _settingsModalGameController = settingsModalGameController;
         }
 
-        public void Initialize()
+        public override void Initialize()
         {
+            base.Initialize();
+            
             if (_floatingScreenUtils.GameFloatingScreen == null)
             {
                 _floatingScreenUtils.CreateNyaFloatingScreen(this, FloatingScreenUtils.FloatingScreenType.Game);
@@ -39,8 +41,10 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
             _gamePause.willResumeEvent += GamePause_didResumeEvent;
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
+            base.Dispose();
+            
             if (AutoNyaActive)
             {
                 ToggleAutoNya(false);

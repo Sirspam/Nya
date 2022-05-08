@@ -25,8 +25,10 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
             _settingsModalMenuController = settingsModalMenuController;
         }
         
-        public void Initialize()
+        public override void Initialize()
         {
+            base.Initialize();
+
             if (_floatingScreenUtils.MenuFloatingScreen == null)
             {
                 _floatingScreenUtils.CreateNyaFloatingScreen(this, FloatingScreenUtils.FloatingScreenType.Menu);
@@ -37,8 +39,10 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
             SceneManager.activeSceneChanged += SceneManagerOnActiveSceneChanged;
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
+            base.Dispose();
+            
             if (_floatingScreenUtils.MenuFloatingScreen != null)
             {
                 _floatingScreenUtils.MenuFloatingScreen!.HandleReleased -= FloatingScreen_HandleReleased;
