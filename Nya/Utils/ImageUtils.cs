@@ -175,8 +175,8 @@ namespace Nya.Utils
                 LoadNewNyaImage(image, callback);
                 return;
             }
-
-            if (image.sprite.texture.GetRawTextureData() == _nyaImageBytes)
+            
+            if (image.name == _nyaImageURL)
             {
                 callback?.Invoke();
                 return;
@@ -191,6 +191,7 @@ namespace Nya.Utils
                 Height = _pluginConfig.ScaleValue
             };
             image.SetImage(_nyaImageURL, false, options, () => callback?.Invoke());
+            image.name = _nyaImageURL;
         }
 
         private void LoadErrorSprite(Image image)
@@ -200,6 +201,7 @@ namespace Nya.Utils
                 _nyaImageBytes = data;
                 _nyaImageURL = "Error Sprite";
                 image.sprite = Utilities.LoadSpriteRaw(data);
+                image.name = _nyaImageURL;
             });
             _siraLog.Warn("Error sprite loaded");
             ErrorSpriteLoadedEvent?.Invoke();

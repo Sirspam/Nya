@@ -1,12 +1,14 @@
 ﻿using System;
 using BeatSaberMarkupLanguage.Attributes;
 using HMUI;
+using Nya.Components;
 using Nya.Configuration;
 using Nya.Utils;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
+using Object = UnityEngine.Object;
 
 namespace Nya.UI.ViewControllers.NyaViewControllers
 {
