@@ -2,7 +2,7 @@
 using Nya.UI.ViewControllers.SettingsControllers;
 using Zenject;
 
-namespace Nya.UI.FlowControllers
+namespace Nya.UI.FlowCoordinators
 {
     internal class NyaSettingsFlowCoordinator : FlowCoordinator
     {

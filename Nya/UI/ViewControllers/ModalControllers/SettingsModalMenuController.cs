@@ -2,7 +2,7 @@
 using BeatSaberMarkupLanguage.Attributes;
 using HMUI;
 using Nya.Configuration;
-using Nya.UI.FlowControllers;
+using Nya.UI.FlowCoordinators;
 using Nya.UI.ViewControllers.SettingsControllers;
 using Nya.Utils;
 using Tweening;

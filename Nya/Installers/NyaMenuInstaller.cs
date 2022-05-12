@@ -1,5 +1,5 @@
 ﻿using Nya.Configuration;
-using Nya.UI.FlowControllers;
+using Nya.UI.FlowCoordinators;
 using Nya.UI.ViewControllers.ModalControllers;
 using Nya.UI.ViewControllers.NyaViewControllers;
 using Nya.UI.ViewControllers.SettingsControllers;
