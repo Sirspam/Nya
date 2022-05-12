@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using BeatSaberMarkupLanguage;
+using BeatSaberMarkupLanguage.Animations;
 using HMUI;
 using IPA.Utilities;
 using Newtonsoft.Json;
@@ -12,7 +13,10 @@ using Nya.Configuration;
 using Nya.Entries;
 using SiraUtil.Logging;
 using SiraUtil.Web;
+using UnityEngine;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
+using Random = System.Random;
 
 namespace Nya.Utils
 {
@@ -196,6 +200,10 @@ namespace Nya.Utils
 
         private void LoadErrorSprite(Image image)
         {
+            var oldStateUpdater = image.GetComponent<AnimationStateUpdater>();
+            if (oldStateUpdater != null)
+                Object.DestroyImmediate(oldStateUpdater);
+            
             Utilities.GetData("Nya.Resources.Chocola_Dead.png", data =>
             {
                 _nyaImageBytes = data;
