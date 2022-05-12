@@ -81,8 +81,11 @@ namespace Nya.UI.ViewControllers.ModalControllers
         protected readonly Button NyaOpenButton = null!;
 
         [UIComponent("nsfw-checkbox")]
-        protected readonly RectTransform NsfwCheckbox = null!;
+        protected readonly GenericInteractableSetting NsfwCheckbox = null!;
 
+        [UIComponent("api-dropdown")]
+        protected readonly DropDownListSetting ApiDropDownListSetting = null!;
+        
         [UIComponent("sfw-dropdown")]
         protected readonly DropDownListSetting SfwDropDownListSetting = null!;
 
@@ -126,11 +129,6 @@ namespace Nya.UI.ViewControllers.ModalControllers
         [UIParams]
         protected readonly BSMLParserParams ParserParams = null!;
 
-        public void Initialize()
-        {
-            SetupLists();
-        }
-
         private void BaseParse(Component parentTransform, object host)
         {
             if (!ModalView && !_parsed)
@@ -140,6 +138,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
                 ApiDropDownTransform.Find("DropdownTableView").GetComponent<ModalView>().SetField("_animateParentCanvas", false);
                 SfwDropDownTransform.Find("DropdownTableView").GetComponent<ModalView>().SetField("_animateParentCanvas", false);
                 NsfwDropDownTransform.Find("DropdownTableView").GetComponent<ModalView>().SetField("_animateParentCanvas", false);
+                CheckNsfwListHasEndpoints();
 
                 _parsed = true;
             }
@@ -205,7 +204,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
         {
             if (value && !PluginConfig.SkipNsfw)
             {
-                _nsfwConfirmModalController.ShowModal(NsfwCheckbox, NsfwConfirmYes, NsfwConfirmNo);
+                _nsfwConfirmModalController.ShowModal(NsfwCheckbox.transform, NsfwConfirmYes, NsfwConfirmNo);
             }
             else
             {
@@ -222,7 +221,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
 
         #region Values
 
-        [UIValue("api-list")]
+        [UIValue("api-list")] 
         protected List<object> APIList = new List<object>();
 
         [UIValue("api-value")]
@@ -394,23 +393,49 @@ namespace Nya.UI.ViewControllers.ModalControllers
             PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(NsfwCheck)));
         }
 
-        private void SetupLists()
+        private bool CheckNsfwListHasEndpoints() // Thanks Nekos.life for removing all of your 30+ nsfw endpoints
         {
-            APIList = ImageSources.Sources.Keys.Cast<object>().ToList();
-            SfwList = ImageSources.Sources[APIValue].SfwEndpoints.Cast<object>().ToList();
-            NsfwList = ImageSources.Sources[APIValue].NsfwEndpoints.Cast<object>().ToList();
+            if (ImageSources.Sources[APIValue].NsfwEndpoints.Count == 0)
+            {
+                NsfwDropDownListSetting.values = new List<object> {"Empty"};
+                NsfwDropDownListSetting.UpdateChoices();
+                NsfwDropDownListSetting.Value = "Empty";
+                NsfwCheck = false;
+                NsfwCheckbox.interactable = false;
+                NsfwDropDownListSetting.interactable = false;
+                return false;
+            }
+
+            return true;
         }
 
         private void UpdateLists()
         {
             SfwDropDownListSetting.values.Clear();
-            NsfwDropDownListSetting.values.Clear();
             SfwDropDownListSetting.values = ImageSources.Sources[APIValue].SfwEndpoints.Cast<object>().ToList();
-            NsfwDropDownListSetting.values = ImageSources.Sources[APIValue].NsfwEndpoints.Cast<object>().ToList();
             SfwDropDownListSetting.UpdateChoices();
-            NsfwDropDownListSetting.UpdateChoices();
             SfwDropDownListSetting.Value = SfwValue;
-            NsfwDropDownListSetting.Value = NsfwValue;
+            
+            if (CheckNsfwListHasEndpoints())
+            {
+                if (NsfwDropDownListSetting.interactable == false)
+                {
+                    NsfwCheckbox.interactable = true;
+                    NsfwDropDownListSetting.interactable = true;
+                }
+                
+                NsfwDropDownListSetting.values.Clear();
+                NsfwDropDownListSetting.values = ImageSources.Sources[APIValue].NsfwEndpoints.Cast<object>().ToList();
+                NsfwDropDownListSetting.Value = NsfwValue;
+                NsfwDropDownListSetting.UpdateChoices();
+            }
+        }
+
+        public void Initialize()
+        {
+            APIList = ImageSources.Sources.Keys.Cast<object>().ToList();
+            SfwList = ImageSources.Sources[APIValue].SfwEndpoints.Cast<object>().ToList();
+            NsfwList = NsfwList = ImageSources.Sources[APIValue].SfwEndpoints.Cast<object>().ToList();
         }
     }
 }

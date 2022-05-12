@@ -30,18 +30,11 @@ namespace Nya.Utils
                     Mode = DataMode.Json,
                     SfwEndpoints = new List<string>
                     {
-                        "neko", "ngif", "meow", "tickle", "slap", "poke", "pat", "lizard", "kiss", "hug", "fox_girl",
-                        "feed", "cuddle", "kemonomimi", "holo", "smug", "baka", "woof", "wallpaper", "goose", "gecg",
-                        "avatar", "waifu"
+                        "neko", "waifu", "tickle", "slap", "poke", "pat", "meow", "lizard", "kiss", "hug", "fox_girl",
+                        "feed", "cuddle", "ngif", "kemonomimi", "holo", "smug", "baka", "woof", "wallpaper", "goose",
+                        "gecg", "avatar"
                     },
-                    NsfwEndpoints = new List<string>
-                    {
-                        "Random_hentai_gif", "pussy", "nsfw_neko_gif", "lewd", "les", "kuni", "cum", "classic", "boobs",
-                        "bj", "anal", "nsfw_avatar", "yuri", "trap", "tits", "solog", "solo", "pwankg", "pussy_jpg",
-                        "lewdkemo", "lewdk", "keta", "hololewd", "holoero", "hentai", "futanari", "femdom", "feetg",
-                        "erofeet", "feet", "ero", "erok", "erokemo", "eron", "eroyuri", "cum_jpg", "blowjob", "spank",
-                        "gasm"
-                    } // 38 nsfw endpoints 💀
+                    NsfwEndpoints = new List<string> {}
                 }
             },
             {
