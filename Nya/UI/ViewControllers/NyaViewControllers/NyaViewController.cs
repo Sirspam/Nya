@@ -1,14 +1,12 @@
 ﻿using System;
 using BeatSaberMarkupLanguage.Attributes;
 using HMUI;
-using Nya.Components;
 using Nya.Configuration;
 using Nya.Utils;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
-using Object = UnityEngine.Object;
 
 namespace Nya.UI.ViewControllers.NyaViewControllers
 {
@@ -41,7 +39,7 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
         [UIComponent("nya-button")]
         internal readonly Button NyaButton = null!;
 
-        [UIComponent("auto-button")]
+        [UIComponent("auto-button")] 
         internal readonly Button NyaAutoButton = null!;
 
         [UIComponent("auto-button")]

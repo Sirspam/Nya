@@ -97,7 +97,7 @@ namespace Nya.Utils
 			return floatingScreen;
 		}
 
-		public FloatingScreen? GetActiveFloatingScreen()
+		private FloatingScreen? GetActiveFloatingScreen()
 		{
 			if (MenuFloatingScreen != null && MenuFloatingScreen.gameObject.activeInHierarchy)
 			{

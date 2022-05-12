@@ -15,7 +15,6 @@ namespace Nya.UI.ViewControllers.SettingsControllers
     [ViewDefinition("Nya.UI.Views.NyaSettingsRightView.bsml")]
     internal class NyaSettingsRightViewController : BSMLAutomaticViewController
     {
-        private UIUtils _uiUtils = null!;
         private PluginConfig _pluginConfig = null!;
         private PluginMetadata _pluginMetadata = null!;
         private FloatingScreenUtils _floatingScreenUtils = null!;
@@ -26,9 +25,8 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         private bool _visible;
 
         [Inject]
-        public void Constructor(UIUtils uiUtils, PluginConfig pluginConfig, UBinder<Plugin, PluginMetadata> pluginMetadata, FloatingScreenUtils floatingScreenUtils, TimeTweeningManager timeTweeningManager, GitHubPageModalController gitHubPageModalController, NyaSettingsMainViewController nyaSettingsMainViewController)
+        public void Constructor(PluginConfig pluginConfig, UBinder<Plugin, PluginMetadata> pluginMetadata, FloatingScreenUtils floatingScreenUtils, TimeTweeningManager timeTweeningManager, GitHubPageModalController gitHubPageModalController, NyaSettingsMainViewController nyaSettingsMainViewController)
         {
-            _uiUtils = uiUtils;
             _pluginConfig = pluginConfig;
             _pluginMetadata = pluginMetadata.Value;
             _floatingScreenUtils = floatingScreenUtils;

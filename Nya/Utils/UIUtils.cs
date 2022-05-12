@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using HMUI;
-using Nya.Configuration;
 using Tweening;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,13 +10,11 @@ namespace Nya.Utils
     internal class UIUtils
     {
         private Color? _defaultUnderlineColor;
-
-        private readonly PluginConfig _pluginConfig;
+        
         private readonly TimeTweeningManager _uwuTweenyManager; // Thanks PixelBoom
 
-        public UIUtils(PluginConfig pluginConfig, TimeTweeningManager timeTweeningManager)
+        public UIUtils(TimeTweeningManager timeTweeningManager)
         {
-            _pluginConfig = pluginConfig;
             _uwuTweenyManager = timeTweeningManager;
         }
 

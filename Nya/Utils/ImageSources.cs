@@ -34,7 +34,7 @@ namespace Nya.Utils
                         "feed", "cuddle", "ngif", "kemonomimi", "holo", "smug", "baka", "woof", "wallpaper", "goose",
                         "gecg", "avatar"
                     },
-                    NsfwEndpoints = new List<string> {}
+                    NsfwEndpoints = new List<string>()
                 }
             },
             {
