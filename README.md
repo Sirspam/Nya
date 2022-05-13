@@ -2,8 +2,12 @@
 Beat Saber mod for displaying nya-tastic images from various anime themed web APIs
 ## Usage
 Nya's settings can be accessed from either the Mod Settings panel or from within Nya's setting modal
+### Accessing Nya's Settings
+Nya's settings can be accessed from the ⚙️ button, pressing this will bring up a modal for common settings, such as the currently selected API. Further settings can be accessed from the ➕ tab.
+### Resetting Nya's Floating Screen Position
+Nya features a floating screen, allowing Nya to be accessed outside of the gameplay setup panel. In the event that this floating screen gets stuck somewhere inaccessible it's position can be reset from BSML's mod settings panel. The position can also be reset from Nya's settings modal and settings view. 
 ### Supported Image Sources
-**Note: I don't own any of these sources so I can't guarantee the images will always be appropiate**
+**Note: I don't own any of these sources so I can't guarantee the images will always be appropriate**
 * [Waifu.Pics](https://waifu.pics/)
 * [Nekos.Life](https://nekos.life/)
 * [xSky API](https://api.xsky.dev/)
