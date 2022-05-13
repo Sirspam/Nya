@@ -1,0 +1,10 @@
+﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
+    <vertical anchor-pos-x="-45" anchor-pos-y="-35" vertical-fit="PreferredSize" horizontal-fit="PreferredSize">
+        <clickable-text id="version-text" text="~version-text-value" on-click="version-text-clicked" font-size="4" default-color="orange" highlight-color="yellow"/>
+    </vertical>
+
+    <horizontal active="~rainbow-nya-available" spacing="-80" anchor-pos-x="45.5" anchor-pos-y="-30">
+        <text id="rainbow-text" text="RAINBOW" color="#FFFFFF00" rich-text="true" align="Center"/>
+        <clickable-image src="Nya.Resources.Vanilla_Stare.png" preserve-aspect="true" highlight-color="white" pref-width="20" pref-height="20" on-click="rainbow-clicked"/>
+    </horizontal>
+</bg>

@@ -1,12 +1,12 @@
-﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
-	<modal id='modal' show-event='open-modal' hide-event='close-modal' size-delta-x='70' size-delta-y='50' move-to-center='true'>
-		<vertical pad-top='2'>
-			<text text='Are you sure you want to enable NSFW images?'/>
-			<image src='Nya.Resources.Vanilla_Flushed.png' preserve-aspect='true' pref-width='25' pref-height='25'/>
-			<horizontal spacing='-2'>
-				<button id='noButton' text='No' on-click='no-click' active='true' min-width='22'/>
-				<button id='yesButton' text="Yes, I'm 18+" on-click='yes-click' active='true' min-width='22'/>
-			</horizontal>
-		</vertical>
-	</modal>
+﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
+    <modal id="modal" show-event="open-modal" hide-event="close-modal" size-delta-x="75" size-delta-y="58" move-to-center="true">
+        <vertical pad-top="1" pref-width="70">
+            <text text="Are you sure you want to enable NSFW images?" align="Center" word-wrapping="true" font-size="6.9"/>
+            <image src="Nya.Resources.Vanilla_Flushed.png" preserve-aspect="true" pref-width="35.5" pref-height="35.5"/>
+            <horizontal spacing="-2">
+                <button id="noButton" text="No" on-click="no-click" active="true" min-width="22"/>
+                <button id="yesButton" text="Yes, I'm 18+" on-click="yes-click" active="true" min-width="22"/>
+            </horizontal>
+        </vertical>
+    </modal>
 </bg>
