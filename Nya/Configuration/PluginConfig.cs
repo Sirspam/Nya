@@ -75,20 +75,18 @@ namespace Nya.Configuration
                 UseBackgroundColor = true;
             }
             
-            if (SelectedEndpoints.Count == ImageSources.Sources.Count)
+            if (SelectedEndpoints.Count != ImageSources.Sources.Count)
             {
-                return;
-            }
-
-            using var _ = ChangeTransaction;
-            SelectedEndpoints.Clear();
-            foreach (var key in ImageSources.Sources.Keys)
-            {
-                SelectedEndpoints.Add(key, new EndpointData
+                using var _ = ChangeTransaction;
+                SelectedEndpoints.Clear();
+                foreach (var key in ImageSources.Sources.Keys)
                 {
-                    SelectedSfwEndpoint = ImageSources.Sources[key].SfwEndpoints[0],
-                    SelectedNsfwEndpoint = ImageSources.Sources[key].NsfwEndpoints[0]
-                });
+                    SelectedEndpoints.Add(key, new EndpointData
+                    {
+                        SelectedSfwEndpoint = ImageSources.Sources[key].SfwEndpoints.FirstOrDefault() ?? "Empty",
+                        SelectedNsfwEndpoint = ImageSources.Sources[key].NsfwEndpoints.FirstOrDefault() ?? "Empty"
+                    });
+                }
             }
         }
     }

@@ -435,7 +435,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
         {
             APIList = ImageSources.Sources.Keys.Cast<object>().ToList();
             SfwList = ImageSources.Sources[APIValue].SfwEndpoints.Cast<object>().ToList();
-            NsfwList = NsfwList = ImageSources.Sources[APIValue].SfwEndpoints.Cast<object>().ToList();
+            NsfwList = NsfwList = ImageSources.Sources[APIValue].NsfwEndpoints.Cast<object>().ToList();
         }
     }
 }
