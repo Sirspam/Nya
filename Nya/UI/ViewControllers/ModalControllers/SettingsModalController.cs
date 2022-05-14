@@ -138,8 +138,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
                 ApiDropDownTransform.Find("DropdownTableView").GetComponent<ModalView>().SetField("_animateParentCanvas", false);
                 SfwDropDownTransform.Find("DropdownTableView").GetComponent<ModalView>().SetField("_animateParentCanvas", false);
                 NsfwDropDownTransform.Find("DropdownTableView").GetComponent<ModalView>().SetField("_animateParentCanvas", false);
-                CheckNsfwListHasEndpoints();
-
+                
                 _parsed = true;
             }
         }
@@ -247,7 +246,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
         [UIValue("nsfw-value")]
         protected string NsfwValue
         {
-            get => PluginConfig.SelectedEndpoints[APIValue].SelectedNsfwEndpoint;
+            get => CheckNsfwListHasEndpoints() ? PluginConfig.SelectedEndpoints[APIValue].SelectedNsfwEndpoint : "Empty";
             set => PluginConfig.SelectedEndpoints[APIValue].SelectedNsfwEndpoint = value;
         }
 
