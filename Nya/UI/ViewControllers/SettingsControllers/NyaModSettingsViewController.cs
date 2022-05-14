@@ -3,11 +3,7 @@ using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Settings;
 using HMUI;
-using Nya.Components;
-using Nya.Configuration;
 using Nya.UI.FlowCoordinators;
-using Nya.Utils;
-using UnityEngine.UI;
 using Zenject;
 
 namespace Nya.UI.ViewControllers.SettingsControllers
@@ -25,17 +21,17 @@ namespace Nya.UI.ViewControllers.SettingsControllers
 			_nyaSettingsMainViewController = nyaSettingsMainViewController;
 		}
 
-		public void Initialize()
-		{
-			BSMLSettings.instance.AddSettingsMenu("Nya", "Nya.UI.Views.NyaModSettingsView.bsml", this);
-		}
-
 		public void Dispose()
 		{
 			if (BSMLSettings.instance != null)
 			{
 				BSMLSettings.instance.RemoveSettingsMenu(this);
 			}
+		}
+
+		public void Initialize()
+		{
+			BSMLSettings.instance.AddSettingsMenu("Nya", "Nya.UI.Views.NyaModSettingsView.bsml", this);
 		}
 
 		[UIAction("settings-image-clicked")]

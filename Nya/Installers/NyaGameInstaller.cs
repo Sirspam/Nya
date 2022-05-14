@@ -5,25 +5,25 @@ using Zenject;
 
 namespace Nya.Installers
 {
-    internal class NyaGameInstaller : Installer
-    {
-        private readonly PluginConfig _config;
+	internal class NyaGameInstaller : Installer
+	{
+		private readonly PluginConfig _config;
 
-        public NyaGameInstaller(PluginConfig config)
-        {
-            _config = config;
-        }
+		public NyaGameInstaller(PluginConfig config)
+		{
+			_config = config;
+		}
 
-        public override void InstallBindings()
-        {
-            if (!_config.InPause)
-            {
-                return;
-            }
+		public override void InstallBindings()
+		{
+			if (!_config.InPause)
+			{
+				return;
+			}
 
-            Container.BindInterfacesTo<NyaViewGameController>().AsSingle();
-            Container.BindInterfacesAndSelfTo<SettingsModalGameController>().AsSingle();
-            Container.Bind<NsfwConfirmModalController>().AsSingle();
-        }
-    }
+			Container.BindInterfacesTo<NyaViewGameController>().AsSingle();
+			Container.BindInterfacesAndSelfTo<SettingsModalGameController>().AsSingle();
+			Container.Bind<NsfwConfirmModalController>().AsSingle();
+		}
+	}
 }

@@ -10,31 +10,32 @@ using SiraUtil.Zenject;
 
 namespace Nya
 {
-    [Plugin(RuntimeOptions.DynamicInit)][NoEnableDisable]
-    public class Plugin
-    {
-        [Init]
-        public Plugin(Config conf, Logger logger, Zenjector zenjector)
-        {
-            zenjector.UseLogger(logger);
-            zenjector.UseHttpService();
-            zenjector.UseMetadataBinder<Plugin>();
-            zenjector.UseSiraSync();
-            
-            var config = conf.Generated<PluginConfig>();
+	[Plugin(RuntimeOptions.DynamicInit)]
+	[NoEnableDisable]
+	public class Plugin
+	{
+		[Init]
+		public Plugin(Config conf, Logger logger, Zenjector zenjector)
+		{
+			zenjector.UseLogger(logger);
+			zenjector.UseHttpService();
+			zenjector.UseMetadataBinder<Plugin>();
+			zenjector.UseSiraSync();
 
-            zenjector.Install<NyaAppInstaller>(Location.App, config);
-            zenjector.Install<NyaMenuInstaller>(Location.Menu);
-            zenjector.Install<NyaGameInstaller>(Location.Singleplayer);
+			var config = conf.Generated<PluginConfig>();
 
-            var folderPath = Path.Combine(UnityGame.UserDataPath, "Nya");
-            Directory.CreateDirectory(Path.Combine(folderPath, "sfw"));
-            Directory.CreateDirectory(Path.Combine(folderPath, "nsfw"));
+			zenjector.Install<NyaAppInstaller>(Location.App, config);
+			zenjector.Install<NyaMenuInstaller>(Location.Menu);
+			zenjector.Install<NyaGameInstaller>(Location.Singleplayer);
 
-            if (!config.RememberNsfw)
-            {
-                config.Nsfw = false;
-            }
-        }
-    }
+			var folderPath = Path.Combine(UnityGame.UserDataPath, "Nya");
+			Directory.CreateDirectory(Path.Combine(folderPath, "sfw"));
+			Directory.CreateDirectory(Path.Combine(folderPath, "nsfw"));
+
+			if (!config.RememberNsfw)
+			{
+				config.Nsfw = false;
+			}
+		}
+	}
 }

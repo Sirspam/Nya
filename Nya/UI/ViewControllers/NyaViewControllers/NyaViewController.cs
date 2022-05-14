@@ -10,151 +10,144 @@ using Zenject;
 
 namespace Nya.UI.ViewControllers.NyaViewControllers
 {
-    internal abstract class NyaViewController
-    {
-        protected static bool AutoNyaActive;
-        protected static bool AutoNyaButtonToggle;
+	internal abstract class NyaViewController
+	{
+		protected static bool AutoNyaActive;
+		protected static bool AutoNyaButtonToggle;
+		private readonly AutoNyaManager _autoNyaManager;
+		private readonly TickableManager _tickableManager;
 
-        protected readonly ImageUtils ImageUtils;
-        protected readonly PluginConfig PluginConfig;
-        private readonly AutoNyaManager _autoNyaManager;
-        private readonly TickableManager _tickableManager;
-        
-        protected NyaViewController(ImageUtils imageUtils, PluginConfig pluginConfig, TickableManager tickableManager)
-        {
-            ImageUtils = imageUtils;
-            PluginConfig = pluginConfig;
-            _autoNyaManager = new AutoNyaManager(ImageUtils, PluginConfig, this);
-            _tickableManager = tickableManager;
-        }
+		protected readonly ImageUtils ImageUtils;
+		protected readonly PluginConfig PluginConfig;
 
-        #region components
+		protected NyaViewController(ImageUtils imageUtils, PluginConfig pluginConfig, TickableManager tickableManager)
+		{
+			ImageUtils = imageUtils;
+			PluginConfig = pluginConfig;
+			_autoNyaManager = new AutoNyaManager(ImageUtils, PluginConfig, this);
+			_tickableManager = tickableManager;
+		}
 
-        [UIComponent("root")]
-        internal readonly RectTransform RootTransform = null!;
+		public virtual void Initialize()
+		{
+			ImageUtils.ErrorSpriteLoadedEvent += ImageUtilsOnErrorSpriteLoadedEvent;
+		}
 
-        [UIComponent("nya-image")]
-        internal readonly ImageView NyaImage = null!;
+		public virtual void Dispose()
+		{
+			ImageUtils.ErrorSpriteLoadedEvent -= ImageUtilsOnErrorSpriteLoadedEvent;
+		}
 
-        [UIComponent("nya-button")]
-        internal readonly Button NyaButton = null!;
+		private void ImageUtilsOnErrorSpriteLoadedEvent()
+		{
+			if (AutoNyaActive)
+			{
+				ToggleAutoNya(false);
+			}
+		}
 
-        [UIComponent("auto-button")] 
-        internal readonly Button NyaAutoButton = null!;
+		protected void ToggleAutoNya(bool active)
+		{
+			switch (active)
+			{
+				case true:
+					AutoNyaActive = true;
+					_tickableManager.AddLate(_autoNyaManager);
 
-        [UIComponent("auto-button")]
-        internal readonly TextMeshProUGUI NyaAutoText = null!;
+					NyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = Color.green;
+					NyaButton.interactable = false;
+					break;
+				case false:
+				{
+					AutoNyaActive = false;
+					_tickableManager.RemoveLate(_autoNyaManager);
 
-        [UIComponent("settings-button")]
-        internal readonly Button NyaSettingsButton = null!;
+					if (!_autoNyaManager.DoingDaThing)
+					{
+						NyaButton.interactable = true;
+					}
 
-        [UIComponent("settings-button")]
-        internal readonly RectTransform SettingsButtonTransform = null!;
+					NyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = new Color(1f, 1f, 1f, 0.502f); // Beatgames why 0.502
+					break;
+				}
+			}
+		}
 
-        #endregion components
+		private class AutoNyaManager : ILateTickable
+		{
+			private static DateTime _lastNyaTime = DateTime.Now;
+			private readonly ImageUtils _imageUtils;
+			private readonly NyaViewController _nyaViewController;
+			private readonly PluginConfig _pluginConfig;
+			public bool DoingDaThing;
 
-        #region actions
+			public AutoNyaManager(ImageUtils imageUtils, PluginConfig pluginConfig, NyaViewController nyaViewController)
+			{
+				_imageUtils = imageUtils;
+				_pluginConfig = pluginConfig;
+				_nyaViewController = nyaViewController;
+			}
 
-        [UIAction("#post-parse")]
-        protected void NyaPostParse()
-        {
-            NyaButton.interactable = false;
-            ImageUtils.LoadCurrentNyaImage(NyaImage, () => NyaButton.interactable = true);
-        }
+			public void LateTick()
+			{
+				if (_lastNyaTime.TimeOfDay < DateTime.Now.TimeOfDay && !DoingDaThing)
+				{
+					DoingDaThing = true;
+					_imageUtils.LoadNewNyaImage(_nyaViewController.NyaImage, () =>
+					{
+						_lastNyaTime = DateTime.Now.AddSeconds(_pluginConfig.AutoNyaWait);
+						DoingDaThing = false;
 
-        [UIAction("nya-click")]
-        protected void NyaClicked()
-        {
-            NyaButton.interactable = false;
-            ImageUtils.LoadNewNyaImage(NyaImage, () => NyaButton.interactable = true);
-        }
+						if (!AutoNyaActive)
+						{
+							_nyaViewController.NyaButton.interactable = true;
+						}
+					});
+				}
+			}
+		}
 
-        [UIAction("nya-auto-clicked")]
-        protected void AutoNyaClicked()
-        {
-            AutoNyaButtonToggle = !AutoNyaActive;
-            ToggleAutoNya(AutoNyaButtonToggle);
-        }
+		#region components
 
-        #endregion actions
+		[UIComponent("root")] internal readonly RectTransform RootTransform = null!;
 
-        public virtual void Initialize()
-        {
-            ImageUtils.ErrorSpriteLoadedEvent += ImageUtilsOnErrorSpriteLoadedEvent;
-        }
-        
-        public virtual void Dispose()
-        {
-            ImageUtils.ErrorSpriteLoadedEvent -= ImageUtilsOnErrorSpriteLoadedEvent;
-        }
+		[UIComponent("nya-image")] internal readonly ImageView NyaImage = null!;
 
-        private void ImageUtilsOnErrorSpriteLoadedEvent()
-        {
-            if (AutoNyaActive)
-            {
-                ToggleAutoNya(false);
-            }
-        }
+		[UIComponent("nya-button")] internal readonly Button NyaButton = null!;
 
-        protected void ToggleAutoNya(bool active)
-        {
-            switch (active)
-            {
-                case true:
-                    AutoNyaActive = true;
-                    _tickableManager.AddLate(_autoNyaManager);
-                
-                    NyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = Color.green;
-                    NyaButton.interactable = false;
-                    break;
-                case false:
-                {
-                    AutoNyaActive = false;
-                    _tickableManager.RemoveLate(_autoNyaManager);
+		[UIComponent("auto-button")] internal readonly Button NyaAutoButton = null!;
 
-                    if (!_autoNyaManager.DoingDaThing)
-                    {
-                        NyaButton.interactable = true;
-                    }
+		[UIComponent("auto-button")] internal readonly TextMeshProUGUI NyaAutoText = null!;
 
-                    NyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = new Color(1f, 1f, 1f, 0.502f); // Beatgames why 0.502
-                    break;
-                }
-            }
-        }
+		[UIComponent("settings-button")] internal readonly Button NyaSettingsButton = null!;
 
-        private class AutoNyaManager : ILateTickable
-        {
-            public bool DoingDaThing;
-            private readonly ImageUtils _imageUtils;
-            private readonly PluginConfig _pluginConfig;
-            private static DateTime _lastNyaTime = DateTime.Now;
-            private readonly NyaViewController _nyaViewController;
+		[UIComponent("settings-button")] internal readonly RectTransform SettingsButtonTransform = null!;
 
-            public AutoNyaManager(ImageUtils imageUtils, PluginConfig pluginConfig, NyaViewController nyaViewController)
-            {
-                _imageUtils = imageUtils;
-                _pluginConfig = pluginConfig;
-                _nyaViewController = nyaViewController;
-            }
+		#endregion components
 
-            public void LateTick()
-            {
-                if (_lastNyaTime.TimeOfDay < DateTime.Now.TimeOfDay && !DoingDaThing)
-                {
-                    DoingDaThing = true;
-                    _imageUtils.LoadNewNyaImage(_nyaViewController.NyaImage, () =>
-                    {
-                        _lastNyaTime = DateTime.Now.AddSeconds(_pluginConfig.AutoNyaWait);
-                        DoingDaThing = false;
+		#region actions
 
-                        if (!AutoNyaActive)
-                        {
-                            _nyaViewController.NyaButton.interactable = true;
-                        }
-                    });
-                }
-            }
-        }
-    }
+		[UIAction("#post-parse")]
+		protected void NyaPostParse()
+		{
+			NyaButton.interactable = false;
+			ImageUtils.LoadCurrentNyaImage(NyaImage, () => NyaButton.interactable = true);
+		}
+
+		[UIAction("nya-click")]
+		protected void NyaClicked()
+		{
+			NyaButton.interactable = false;
+			ImageUtils.LoadNewNyaImage(NyaImage, () => NyaButton.interactable = true);
+		}
+
+		[UIAction("nya-auto-clicked")]
+		protected void AutoNyaClicked()
+		{
+			AutoNyaButtonToggle = !AutoNyaActive;
+			ToggleAutoNya(AutoNyaButtonToggle);
+		}
+
+		#endregion actions
+	}
 }
