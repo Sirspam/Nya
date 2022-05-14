@@ -66,6 +66,8 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
 
         private void SceneManagerOnActiveSceneChanged(Scene currentScene, Scene nextScene)
         {
+            _settingsModalMenuController.HideModal();
+            
             if (nextScene.name == "MainMenu")
             {
                 _gameScenesManager.transitionDidFinishEvent -= MenuActivated;
