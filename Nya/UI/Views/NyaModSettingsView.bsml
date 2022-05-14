@@ -1,10 +1,5 @@
 ﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
-    <vertical preferred-width="90" horizontal-fit="PreferredSize" vertical-fit="PreferredSize" anchor-pos-y="14" spacing="2">
-        <text text="This is just here in case Nya's floating screen has gotten somewhere where you can't access it. More settings for Nya can be accessed from the ⚙ button on Nya itself" font-size="5" align="Center" word-wrapping="true"/>
-        <button id="reset-button" text="Reset Nya floating screen position" on-click="reset-position-clicked" pref-height="12"/>
+    <vertical anchor-pos-y="5">
+        <clickable-image src="Nya.Resources.Chocola_Settings_Sign.png" on-click="settings-image-clicked" pref-width="68" pref-height="68" preserve-aspect="true"/>
     </vertical>
-    <horizontal spacing="50" pad-top="20">
-        <image id="chocola-image" src="Nya.Resources.Chocola_Mini_Sitting.png" preserve-aspect="true" pref-width="22" pref-height="22"/>
-        <image id="vanilla-image" src="Nya.Resources.Vanilla_Mini_Sitting.png" preserve-aspect="true" pref-width="22" pref-height="22"/>
-    </horizontal>
 </bg>

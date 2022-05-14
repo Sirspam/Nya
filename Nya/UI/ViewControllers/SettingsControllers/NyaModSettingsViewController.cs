@@ -1,9 +1,11 @@
 ﻿using System;
+using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Settings;
 using HMUI;
 using Nya.Components;
 using Nya.Configuration;
+using Nya.UI.FlowCoordinators;
 using Nya.Utils;
 using UnityEngine.UI;
 using Zenject;
@@ -12,15 +14,15 @@ namespace Nya.UI.ViewControllers.SettingsControllers
 {
 	internal class NyaModSettingsViewController : IInitializable, IDisposable
 	{
-		private readonly UIUtils _uiUtils;
-		private readonly PluginConfig _pluginConfig;
-		private readonly FloatingScreenUtils _floatingScreenUtils;
+		private readonly MainFlowCoordinator _mainFlowCoordinator;
+		private readonly NyaSettingsFlowCoordinator _nyaSettingsFlowCoordinator;
+		private readonly NyaSettingsMainViewController _nyaSettingsMainViewController;
 
-		public NyaModSettingsViewController(UIUtils uiUtils, PluginConfig pluginConfig, FloatingScreenUtils floatingScreenUtils)
+		public NyaModSettingsViewController(MainFlowCoordinator mainFlowCoordinator, NyaSettingsFlowCoordinator nyaSettingsFlowCoordinator, NyaSettingsMainViewController nyaSettingsMainViewController)
 		{
-			_uiUtils = uiUtils;
-			_pluginConfig = pluginConfig;
-			_floatingScreenUtils = floatingScreenUtils;
+			_mainFlowCoordinator = mainFlowCoordinator;
+			_nyaSettingsFlowCoordinator = nyaSettingsFlowCoordinator;
+			_nyaSettingsMainViewController = nyaSettingsMainViewController;
 		}
 
 		public void Initialize()
@@ -35,42 +37,12 @@ namespace Nya.UI.ViewControllers.SettingsControllers
 				BSMLSettings.instance.RemoveSettingsMenu(this);
 			}
 		}
-		
-		[UIComponent("reset-button")]
-		private readonly Button _resetButton = null!;
-		
-		[UIComponent("chocola-image")]
-		private readonly ImageView _chocolaImage = null!;
-        
-		[UIComponent("vanilla-image")]
-		private readonly ImageView _vanillaImage = null!;
 
-		[UIAction("#post-parse")]
-		private void PostParse()
-		{
-			// This is absolutely crucial for this view which will be rarely used 
-			_chocolaImage.name = "ChocolaImage";
-			_vanillaImage.name = "VanillaImage";
-			_chocolaImage.gameObject.AddComponent<NyaSettingsClickableImage>();
-			_vanillaImage.gameObject.AddComponent<NyaSettingsClickableImage>();
-		}
-
-		[UIAction("reset-position-clicked")]
+		[UIAction("settings-image-clicked")]
 		private void ResetPositionClicked()
 		{
-			_uiUtils.ButtonUnderlineClick(_resetButton.gameObject);
-			_pluginConfig.PausePosition = FloatingScreenUtils.DefaultPosition;
-			_pluginConfig.PauseRotation = FloatingScreenUtils.DefaultRotation.eulerAngles;
-			
-			if (_pluginConfig.InMenu && _floatingScreenUtils.MenuFloatingScreen != null)
-			{
-				// TransitionToDefault saves position to config
-				_floatingScreenUtils.TransitionToDefaultPosition();
-				return;
-			}
-			
-			_pluginConfig.MenuPosition = FloatingScreenUtils.DefaultPosition;
-			_pluginConfig.MenuRotation = FloatingScreenUtils.DefaultRotation.eulerAngles;
+			_nyaSettingsMainViewController.parentFlowCoordinator = _mainFlowCoordinator.YoungestChildFlowCoordinatorOrSelf();
+			_nyaSettingsMainViewController.parentFlowCoordinator.PresentFlowCoordinator(_nyaSettingsFlowCoordinator, animationDirection: ViewController.AnimationDirection.Vertical);
 		}
 	}
 }
