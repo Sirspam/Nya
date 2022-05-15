@@ -107,15 +107,15 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="Directory.Build.props" Condition="Exists('Directory.Build.props')"/>
-        <None Include="Directory.Build.targets" Condition="Exists('Directory.Build.targets')"/>
-        <None Include="Nya.csproj.user" Condition="Exists('Nya.csproj.user')"/>
+        <None Include="Directory.Build.props" Condition="Exists('Directory.Build.props')" />
+        <None Include="Directory.Build.targets" Condition="Exists('Directory.Build.targets')" />
+        <None Include="Nya.csproj.user" Condition="Exists('Nya.csproj.user')" />
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="Resources\*"/>
-        <EmbeddedResource Include="manifest.json"/>
-        <EmbeddedResource Include="UI\Views\*.bsml"/>
+        <EmbeddedResource Include="Resources\*" />
+        <EmbeddedResource Include="manifest.json" />
+        <EmbeddedResource Include="UI\Views\*.bsml" />
     </ItemGroup>
 
     <ItemGroup>

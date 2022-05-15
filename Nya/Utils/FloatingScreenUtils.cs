@@ -11,24 +11,18 @@ namespace Nya.Utils
 {
 	internal class FloatingScreenUtils
 	{
-		public enum FloatingScreenType
-		{
-			Menu,
-			Game
-		}
-
 		public static Vector3 DefaultPosition = new Vector3(0f, 3.75f, 4f);
 		public static Quaternion DefaultRotation = Quaternion.Euler(332f, 0f, 0f);
+		
+		public Vector3 HandleScale;
+		private Material? _uiFogBg;
+		private bool _usingNyaMaterial;
+		private Material? _nyaBgMaterial;
+		public FloatingScreen? MenuFloatingScreen;
+		public FloatingScreen? GameFloatingScreen;
 
 		private readonly PluginConfig _pluginConfig;
 		private readonly TimeTweeningManager _timeTweeningManager;
-		private Material? _nyaBgMaterial;
-		private Material? _uiFogBg;
-		private bool _usingNyaMaterial;
-		public FloatingScreen? GameFloatingScreen;
-
-		public Vector3 HandleScale;
-		public FloatingScreen? MenuFloatingScreen;
 
 		public FloatingScreenUtils(PluginConfig pluginConfig, TimeTweeningManager timeTweeningManager)
 		{
@@ -38,9 +32,18 @@ namespace Nya.Utils
 
 		private Material NyaBgMaterial
 		{
-			get { return _nyaBgMaterial ??= InstantiateNyaMaterial(); }
+			get
+			{
+				return _nyaBgMaterial ??= InstantiateNyaMaterial();
+			}
 		}
-
+		
+		public enum FloatingScreenType
+		{
+			Menu,
+			Game
+		}
+		
 		public void CreateNyaFloatingScreen(object host, FloatingScreenType type)
 		{
 			switch (type)
@@ -52,11 +55,10 @@ namespace Nya.Utils
 						GameFloatingScreen.gameObject.name = "NyaGameFloatingScreen";
 						break;
 					}
-
 					GameFloatingScreen = CreateNyaFloatingScreen(host, _pluginConfig.MenuPosition, _pluginConfig.MenuRotation);
 					GameFloatingScreen.gameObject.name = "NyaGameFloatingScreen";
 					break;
-
+					
 				case FloatingScreenType.Menu:
 				default:
 					MenuFloatingScreen = CreateNyaFloatingScreen(host, _pluginConfig.MenuPosition, _pluginConfig.MenuRotation);
@@ -68,10 +70,10 @@ namespace Nya.Utils
 		private FloatingScreen CreateNyaFloatingScreen(object host, Vector3 position, Vector3 rotation)
 		{
 			var floatingScreen = FloatingScreen.CreateFloatingScreen(new Vector2(100f, 80f), true, position, Quaternion.Euler(rotation), 220, true);
-
+			
 			BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.NyaView.bsml"), floatingScreen.gameObject, host);
 			floatingScreen.gameObject.layer = 5;
-
+			
 			floatingScreen.handle.transform.localPosition = new Vector3(0f, -floatingScreen.ScreenSize.y / 1.8f, -5f);
 			HandleScale = new Vector3(floatingScreen.ScreenSize.x * 0.8f, floatingScreen.ScreenSize.y / 15f, floatingScreen.ScreenSize.y / 15f);
 			floatingScreen.handle.transform.localScale = HandleScale;
@@ -101,7 +103,6 @@ namespace Nya.Utils
 			{
 				return MenuFloatingScreen;
 			}
-
 			if (GameFloatingScreen != null && GameFloatingScreen.gameObject.activeInHierarchy)
 			{
 				return GameFloatingScreen;
@@ -109,7 +110,7 @@ namespace Nya.Utils
 
 			return null;
 		}
-
+		
 		public void TransitionToDefaultPosition(bool saveValuesToConfig = true)
 		{
 			var floatingScreen = GetActiveFloatingScreen();
@@ -118,7 +119,7 @@ namespace Nya.Utils
 			{
 				return;
 			}
-
+			
 			_timeTweeningManager.KillAllTweens(floatingScreen);
 			var transform = floatingScreen.gameObject.transform;
 			var oldPosition = transform.position;
@@ -132,7 +133,7 @@ namespace Nya.Utils
 			{
 				return;
 			}
-
+			
 			if (floatingScreen.gameObject.name == "NyaGameFloatingScreen" && _pluginConfig.SeparatePositions)
 			{
 				_pluginConfig.PausePosition = DefaultPosition;
@@ -144,28 +145,28 @@ namespace Nya.Utils
 				_pluginConfig.MenuRotation = DefaultRotation.eulerAngles;
 			}
 		}
-
+		
 		public void SetNyaMaterialColor(Color color)
-		{
-			color.a = 0.6f;
-			NyaBgMaterial.color = color;
-			SetNyaMaterial();
-		}
+        {
+            color.a = 0.6f;
+            NyaBgMaterial.color = color;
+            SetNyaMaterial();
+        }
 
 		public void SetStandardMaterial()
 		{
 			_usingNyaMaterial = false;
-
+			
 			if (_uiFogBg == null)
 			{
 				_uiFogBg = Resources.FindObjectsOfTypeAll<Material>().Last(x => x.name == "UIFogBG");
 			}
-
+	                
 			if (MenuFloatingScreen != null)
 			{
 				MenuFloatingScreen.transform.GetChild(0).GetComponent<ImageView>().material = _uiFogBg;
 			}
-
+                    
 			if (GameFloatingScreen != null)
 			{
 				GameFloatingScreen.transform.GetChild(0).GetComponent<ImageView>().material = _uiFogBg;
@@ -178,12 +179,12 @@ namespace Nya.Utils
 			{
 				return;
 			}
-
+			
 			if (MenuFloatingScreen != null)
 			{
 				MenuFloatingScreen.transform.GetChild(0).GetComponent<ImageView>().material = NyaBgMaterial;
 			}
-
+                    
 			if (GameFloatingScreen != null)
 			{
 				GameFloatingScreen.transform.GetChild(0).GetComponent<ImageView>().material = NyaBgMaterial;
@@ -191,43 +192,43 @@ namespace Nya.Utils
 
 			_usingNyaMaterial = true;
 		}
-
-		public void ToggleRainbowNyaBg(bool active)
-		{
-			_timeTweeningManager.KillAllTweens(NyaBgMaterial);
-			if (!active)
-			{
-				if (_pluginConfig.UseBackgroundColor)
-				{
-					SetNyaMaterialColor(_pluginConfig.BackgroundColor);
-				}
-				else
-				{
+        
+        public void ToggleRainbowNyaBg(bool active)
+        {
+	        _timeTweeningManager.KillAllTweens(NyaBgMaterial);
+            if (!active)
+            {
+                if (_pluginConfig.UseBackgroundColor)
+                {
+                    SetNyaMaterialColor(_pluginConfig.BackgroundColor);
+                }
+                else
+                {
 					SetStandardMaterial();
-				}
+                }
+                
+                return;
+            }
 
-				return;
-			}
+            if (!_pluginConfig.UseBackgroundColor)
+            {
+	            SetNyaMaterial();
+            }
+            
+            var tween = new FloatTween(0f, 1, val => SetNyaMaterialColor(Color.HSVToRGB(val, 1f, 1f)), 6f, EaseType.Linear)
+            {
+                loop = true
+            };
+            _timeTweeningManager.AddTween(tween, NyaBgMaterial);
+        }
 
-			if (!_pluginConfig.UseBackgroundColor)
-			{
-				SetNyaMaterial();
-			}
-
-			var tween = new FloatTween(0f, 1, val => SetNyaMaterialColor(Color.HSVToRGB(val, 1f, 1f)), 6f, EaseType.Linear)
-			{
-				loop = true
-			};
-			_timeTweeningManager.AddTween(tween, NyaBgMaterial);
-		}
-
-		private Material InstantiateNyaMaterial()
-		{
-			var material = Object.Instantiate(new Material(Resources.FindObjectsOfTypeAll<Material>().Last(x => x.name == "UINoGlow")));
-			var color = _pluginConfig.BackgroundColor;
-			color.a = 0.5f;
-			material.color = color;
-			return material;
-		}
+        private Material InstantiateNyaMaterial()
+        {
+            var material = Object.Instantiate(new Material(Resources.FindObjectsOfTypeAll<Material>().Last(x => x.name == "UINoGlow")));
+            var color = _pluginConfig.BackgroundColor;
+            color.a = 0.5f;
+            material.color = color;
+            return material;
+        }
 	}
 }

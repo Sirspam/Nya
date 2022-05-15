@@ -8,6 +8,12 @@ namespace Nya.Components
 	{
 		private NyaViewGameplaySetupController _nyaViewGameplaySetupController = null!;
 
+		[Inject]
+		public void Construct(NyaViewGameplaySetupController nyaViewGameplaySetupController)
+		{
+			_nyaViewGameplaySetupController = nyaViewGameplaySetupController;
+		}
+
 		private void OnEnable()
 		{
 			_nyaViewGameplaySetupController.OnEnable();
@@ -16,12 +22,6 @@ namespace Nya.Components
 		private void OnDisable()
 		{
 			_nyaViewGameplaySetupController.OnDisable();
-		}
-
-		[Inject]
-		public void Construct(NyaViewGameplaySetupController nyaViewGameplaySetupController)
-		{
-			_nyaViewGameplaySetupController = nyaViewGameplaySetupController;
 		}
 	}
 }

@@ -11,12 +11,15 @@ namespace Nya.UI.ViewControllers.ModalControllers
 {
 	public class GitHubPageModalController : INotifyPropertyChanged
 	{
+		private bool _parsed;
+		private string _modalText = null!;
+		private string _githubPath = null!;
+		
+		public event PropertyChangedEventHandler? PropertyChanged;
+
 		[UIComponent("modal")] private readonly ModalView _modalView = null!;
 
 		[UIParams] private readonly BSMLParserParams _parserParams = null!;
-		private string _githubPath = null!;
-		private string _modalText = null!;
-		private bool _parsed;
 
 		[UIValue("modal-text")]
 		private string ModalText
@@ -29,8 +32,6 @@ namespace Nya.UI.ViewControllers.ModalControllers
 			}
 		}
 
-		public event PropertyChangedEventHandler? PropertyChanged;
-
 		private void Parse(Component parentTransform, string pluginName, string githubPath)
 		{
 			if (!_parsed)
@@ -38,12 +39,12 @@ namespace Nya.UI.ViewControllers.ModalControllers
 				BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.GitHubPageModal.bsml"), parentTransform.gameObject, this);
 				ModalText = $"Open {pluginName}'s GitHub Page?"; // Might be a bit silly to set the text like this but it felt odd having the version text get everything from the manifest while the modal was static
 				_githubPath = githubPath;
-				_modalView.name = "NyaGitHubModal";
+				_modalView.name = "NyaGitHubModal";				
 				_parsed = true;
 			}
 		}
 
-		public void ShowModal(Transform parentTransform, string pluginName, string githubPath)
+		public void ShowModal(Transform parentTransform, string pluginName,string githubPath)
 		{
 			Parse(parentTransform, pluginName, githubPath);
 

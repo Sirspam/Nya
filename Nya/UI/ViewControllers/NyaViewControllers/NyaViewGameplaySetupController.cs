@@ -12,37 +12,38 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
 	internal class NyaViewGameplaySetupController : NyaViewController, IInitializable, IDisposable
 	{
 		private readonly DiContainer _diContainer;
-		private readonly GameplaySetupViewController _gameplaySetupViewController;
 		private readonly SettingsModalMenuController _settingsModalMenuController;
-
-		public NyaViewGameplaySetupController(ImageUtils imageUtils, PluginConfig pluginConfig, TickableManager tickableManager, DiContainer diContainer, SettingsModalMenuController settingsModalMenuController, GameplaySetupViewController gameplaySetupViewController) : base(imageUtils, pluginConfig, tickableManager)
+		private readonly GameplaySetupViewController _gameplaySetupViewController;
+		
+		public NyaViewGameplaySetupController(ImageUtils imageUtils, PluginConfig pluginConfig, TickableManager tickableManager, DiContainer diContainer, SettingsModalMenuController settingsModalMenuController, GameplaySetupViewController gameplaySetupViewController)
+			: base(imageUtils, pluginConfig, tickableManager)
 		{
 			_diContainer = diContainer;
 			_settingsModalMenuController = settingsModalMenuController;
 			_gameplaySetupViewController = gameplaySetupViewController;
 		}
 
-		public override void Dispose()
-		{
-			base.Dispose();
-
-			if (GameplaySetup.IsSingletonAvailable)
-			{
-				GameplaySetup.instance.RemoveTab("Nya");
-			}
-
-			_gameplaySetupViewController.didActivateEvent -= GameplaySetupViewControllerOnDidActivateEvent;
-			_gameplaySetupViewController.didDeactivateEvent -= GameplaySetupViewControllerOnDidDeactivateEvent;
-		}
-
 		public override void Initialize()
 		{
 			base.Initialize();
-
+			
 			GameplaySetup.instance.AddTab("Nya", "Nya.UI.Views.NyaView.bsml", this);
 
 			_gameplaySetupViewController.didActivateEvent += GameplaySetupViewControllerOnDidActivateEvent;
 			_gameplaySetupViewController.didDeactivateEvent += GameplaySetupViewControllerOnDidDeactivateEvent;
+		}
+
+		public override void Dispose()
+		{
+			base.Dispose();
+			
+			if (GameplaySetup.IsSingletonAvailable)
+			{
+				GameplaySetup.instance.RemoveTab("Nya");
+			}
+			
+			_gameplaySetupViewController.didActivateEvent -= GameplaySetupViewControllerOnDidActivateEvent;
+			_gameplaySetupViewController.didDeactivateEvent -= GameplaySetupViewControllerOnDidDeactivateEvent;
 		}
 
 		public void OnEnable()
@@ -87,7 +88,7 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
 			{
 				ToggleAutoNya(false);
 			}
-
+            
 			_settingsModalMenuController.HideModal();
 		}
 
@@ -98,7 +99,7 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
 				ToggleAutoNya(true);
 			}
 		}
-
+		
 		[UIAction("settings-button-clicked")]
 		protected void SettingsButtonClicked()
 		{
@@ -106,7 +107,7 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
 			{
 				ToggleAutoNya(false);
 			}
-
+            
 			_settingsModalMenuController.ShowModal(SettingsButtonTransform);
 			_settingsModalMenuController.ModalView.blockerClickedEvent += ModalViewOnBlockerClickedEvent;
 		}
