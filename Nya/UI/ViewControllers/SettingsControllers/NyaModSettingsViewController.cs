@@ -3,11 +3,7 @@ using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Settings;
 using HMUI;
-using Nya.Components;
-using Nya.Configuration;
 using Nya.UI.FlowCoordinators;
-using Nya.Utils;
-using UnityEngine.UI;
 using Zenject;
 
 namespace Nya.UI.ViewControllers.SettingsControllers
