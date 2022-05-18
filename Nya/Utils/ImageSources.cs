@@ -30,9 +30,8 @@ namespace Nya.Utils
                     Mode = DataMode.Json,
                     SfwEndpoints = new List<string>
                     {
-                        "neko", "waifu", "tickle", "slap", "poke", "pat", "meow", "lizard", "kiss", "hug", "fox_girl",
-                        "feed", "cuddle", "ngif", "kemonomimi", "holo", "smug", "baka", "woof", "wallpaper", "goose",
-                        "gecg", "avatar"
+                        "neko", "waifu", "tickle", "slap", "pat", "meow", "lizard", "kiss", "hug", "fox_girl",
+                        "feed", "cuddle", "ngif", "smug", "woof", "wallpaper", "goose", "gecg", "avatar"
                     },
                     NsfwEndpoints = new List<string>()
                 }
