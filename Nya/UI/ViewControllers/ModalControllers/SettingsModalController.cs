@@ -303,39 +303,14 @@ namespace Nya.UI.ViewControllers.ModalControllers
         protected void FaceHeadsetClicked()
         {
             _uiUtils.ButtonUnderlineClick(FaceHeadsetButton.gameObject);
-            _timeTweeningManager.KillAllTweens(RootTransform);
-            var rootTransform = RootTransform.root.gameObject.transform;
-            var previousRotation = rootTransform.rotation;
-            var newRotation = Quaternion.LookRotation(rootTransform.position - _mainCamera.camera.transform.position);
-            var tween = new FloatTween(0f, 1f, val => RootTransform.root.gameObject.transform.rotation = Quaternion.Lerp(previousRotation, newRotation, val), 0.5f, EaseType.OutQuart);
-            _timeTweeningManager.AddTween(tween, RootTransform);
-            if (RootTransform.root.name == "nyaGameFloatingScreen" && PluginConfig.SeparatePositions)
-            {
-                PluginConfig.PauseRotation = newRotation.eulerAngles;
-            }
-            else
-            {
-                PluginConfig.MenuRotation = newRotation.eulerAngles;
-            }
+            _floatingScreenUtils.TweenToHeadset(_mainCamera.camera);
         }
 
         [UIAction("set-upright-clicked")]
         protected void SetUprightClicked()
         {
             _uiUtils.ButtonUnderlineClick(SetUprightButton.gameObject);
-            _timeTweeningManager.KillAllTweens(RootTransform);
-            var previousRotation = RootTransform.root.gameObject.transform.rotation;
-            var newRotation = Quaternion.Euler(0f, previousRotation.eulerAngles.y, 0f);
-            var tween = new FloatTween(0f, 1f, val => RootTransform.root.gameObject.transform.rotation = Quaternion.Lerp(previousRotation, newRotation, val), 0.5f, EaseType.OutQuart);
-            _timeTweeningManager.AddTween(tween, RootTransform);
-            if (RootTransform.root.name == "nyaGameFloatingScreen" && PluginConfig.SeparatePositions)
-            {
-                PluginConfig.PauseRotation = newRotation.eulerAngles;
-            }
-            else
-            {
-                PluginConfig.MenuRotation = newRotation.eulerAngles;
-            }
+            _floatingScreenUtils.TweenUpright();
         }
 
         [UIAction("default-position-clicked")]

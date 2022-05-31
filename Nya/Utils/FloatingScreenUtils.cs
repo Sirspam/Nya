@@ -1,11 +1,14 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.FloatingScreen;
 using HMUI;
 using Nya.Configuration;
+using SiraUtil.Logging;
 using Tweening;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Nya.Utils
 {
@@ -20,7 +23,7 @@ namespace Nya.Utils
 		private Material? _nyaBgMaterial;
 		public FloatingScreen? MenuFloatingScreen;
 		public FloatingScreen? GameFloatingScreen;
-
+		
 		private readonly PluginConfig _pluginConfig;
 		private readonly TimeTweeningManager _timeTweeningManager;
 
@@ -139,8 +142,13 @@ namespace Nya.Utils
 			var transform = floatingScreen.gameObject.transform;
 			var oldPosition = transform.position;
 			var oldRotation = transform.rotation;
-			var positionTween = new FloatTween(0f, 1f, val => transform.position = Vector3.Lerp(oldPosition, DefaultPosition, val), 0.5f, EaseType.OutQuart);
-			var rotationTween = new FloatTween(0f, 1f, val => transform.rotation = Quaternion.Lerp(oldRotation, DefaultRotation, val), 0.5f, EaseType.OutQuart);
+			var time = (float) Math.Sqrt(Vector3.Distance(oldPosition, DefaultPosition) / 2);
+			if (time < 0.5f)
+			{
+				time = (float) Math.Sqrt(Quaternion.Angle(oldRotation, DefaultRotation) / 100); // Should probably change this
+			}
+			var positionTween = new FloatTween(0f, 1f, val => transform.position = Vector3.Lerp(oldPosition, DefaultPosition, val), time, EaseType.OutQuart);
+			var rotationTween = new FloatTween(0f, 1f, val => transform.rotation = Quaternion.Lerp(oldRotation, DefaultRotation, val), time, EaseType.OutQuart);
 			_timeTweeningManager.AddTween(positionTween, floatingScreen);
 			_timeTweeningManager.AddTween(rotationTween, floatingScreen);
 
@@ -158,6 +166,55 @@ namespace Nya.Utils
 			{
 				_pluginConfig.MenuPosition = DefaultPosition;
 				_pluginConfig.MenuRotation = DefaultRotation.eulerAngles;
+			}
+		}
+
+		public void TweenToHeadset(Camera camera)
+		{
+			var floatingScreen = GetActiveFloatingScreen();
+			
+			if (floatingScreen == null)
+			{
+				return;
+			}
+			
+			_timeTweeningManager.KillAllTweens(floatingScreen);
+			var rootTransform = floatingScreen.gameObject.transform;
+			var previousRotation = rootTransform.rotation;
+			var newRotation = Quaternion.LookRotation(rootTransform.position - camera.transform.position);
+			var tween = new FloatTween(0f, 1f, val => floatingScreen.gameObject.transform.rotation = Quaternion.Lerp(previousRotation, newRotation, val), 0.5f, EaseType.OutQuart);
+			_timeTweeningManager.AddTween(tween, floatingScreen);
+			if (floatingScreen.name == "nyaGameFloatingScreen" && _pluginConfig.SeparatePositions)
+			{
+				_pluginConfig.PauseRotation = newRotation.eulerAngles;
+			}
+			else
+			{
+				_pluginConfig.MenuRotation = newRotation.eulerAngles;
+			}
+		}
+
+		public void TweenUpright()
+		{
+			var floatingScreen = GetActiveFloatingScreen();
+			
+			if (floatingScreen == null)
+			{
+				return;
+			}
+			
+			_timeTweeningManager.KillAllTweens(floatingScreen);
+			var previousRotation = floatingScreen.gameObject.transform.rotation;
+			var newRotation = Quaternion.Euler(0f, previousRotation.eulerAngles.y, 0f);
+			var tween = new FloatTween(0f, 1f, val => floatingScreen.gameObject.transform.rotation = Quaternion.Lerp(previousRotation, newRotation, val), 0.5f, EaseType.OutQuart);
+			_timeTweeningManager.AddTween(tween, floatingScreen);
+			if (floatingScreen.name == "nyaGameFloatingScreen" && _pluginConfig.SeparatePositions)
+			{
+				_pluginConfig.PauseRotation = newRotation.eulerAngles;
+			}
+			else
+			{
+				_pluginConfig.MenuRotation = newRotation.eulerAngles;
 			}
 		}
 		
