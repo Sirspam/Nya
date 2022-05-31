@@ -203,7 +203,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
 						ChangeModalContent(new ModalContent("Incorrect!", "", "Nya.Resources.Chocola_Sobbing.png", "", "", false, false, false));
 					};
 
-					tween = new FloatTween(1f, 0f, val => modalCanvasGroup.alpha = val, 2f, EaseType.Linear, 3f);
+					tween = new FloatTween(1f, 0f, val => modalCanvasGroup.alpha = val, 2f, EaseType.Linear, 2f);
 					break;
 				}
 				default:
