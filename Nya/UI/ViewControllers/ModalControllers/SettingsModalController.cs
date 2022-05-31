@@ -342,7 +342,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
         protected void DefaultPositionClicked()
         {
             _uiUtils.ButtonUnderlineClick(DefaultPositionButton.gameObject);
-            _floatingScreenUtils.TransitionToDefaultPosition();
+            _floatingScreenUtils.TweenToDefaultPosition();
         }
 
         [UIAction("show-handle-changed")]

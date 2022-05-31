@@ -20,6 +20,7 @@ namespace Nya.Configuration
         public virtual bool SkipNsfw { get; set; } = false;
         public virtual bool InMenu { get; set; } = false;
         public virtual bool InPause { get; set; } = false;
+        public virtual float FloatingScreenScale { get; set; } = 1f;
         public virtual bool ShowHandle { get; set; } = false;
         public virtual bool SeparatePositions { get; set; } = false;
         public virtual Vector3 MenuPosition { get; set; } = FloatingScreenUtils.DefaultPosition;
@@ -31,7 +32,7 @@ namespace Nya.Configuration
         public virtual bool RainbowBackgroundColor { get; set; } = false;
         public virtual bool PersistantAutoNya { get; set; } = false;
         public virtual int AutoNyaWait { get; set; } = 4;
-        public virtual int ScaleValue { get; set; } = 512; // 0 means scaling disabled
+        public virtual int ImageScaleValue { get; set; } = 512; // 0 means scaling disabled
         public virtual bool EasterEggs { get; set; } = true;
         public virtual string SelectedAPI { get; set; } = ImageSources.Sources.Keys.First();
 

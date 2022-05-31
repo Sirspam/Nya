@@ -31,6 +31,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         private bool _updateAvailable;
         private bool _inMenu;
         private bool _inPause;
+        private float _floatingScreenScale;
         private Color _backgroundColor;
         private int _autoNyaWait;
         private bool _persistantAutoNya;
@@ -148,6 +149,17 @@ namespace Nya.UI.ViewControllers.SettingsControllers
             }
         }
 
+        [UIValue("floating-screen-scale-value")]
+        private float FloatingScreenScale
+        {
+            get => _floatingScreenScale;
+            set
+            {
+                _floatingScreenScale = value;
+                NotifyPropertyChanged();
+            }
+        }
+        
         [UIValue("bg-color")]
         private Color BackgroundColor
         {
@@ -331,6 +343,12 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         {
             AssignValues();
         }
+
+        [UIAction("floating-screen-scale-changed")]
+        private void FloatingScreenScaleChanged(float scale)
+        {
+            _floatingScreenUtils.ScaleFloatingScreen(scale);
+        }
         
         [UIAction("bg-color-setting-changed")]
         private void BgColorSettingChanged(Color value)
@@ -355,7 +373,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
             _menuRotation = FloatingScreenUtils.DefaultRotation.eulerAngles;
             if (_pluginConfig.InMenu && _floatingScreenUtils.MenuFloatingScreen != null)
             {
-                _floatingScreenUtils.TransitionToDefaultPosition(false);
+                _floatingScreenUtils.TweenToDefaultPosition(false);
             }
         }
 
@@ -387,10 +405,11 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         {
             InMenu = _pluginConfig.InMenu;
             InPause = _pluginConfig.InPause;
+            FloatingScreenScale = _pluginConfig.FloatingScreenScale;
             BackgroundColor = _pluginConfig.BackgroundColor;
             AutoNyaWait = _pluginConfig.AutoNyaWait;
             PersistantAutoNya = _pluginConfig.PersistantAutoNya;
-            ScalingValue = _pluginConfig.ScaleValue;
+            ScalingValue = _pluginConfig.ImageScaleValue;
             SeparatePositions = _pluginConfig.SeparatePositions;
             EasterEggs = _pluginConfig.EasterEggs;
             NsfwFeatures = _pluginConfig.NsfwFeatures;
@@ -407,10 +426,11 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         {
             _pluginConfig.InMenu = InMenu;
             _pluginConfig.InPause = InPause;
+            _pluginConfig.FloatingScreenScale = FloatingScreenScale;
             _pluginConfig.BackgroundColor = BackgroundColor;
             _pluginConfig.AutoNyaWait = AutoNyaWait;
             _pluginConfig.PersistantAutoNya = PersistantAutoNya;
-            _pluginConfig.ScaleValue = _scaleValue;
+            _pluginConfig.ImageScaleValue = _scaleValue;
             _pluginConfig.SeparatePositions = SeparatePositions;
             _pluginConfig.NsfwFeatures = NsfwFeatures;
             _pluginConfig.RememberNsfw = RememberNsfw;
@@ -457,6 +477,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
                 floatingScreen.transform.rotation = Quaternion.Euler(_pluginConfig.MenuRotation);
             }
             
+            _floatingScreenUtils.ScaleFloatingScreen(_pluginConfig.FloatingScreenScale);
             parentFlowCoordinator.DismissFlowCoordinator(_mainFlowCoordinator.YoungestChildFlowCoordinatorOrSelf(), animationDirection: AnimationDirection.Vertical);
         }
     }

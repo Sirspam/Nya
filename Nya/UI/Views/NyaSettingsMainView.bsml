@@ -34,6 +34,7 @@
                     <button id="reset-menu-position" active="~separate-positions" text="Reset menu Nya's position" hover-hint="Resets the menu Nya screen to it's default position" on-click="reset-menu-clicked"/>
                     <button id="reset-pause-position" active="~separate-positions" text="Reset pause Nya's position" hover-hint="Resets the pause Nya screen to it's default position" on-click="reset-pause-clicked"/>
                 </horizontal>
+                <slider-setting text="Floating Screen Scale" increment="0.1" min="0.1" max="2" integer-only="false" show-buttons="true" value="floating-screen-scale-value" on-change="floating-screen-scale-changed" bind-value="true" apply-on-change="true"/>
                 <horizontal>
                     <color-setting id="bg-color-setting" text="Nya background color" value="bg-color" on-change="bg-color-setting-changed" pref-width="70" bind-value="true" apply-on-change="true"/>
                     <button id="bg-color-default" text="Default" on-click="bg-color-default-clicked" font-size="4"/>

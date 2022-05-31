@@ -187,10 +187,10 @@ namespace Nya.Utils
             _siraLog.Info($"Loading image from {_nyaImageURL}");
             var options = new BeatSaberUI.ScaleOptions
             {
-                ShouldScale = _pluginConfig.ScaleValue != 0,
+                ShouldScale = _pluginConfig.ImageScaleValue != 0,
                 MaintainRatio = true,
-                Width = _pluginConfig.ScaleValue,
-                Height = _pluginConfig.ScaleValue
+                Width = _pluginConfig.ImageScaleValue,
+                Height = _pluginConfig.ImageScaleValue
             };
             image.SetImage(_nyaImageURL, false, options, () => callback?.Invoke());
             image.name = _nyaImageURL;

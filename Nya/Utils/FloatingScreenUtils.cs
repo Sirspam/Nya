@@ -72,7 +72,9 @@ namespace Nya.Utils
 			var floatingScreen = FloatingScreen.CreateFloatingScreen(new Vector2(100f, 80f), true, position, Quaternion.Euler(rotation), 220, true);
 			
 			BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.NyaView.bsml"), floatingScreen.gameObject, host);
-			floatingScreen.gameObject.layer = 5;
+			var gameObject = floatingScreen.gameObject;
+			gameObject.transform.localScale = new Vector3(0.02f * _pluginConfig.FloatingScreenScale,  0.02f * _pluginConfig.FloatingScreenScale, 0.02f * _pluginConfig.FloatingScreenScale);;
+			gameObject.layer = 5;
 			
 			floatingScreen.handle.transform.localPosition = new Vector3(0f, -floatingScreen.ScreenSize.y / 1.8f, -5f);
 			HandleScale = new Vector3(floatingScreen.ScreenSize.x * 0.8f, floatingScreen.ScreenSize.y / 15f, floatingScreen.ScreenSize.y / 15f);
@@ -110,8 +112,21 @@ namespace Nya.Utils
 
 			return null;
 		}
+
+		public void ScaleFloatingScreen(float scale)
+		{
+			if (MenuFloatingScreen != null)
+			{
+				MenuFloatingScreen.gameObject.transform.localScale = new Vector3(0.02f * scale,  0.02f * scale, 0.02f * scale);
+			}
+			
+			if (GameFloatingScreen != null)
+			{
+				GameFloatingScreen.gameObject.transform.localScale = new Vector3(0.02f * scale,  0.02f * scale, 0.02f * scale);
+			}
+		}
 		
-		public void TransitionToDefaultPosition(bool saveValuesToConfig = true)
+		public void TweenToDefaultPosition(bool saveValuesToConfig = true)
 		{
 			var floatingScreen = GetActiveFloatingScreen();
 
