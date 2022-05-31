@@ -317,7 +317,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
 		[UIAction("submit-clicked")]
 		private void SubmitClicked()
 		{
-			if (_mathSlider.Value.ToString(CultureInfo.InvariantCulture) == "15")
+			if (_mathSlider.Value.ToString(CultureInfo.InvariantCulture) == "24")
 			{
 				ConfirmationStage += 1;
 			}
