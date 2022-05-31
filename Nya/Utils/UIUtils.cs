@@ -1,4 +1,5 @@
-﻿using HMUI;
+﻿using System;
+using HMUI;
 using Tweening;
 using UnityEngine;
 
@@ -7,14 +8,12 @@ namespace Nya.Utils
     internal class UIUtils
     {
         private Color? _defaultUnderlineColor;
-        
         private readonly TimeTweeningManager _uwuTweenyManager; // Thanks PixelBoom
 
         public UIUtils(TimeTweeningManager timeTweeningManager)
         {
             _uwuTweenyManager = timeTweeningManager;
         }
-
         public void ButtonUnderlineClick(GameObject gameObject)
         {
             var underline = gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>();

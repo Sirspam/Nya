@@ -1,0 +1,28 @@
+﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
+    <modal id="modal" show-event="open-modal" hide-event="close-modal" size-delta-x="95" size-delta-y="70">
+        <vertical id="root-vertical" pref-width="92">
+            <vertical id="main-layout">
+                <vertical pad-top="2">
+                    <text id="top-text" font-size="8.2" underlined="true"/>
+                </vertical>
+                <horizontal horizontal-fit="PreferredSize">
+                    <vertical pref-width="45">
+                        <text id="mid-text" font-size="5" word-wrapping="true" align="Center"/>
+                    </vertical>
+                    <image id="mid-image" preserve-aspect="true" pref-width="40"/>
+                </horizontal>
+                <horizontal id="buttons-layout">
+                    <button id="no-button" on-click="no-clicked" pref-width="34" pref-height="10"/>
+                    <button id="yes-button" on-click="yes-clicked" pref-width="34" pref-height="10"/>
+                </horizontal>
+                <horizontal id="slider-layout" active="false" pref-width="88">
+                    <slider-setting id="slider" text="Value" min="0" max="60" increment="1" show-buttons="true" integer-only="true" pref-width="60"/>
+                    <button id="submit-button" text="Submit" on-click="submit-clicked" pref-width="25" pref-height="10"/>
+                </horizontal>
+            </vertical>
+            <horizontal id="horny-pastry-puffer-layout" active="false">
+                <image src="Nya.Resources.Vanilla_Horny_Pastry_Puffer.png" preserve-aspect="true"/>
+            </horizontal>
+        </vertical>
+    </modal>
+</bg>

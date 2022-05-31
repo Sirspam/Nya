@@ -5,6 +5,7 @@ using BeatSaberMarkupLanguage.Parser;
 using HMUI;
 using IPA.Utilities;
 using UnityEngine;
+using Zenject;
 
 namespace Nya.UI.ViewControllers.ModalControllers
 {
@@ -43,7 +44,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
         {
             if (!_modalView && !_parsed)
             {
-                BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.NSFWConfirmModal.bsml"), parentTransform.gameObject, this);
+                BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.NsfwConfirmModalView.bsml"), parentTransform.gameObject, this);
                 _modalView.SetField("_animateParentCanvas", false);
                 _modalView.name = "NyaNsfwConfirmModal";
 

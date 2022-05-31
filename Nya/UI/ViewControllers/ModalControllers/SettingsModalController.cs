@@ -117,6 +117,9 @@ namespace Nya.UI.ViewControllers.ModalControllers
 
         #region values
 
+        [UIValue("nsfw-features")]
+        protected bool NsfwFeatures => PluginConfig.NsfwFeatures;
+
         [UIValue("show-handle")]
         protected bool PauseHandle
         {
@@ -133,7 +136,8 @@ namespace Nya.UI.ViewControllers.ModalControllers
         {
             if (!ModalView && !_parsed)
             {
-                BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.SettingsModal.bsml"), parentTransform.gameObject, host);
+                BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.SettingsModalView.bsml"), parentTransform.gameObject, host);
+                ModalView.name = "NyaSettingsModal";
                 ModalView.SetField("_animateParentCanvas", true);
                 ApiDropDownTransform.Find("DropdownTableView").GetComponent<ModalView>().SetField("_animateParentCanvas", false);
                 SfwDropDownTransform.Find("DropdownTableView").GetComponent<ModalView>().SetField("_animateParentCanvas", false);
@@ -154,6 +158,8 @@ namespace Nya.UI.ViewControllers.ModalControllers
             ScreenTab.gameObject.SetActive(false);
             MoreSettingsTab.gameObject.SetActive(false);
             TabSelector.Refresh();
+
+            PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(NsfwFeatures)));
         }
 
         public void HideModal()
@@ -172,10 +178,10 @@ namespace Nya.UI.ViewControllers.ModalControllers
         [UIValue("nya-nsfw-check")]
         protected bool NsfwCheck
         {
-            get => PluginConfig.Nsfw;
+            get => PluginConfig.NsfwImages;
             set
             {
-                PluginConfig.Nsfw = value;
+                PluginConfig.NsfwImages = value;
                 PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(NsfwCheck)));
             }
         }

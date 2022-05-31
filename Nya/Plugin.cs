@@ -14,27 +14,27 @@ namespace Nya
     public class Plugin
     {
         [Init]
-        public Plugin(Config conf, Logger logger, Zenjector zenjector)
+        public Plugin(Config config, Logger logger, Zenjector zenjector)
         {
             zenjector.UseLogger(logger);
             zenjector.UseHttpService();
             zenjector.UseMetadataBinder<Plugin>();
             zenjector.UseSiraSync();
             
-            var config = conf.Generated<PluginConfig>();
+            var pluginConfig = config.Generated<PluginConfig>();
 
-            zenjector.Install<NyaAppInstaller>(Location.App, config);
+            if (!pluginConfig.RememberNsfw || !pluginConfig.NsfwFeatures)
+            {
+                pluginConfig.NsfwImages = false;
+            }
+
+            zenjector.Install<NyaAppInstaller>(Location.App, pluginConfig);
             zenjector.Install<NyaMenuInstaller>(Location.Menu);
             zenjector.Install<NyaGameInstaller>(Location.Singleplayer);
 
             var folderPath = Path.Combine(UnityGame.UserDataPath, "Nya");
             Directory.CreateDirectory(Path.Combine(folderPath, "sfw"));
             Directory.CreateDirectory(Path.Combine(folderPath, "nsfw"));
-
-            if (!config.RememberNsfw)
-            {
-                config.Nsfw = false;
-            }
         }
     }
 }

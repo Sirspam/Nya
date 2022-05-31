@@ -3,6 +3,7 @@ using Nya.UI.FlowCoordinators;
 using Nya.UI.ViewControllers.ModalControllers;
 using Nya.UI.ViewControllers.NyaViewControllers;
 using Nya.UI.ViewControllers.SettingsControllers;
+using Nya.Utils;
 using Zenject;
 
 namespace Nya.Installers
@@ -26,11 +27,12 @@ namespace Nya.Installers
             {
                 Container.BindInterfacesAndSelfTo<NyaViewGameplaySetupController>().AsSingle();
             }
-            
-            Container.BindInterfacesAndSelfTo<SettingsModalMenuController>().AsSingle();
-            Container.Bind<NsfwConfirmModalController>().AsSingle();
+
             Container.Bind<GitHubPageModalController>().AsSingle();
+            Container.Bind<NsfwConfirmModalController>().AsSingle();
+            Container.Bind<EnableNsfwFeaturesModalController>().AsSingle();
             Container.BindInterfacesTo<NyaModSettingsViewController>().AsSingle();
+            Container.BindInterfacesAndSelfTo<SettingsModalMenuController>().AsSingle();
             Container.Bind<NyaSettingsFlowCoordinator>().FromNewComponentOnNewGameObject().AsSingle();
             Container.BindInterfacesAndSelfTo<NyaSettingsMainViewController>().FromNewComponentAsViewController().AsSingle();
             Container.BindInterfacesAndSelfTo<NyaSettingsRightViewController>().FromNewComponentAsViewController().AsSingle();

@@ -8,6 +8,7 @@ using IPA.Loader;
 using IPA.Utilities;
 using Nya.Components;
 using Nya.Configuration;
+using Nya.UI.ViewControllers.ModalControllers;
 using Nya.Utils;
 using SiraUtil.Logging;
 using SiraUtil.Web.SiraSync;
@@ -31,13 +32,15 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         private bool _inMenu;
         private bool _inPause;
         private Color _backgroundColor;
-        private bool _rememberNsfw;
-        private bool _skipNsfw;
         private int _autoNyaWait;
         private bool _persistantAutoNya;
         private int _scaleValue;
         private bool _separatePositions;
         private bool _easterEggs;
+        private bool _nsfwFeatures;
+        private bool _rememberNsfw;
+        private bool _skipNsfw;
+        
         private bool _useBackgroundColor;
         private Vector3 _menuPosition;
         private Vector3 _menuRotation;
@@ -53,9 +56,10 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         private TimeTweeningManager _timeTweeningManager = null!;
         private MainFlowCoordinator _mainFlowCoordinator = null!;
         private MenuTransitionsHelper _menuTransitionsHelper = null!;
+        private EnableNsfwFeaturesModalController _enableNsfwFeaturesModalController = null!;
 
         [Inject]
-        public void Constructor(SiraLog siraLog, UIUtils uiUtils, PluginConfig pluginConfig, UBinder<Plugin, PluginMetadata> pluginMetadata, ISiraSyncService siraSyncService, FloatingScreenUtils floatingScreenUtils, TimeTweeningManager timeTweeningManager, MainFlowCoordinator mainFlowCoordinator, MenuTransitionsHelper menuTransitionsHelper)
+        public void Constructor(SiraLog siraLog, UIUtils uiUtils, PluginConfig pluginConfig, UBinder<Plugin, PluginMetadata> pluginMetadata, ISiraSyncService siraSyncService, FloatingScreenUtils floatingScreenUtils, TimeTweeningManager timeTweeningManager, MainFlowCoordinator mainFlowCoordinator, MenuTransitionsHelper menuTransitionsHelper, EnableNsfwFeaturesModalController enableNsfwFeaturesModalController)
         {
             _siraLog = siraLog;
             _uiUtils = uiUtils;
@@ -66,6 +70,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
             _timeTweeningManager = timeTweeningManager;
             _mainFlowCoordinator = mainFlowCoordinator;
             _menuTransitionsHelper = menuTransitionsHelper;
+            _enableNsfwFeaturesModalController = enableNsfwFeaturesModalController;
         }
 
         protected override async void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
@@ -155,28 +160,6 @@ namespace Nya.UI.ViewControllers.SettingsControllers
 
         }
 
-        [UIValue("remember-NSFW")]
-        private bool RememberNsfw
-        {
-            get => _rememberNsfw;
-            set
-            {
-                _rememberNsfw = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        [UIValue("skip-NSFW")]
-        private bool SkipNsfw
-        {
-            get => _skipNsfw;
-            set
-            {
-                _skipNsfw = value;
-                NotifyPropertyChanged();
-            }
-        }
-
         [UIValue("auto-wait-value")]
         private int AutoNyaWait
         {
@@ -255,6 +238,58 @@ namespace Nya.UI.ViewControllers.SettingsControllers
                 NotifyPropertyChanged();
             }
         }
+
+        [UIValue("done-enable-nsfw-features-steps")]
+        private bool DoneEnableNsfwFeaturesSteps
+        {
+            get => _pluginConfig.DoneEnableNsfwFeaturesSteps;
+            set
+            {
+                _pluginConfig.DoneEnableNsfwFeaturesSteps = value;
+                NotDoneEnableNsfwFeaturesSteps = !value;
+                NotifyPropertyChanged();
+            }
+        }
+        
+        [UIValue("not-done-enable-nsfw-features-steps")]
+        private bool NotDoneEnableNsfwFeaturesSteps
+        {
+            get => !DoneEnableNsfwFeaturesSteps;
+            set => NotifyPropertyChanged();
+        }
+        
+        [UIValue("NSFW-features")]
+        private bool NsfwFeatures
+        {
+            get => _nsfwFeatures;
+            set
+            {
+                _nsfwFeatures = value;
+                NotifyPropertyChanged();
+            }
+        }
+        
+        [UIValue("remember-NSFW")]
+        private bool RememberNsfw
+        {
+            get => _rememberNsfw;
+            set
+            {
+                _rememberNsfw = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        [UIValue("skip-NSFW")]
+        private bool SkipNsfw
+        {
+            get => _skipNsfw;
+            set
+            {
+                _skipNsfw = value;
+                NotifyPropertyChanged();
+            }
+        }
         
         [UIComponent("update-text")] 
         private readonly TextMeshProUGUI _updateText = null!;
@@ -279,6 +314,9 @@ namespace Nya.UI.ViewControllers.SettingsControllers
 
         [UIComponent("reset-pause-position")]
         private readonly Button _resetPausePositionButton = null!;
+        
+        [UIComponent("enable-nsfw-features-button")]
+        private readonly Button _enableNsfwFeaturesButton = null!;
 
         private void BgColorSettingCancelled()
         {
@@ -329,18 +367,35 @@ namespace Nya.UI.ViewControllers.SettingsControllers
             _pauseRotation = FloatingScreenUtils.DefaultRotation.eulerAngles;
         }
 
+        [UIAction("enable-nsfw-features-clicked")]
+        private void EnableNsfwFeaturesClicked()
+        {
+            _enableNsfwFeaturesModalController.ShowModal(_enableNsfwFeaturesButton.transform, () =>
+            {
+                DoneEnableNsfwFeaturesSteps = true;
+                NsfwFeatures = true;
+            });
+        }
+        
+        [UIAction("redo-nsfw-features-steps-clicked")]
+        private void RedoEnableNsfwFeaturesClicked()
+        {
+            _enableNsfwFeaturesModalController.ShowModal(_enableNsfwFeaturesButton.transform, null);
+        }
+
         private void AssignValues()
         {
             InMenu = _pluginConfig.InMenu;
             InPause = _pluginConfig.InPause;
             BackgroundColor = _pluginConfig.BackgroundColor;
-            RememberNsfw = _pluginConfig.RememberNsfw;
-            SkipNsfw = _pluginConfig.SkipNsfw;
             AutoNyaWait = _pluginConfig.AutoNyaWait;
             PersistantAutoNya = _pluginConfig.PersistantAutoNya;
             ScalingValue = _pluginConfig.ScaleValue;
             SeparatePositions = _pluginConfig.SeparatePositions;
             EasterEggs = _pluginConfig.EasterEggs;
+            NsfwFeatures = _pluginConfig.NsfwFeatures;
+            RememberNsfw = _pluginConfig.RememberNsfw;
+            SkipNsfw = _pluginConfig.SkipNsfw;
             _useBackgroundColor = _pluginConfig.UseBackgroundColor;
             _menuPosition = _pluginConfig.MenuPosition;
             _menuRotation = _pluginConfig.MenuRotation;
@@ -353,12 +408,13 @@ namespace Nya.UI.ViewControllers.SettingsControllers
             _pluginConfig.InMenu = InMenu;
             _pluginConfig.InPause = InPause;
             _pluginConfig.BackgroundColor = BackgroundColor;
-            _pluginConfig.RememberNsfw = RememberNsfw;
-            _pluginConfig.SkipNsfw = SkipNsfw;
             _pluginConfig.AutoNyaWait = AutoNyaWait;
             _pluginConfig.PersistantAutoNya = PersistantAutoNya;
             _pluginConfig.ScaleValue = _scaleValue;
             _pluginConfig.SeparatePositions = SeparatePositions;
+            _pluginConfig.NsfwFeatures = NsfwFeatures;
+            _pluginConfig.RememberNsfw = RememberNsfw;
+            _pluginConfig.SkipNsfw = SkipNsfw;
             _pluginConfig.MenuPosition = _menuPosition;
             _pluginConfig.MenuRotation = _menuRotation;
             _pluginConfig.PausePosition = _pausePosition;

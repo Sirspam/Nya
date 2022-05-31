@@ -47,7 +47,7 @@ namespace Nya.Utils
                 return;
             }
             
-            File.WriteAllBytes(Path.Combine(UnityGame.UserDataPath, "Nya", _pluginConfig.Nsfw ? "nsfw" : "sfw", _nyaImageEndpoint), _nyaImageBytes);
+            File.WriteAllBytes(Path.Combine(UnityGame.UserDataPath, "Nya", _pluginConfig.NsfwImages ? "nsfw" : "sfw", _nyaImageEndpoint), _nyaImageBytes);
         }
         
         private async Task<byte[]?> GetWebDataToBytesAsync(string url)
@@ -102,7 +102,7 @@ namespace Nya.Utils
         {
             try
             {
-                var selectedEndpoint = _pluginConfig.Nsfw
+                var selectedEndpoint = _pluginConfig.NsfwImages
                     ? _pluginConfig.SelectedEndpoints[_pluginConfig.SelectedAPI].SelectedNsfwEndpoint
                     : _pluginConfig.SelectedEndpoints[_pluginConfig.SelectedAPI].SelectedSfwEndpoint;
 
@@ -133,7 +133,7 @@ namespace Nya.Utils
 
                         break;
                     case DataMode.Local:
-                        var type = _pluginConfig.Nsfw ? "nsfw" : "sfw";
+                        var type = _pluginConfig.NsfwImages ? "nsfw" : "sfw";
                         var oldImageURL = _nyaImageURL;
                         while (_nyaImageURL == oldImageURL)
                         {

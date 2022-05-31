@@ -126,7 +126,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Update="UI\ViewControllers\ModalControllers\NSFWConfirmModalController.cs">
+        <Compile Update="UI\ViewControllers\ModalControllers\NsfwConfirmModalController.cs">
             <SubType>Code</SubType>
         </Compile>
         <Compile Update="UI\ViewControllers\NyaViewControllers\NyaViewController.cs">

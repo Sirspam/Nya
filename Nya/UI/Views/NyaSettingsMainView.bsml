@@ -11,7 +11,7 @@
     </horizontal>
 
     <vertical anchor-pos-y="11">
-        <horizontal vertical-fit="PreferredSize" horizontal-fit="PreferredSize" pref-height="7" pref-width="82">
+        <horizontal vertical-fit="PreferredSize" horizontal-fit="PreferredSize" pref-height="7" pref-width="90">
             <tab-selector tab-tag="settings-tab" child-expand-width="true" child-control-width="true"/>
         </horizontal>
 
@@ -19,8 +19,6 @@
             <vertical child-expand-width="true" horizontal-fit="PreferredSize" vertical-fit="PreferredSize" anchor-pos-y="10">
                 <slider-setting id="auto-wait-slider" text="Auto Nya wait time" hover-hint="How many seconds Auto Nya will wait for before getting a new image" increment="1" min="4" max="30" integer-only="true" value="auto-wait-value" bind-value="true" apply-on-change="true"/>
                 <checkbox-setting text="Persistant Auto Nya" hover-hint="Auto Nya will re-enable whenever Nya is active" value="persistant-auto-nya" bind-value="true" apply-on-change="true"/>
-                <checkbox-setting id="remember-NSFW-checkbox" text="Remember NSFW setting" hover-hint="If disabled Nya will always be set to SFW on start-up" value="remember-NSFW" bind-value="true" apply-on-change="true"/>
-                <checkbox-setting id="skip-NSFW-checkbox" text="Skip NSFW confirmation" hover-hint="You horny pastry puffer" value="skip-NSFW" bind-value="true" apply-on-change="true"/>
                 <dropdown-list-setting id="scale-dropdown" text="Downscale images" hover-hint="Image downscaling helps reduce the stutter whenever loading a new image. It's recommended to keep this enabled" value="scaling-value" choices="scaling-choices" bind-value="true" apply-on-change="true"/>
                 <checkbox-setting id="easter-eggs-checkbox" text="Easter Eggs" hover-hint="They're funny please I swear" value="easter-eggs" bind-value="true" apply-on-change="true"/>
             </vertical>
@@ -40,6 +38,21 @@
                     <color-setting id="bg-color-setting" text="Nya background color" value="bg-color" on-change="bg-color-setting-changed" pref-width="70" bind-value="true" apply-on-change="true"/>
                     <button id="bg-color-default" text="Default" on-click="bg-color-default-clicked" font-size="4"/>
                 </horizontal>
+            </vertical>
+        </tab>
+        
+        <tab tab-name="NSFW" tags="settings-tab" horizontal-fit="PreferredSize" vertical-fit="PreferredSize">
+            <vertical active="~not-done-enable-nsfw-features-steps" anchor-pos-y="14">
+                <primary-button id="enable-nsfw-features-button" text="Enable NSFW features" font-size="6" on-click="enable-nsfw-features-clicked"/>
+            </vertical>
+
+            <vertical active="~done-enable-nsfw-features-steps" child-expand-width="true" horizontal-fit="PreferredSize" vertical-fit="PreferredSize" anchor-pos-y="5">
+                <checkbox-setting text="Enable NSFW features" value="NSFW-features" bind-value="true" apply-on-change="true"/>
+                <checkbox-setting id="remember-NSFW-checkbox" text="Remember NSFW setting" hover-hint="If disabled Nya will always be set to SFW on start-up" value="remember-NSFW" bind-value="true" apply-on-change="true"/>
+                <checkbox-setting id="skip-NSFW-checkbox" text="Skip NSFW confirmation" hover-hint="Stops the NSFW confirmation modal appearing when enabling NSFW" value="skip-NSFW" bind-value="true" apply-on-change="true"/>
+                <vertical pad="2">
+                    <button text="Redo NSFW Confirmation Steps" hover-hint="It was pretty funny, right?" on-click="redo-nsfw-features-steps-clicked" pref-width="50" pref-height="10"/>
+                </vertical>
             </vertical>
         </tab>
     </vertical>
