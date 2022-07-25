@@ -135,10 +135,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
 		
 		[UIComponent("slider")]
 		private readonly SliderSetting _mathSlider = null!;
-		
-		[UIComponent("submit-button")]
-		private readonly Button _submitButton = null!;
-		
+
 		[UIParams] 
 		private readonly BSMLParserParams _parserParams = null!;
 
@@ -155,6 +152,8 @@ namespace Nya.UI.ViewControllers.ModalControllers
 			}
 
 			_mainLayoutGameObject.SetActive(true);
+			_yesButton.gameObject.SetActive(true);
+			_noButton.gameObject.SetActive(true);
 			_hornyPastryPufferLayout.SetActive(false);
 			_buttonsLayoutGameObject.SetActive(true);
 			_sliderLayoutGameObject.SetActive(false);
