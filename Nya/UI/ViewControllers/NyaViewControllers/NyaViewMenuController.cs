@@ -83,14 +83,19 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
         private void MenuActivated(ScenesTransitionSetupDataSO transitionSetupData, DiContainer diContainer)
         {
             _gameScenesManager.transitionDidFinishEvent -= MenuActivated;
-            
-            if (_floatingScreenUtils.MenuFloatingScreen != null &&
-                _floatingScreenUtils.MenuFloatingScreen.isActiveAndEnabled &&
-                (_floatingScreenUtils.MenuFloatingScreen!.transform.position != PluginConfig.MenuPosition ||
-                 _floatingScreenUtils.MenuFloatingScreen.transform.rotation.eulerAngles != PluginConfig.MenuRotation))
+
+            if (_floatingScreenUtils.MenuFloatingScreen != null)
             {
-                _floatingScreenUtils.MenuFloatingScreen.transform.position = PluginConfig.MenuPosition;
-                _floatingScreenUtils.MenuFloatingScreen.transform.rotation = Quaternion.Euler(PluginConfig.MenuRotation);
+                // Updates position if floating screen in game scene changed
+                if (_floatingScreenUtils.MenuFloatingScreen.isActiveAndEnabled &&
+                    (_floatingScreenUtils.MenuFloatingScreen!.transform.position != PluginConfig.MenuPosition ||
+                     _floatingScreenUtils.MenuFloatingScreen.transform.rotation.eulerAngles != PluginConfig.MenuRotation))
+                {
+                    _floatingScreenUtils.MenuFloatingScreen.transform.position = PluginConfig.MenuPosition;
+                    _floatingScreenUtils.MenuFloatingScreen.transform.rotation = Quaternion.Euler(PluginConfig.MenuRotation);
+                }
+                
+                _floatingScreenUtils.MenuFloatingScreen.handle.SetActive(PluginConfig.ShowHandle);
             }
 
             NyaButton.interactable = false;
