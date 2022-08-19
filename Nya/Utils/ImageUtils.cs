@@ -58,7 +58,7 @@ namespace Nya.Utils
                 if (!response.Successful)
                 {
                     _siraLog.Error($"{url} returned an unsuccessful status code ({response.Code.ToString()})");
-                    return null;
+                    throw new HttpRequestException();
                 }
 
                 return await response.ReadAsByteArrayAsync();
@@ -159,7 +159,7 @@ namespace Nya.Utils
                         _siraLog.Warn($"Unsupported data mode for endpoint: {_pluginConfig.SelectedAPI}");
                         return;
                 }
-
+                
                 _nyaImageBytes = await GetWebDataToBytesAsync(_nyaImageURL!);
                 LoadCurrentNyaImage(image, () => callback?.Invoke());
             }
