@@ -39,7 +39,7 @@ namespace Nya.Utils
             {
                 "xSky", new SourceData
                 {
-                    BaseEndpoint = "https://api.xsky.dev/",
+                    BaseEndpoint = "https://api.nekos.cc/",
                     Mode = DataMode.Json,
                     SfwEndpoints = new List<string> { "neko", "catboy" },
                     NsfwEndpoints = new List<string> { "hentai", "bdsm", "furry", "ff", "feet", "trap", "gif", "futa" }
