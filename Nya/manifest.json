@@ -9,7 +9,7 @@
   "icon": "Nya.Resources.Chocola_Mini_Sitting.png",
   "dependsOn": {
     "BSIPA": "^4.2.2",
-    "BeatSaberMarkupLanguage": "^1.6.4",
+    "BeatSaberMarkupLanguage": "^1.6.8",
     "SiraUtil": "^3.0.5"
   },
   "links": {

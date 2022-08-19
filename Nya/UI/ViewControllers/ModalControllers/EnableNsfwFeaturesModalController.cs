@@ -152,8 +152,6 @@ namespace Nya.UI.ViewControllers.ModalControllers
 			}
 
 			_mainLayoutGameObject.SetActive(true);
-			_yesButton.gameObject.SetActive(true);
-			_noButton.gameObject.SetActive(true);
 			_hornyPastryPufferLayout.SetActive(false);
 			_buttonsLayoutGameObject.SetActive(true);
 			_sliderLayoutGameObject.SetActive(false);
