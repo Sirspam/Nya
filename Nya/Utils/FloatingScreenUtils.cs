@@ -89,7 +89,7 @@ namespace Nya.Utils
 				floatingScreen.handle.gameObject.SetActive(false);
 			}
 
-			if (_pluginConfig.UseBackgroundColor)
+			if (_pluginConfig.UseBackgroundColor || _pluginConfig.RainbowBackgroundColor)
 			{
 				floatingScreen.gameObject.transform.GetChild(0).GetComponent<ImageView>().material = NyaBgMaterial;
 			}
@@ -282,11 +282,8 @@ namespace Nya.Utils
                 return;
             }
 
-            if (!_pluginConfig.UseBackgroundColor)
-            {
-	            SetNyaMaterial();
-            }
-            
+            SetNyaMaterial();
+
             var tween = new FloatTween(0f, 1, val => SetNyaMaterialColor(Color.HSVToRGB(val, 1f, 1f)), 6f, EaseType.Linear)
             {
                 loop = true

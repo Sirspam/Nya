@@ -353,6 +353,11 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         [UIAction("bg-color-setting-changed")]
         private void BgColorSettingChanged(Color value)
         {
+            if (value == _pluginConfig.BackgroundColor || value == Color.clear)
+            {
+                return;
+            }
+
             _backgroundColor = value;
             _floatingScreenUtils.SetNyaMaterialColor(value);
         }
