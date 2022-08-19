@@ -12,6 +12,7 @@ Nya features a floating screen, allowing Nya to be accessed outside of the gamep
 * [Nekos.Life](https://nekos.life/)
 * [xSky API](https://api.xsky.dev/)
 * [Anime-Images API](https://anime-api.hisoka17.repl.co/)
+* [Catboys](https://catboys.com/)
 * [Local Files](#local-files)
 ### Local Files
 In order for local files to work there must be compatible images in the sfw / nsfw files found in Nya's UserData folder.

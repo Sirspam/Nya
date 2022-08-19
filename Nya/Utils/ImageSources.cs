@@ -55,6 +55,18 @@ namespace Nya.Utils
                 }
             },
             {
+                "Catboys", new SourceData
+                {
+                    BaseEndpoint = "https://api.catboys.com/",
+                    Mode = DataMode.Json,
+                    SfwEndpoints = new List<string>
+                    {
+                        "img", "baka"
+                    },
+                    NsfwEndpoints = new List<string>()
+                }
+            },
+            {
                 "Local Files", new SourceData
                 {
                     BaseEndpoint = Path.Combine(UnityGame.UserDataPath, "Nya"),
