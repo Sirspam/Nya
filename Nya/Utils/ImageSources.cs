@@ -51,7 +51,7 @@ namespace Nya.Utils
                     BaseEndpoint = "https://anime-api.hisoka17.repl.co/img/",
                     Mode = DataMode.Json,
                     SfwEndpoints = new List<string> { "hug", "kiss", "slap", "wink", "pat", "kill", "cuddle", "punch", "waifu" },
-                    NsfwEndpoints = new List<string> { "hentai", "boobs", "lesbian" }
+                    NsfwEndpoints = new List<string> { "nsfw/hentai", "nsfw/boobs", "nsfw/lesbian" }
                 }
             },
             {
