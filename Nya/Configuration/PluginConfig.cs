@@ -86,6 +86,12 @@ namespace Nya.Configuration
                     });
                 }
             }
+
+            if (!ImageSources.Sources.ContainsKey(SelectedAPI))
+            {
+                SelectedEndpoints.Remove(SelectedAPI);
+                SelectedAPI = ImageSources.Sources.First().Key;
+            }
         }
     }
 }
