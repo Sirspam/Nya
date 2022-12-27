@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -74,6 +75,15 @@ namespace Nya.Utils
         {
             try
             {
+                if (endpoint == "Random")
+                {
+                    var endpoints = !_pluginConfig.NsfwImages
+                        ? ImageSources.Sources[_pluginConfig.SelectedAPI].SfwEndpoints
+                        : ImageSources.Sources[_pluginConfig.SelectedAPI].NsfwEndpoints;
+                    
+                    endpoint = endpoints[_random.Next(endpoints.Count)];
+                }
+                
                 var path = ImageSources.Sources[_pluginConfig.SelectedAPI].BaseEndpoint + endpoint;
                 _siraLog.Info($"Attempting to get image url from {path}");
                 var response = await GetWebDataToBytesAsync(path);
@@ -108,7 +118,7 @@ namespace Nya.Utils
 
                 switch (ImageSources.Sources[_pluginConfig.SelectedAPI].Mode)
                 {
-                    case DataMode.Json:
+                    case ImageSources.DataMode.Json:
                         var newUrl = _nyaImageURL;
                         _nyaImageURL = await GetImageURL(selectedEndpoint);
                         var count = 0;
@@ -132,7 +142,7 @@ namespace Nya.Utils
                         }
 
                         break;
-                    case DataMode.Local:
+                    case ImageSources.DataMode.Local:
                         var type = _pluginConfig.NsfwImages ? "nsfw" : "sfw";
                         var oldImageURL = _nyaImageURL;
                         while (_nyaImageURL == oldImageURL)
@@ -154,7 +164,7 @@ namespace Nya.Utils
                         
                         _nyaImageBytes = File.ReadAllBytes(_nyaImageURL!);
                         break;
-                    case DataMode.Unsupported:
+                    case ImageSources.DataMode.Unsupported:
                     default:
                         _siraLog.Warn($"Unsupported data mode for endpoint: {_pluginConfig.SelectedAPI}");
                         return;
@@ -163,7 +173,7 @@ namespace Nya.Utils
                 _nyaImageBytes = await GetWebDataToBytesAsync(_nyaImageURL!);
                 LoadCurrentNyaImage(image, () => callback?.Invoke());
             }
-            catch (Exception e) // e for dEez nuts
+            catch (Exception e)
             {
                 _siraLog.Error(e);
                 LoadErrorSprite(image);

@@ -4,7 +4,7 @@ using IPA.Utilities;
 
 namespace Nya.Utils
 {
-    public class ImageSources
+    internal sealed class ImageSources
     {
         internal static Dictionary<string, SourceData> Sources { get; } = new Dictionary<string, SourceData>
         {
@@ -75,12 +75,15 @@ namespace Nya.Utils
             internal List<string> SfwEndpoints;
             internal List<string> NsfwEndpoints;
         }
-    }
 
-    internal enum DataMode
-    {
-        Unsupported,
-        Json,
-        Local
+        // Empty shouldn't really be here but that's an issue I'll fix later :clueless:
+        internal static readonly string[] GlobalEndpoints = {"Empty", "Random"};
+        
+        internal enum DataMode
+        {
+            Unsupported,
+            Json,
+            Local
+        }
     }
 }

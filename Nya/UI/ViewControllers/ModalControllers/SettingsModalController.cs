@@ -397,9 +397,10 @@ namespace Nya.UI.ViewControllers.ModalControllers
         {
             SfwDropDownListSetting.values.Clear();
             SfwDropDownListSetting.values = ImageSources.Sources[APIValue].SfwEndpoints.Cast<object>().ToList();
-            SfwDropDownListSetting.UpdateChoices();
+            SfwDropDownListSetting.values.Add("Random");
             SfwDropDownListSetting.Value = SfwValue;
-            
+            SfwDropDownListSetting.UpdateChoices();
+
             if (CheckNsfwListHasEndpoints())
             {
                 if (NsfwDropDownListSetting.interactable == false)
@@ -410,6 +411,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
                 
                 NsfwDropDownListSetting.values.Clear();
                 NsfwDropDownListSetting.values = ImageSources.Sources[APIValue].NsfwEndpoints.Cast<object>().ToList();
+                NsfwDropDownListSetting.values.Add("Random");
                 NsfwDropDownListSetting.Value = NsfwValue;
                 NsfwDropDownListSetting.UpdateChoices();
             }
@@ -419,7 +421,9 @@ namespace Nya.UI.ViewControllers.ModalControllers
         {
             APIList = ImageSources.Sources.Keys.Cast<object>().ToList();
             SfwList = ImageSources.Sources[APIValue].SfwEndpoints.Cast<object>().ToList();
-            NsfwList = NsfwList = ImageSources.Sources[APIValue].NsfwEndpoints.Cast<object>().ToList();
+            SfwList.Add("Random");
+            NsfwList = ImageSources.Sources[APIValue].NsfwEndpoints.Cast<object>().ToList();
+            NsfwList.Add("Random");
         }
     }
 }

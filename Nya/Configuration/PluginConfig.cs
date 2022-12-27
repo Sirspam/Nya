@@ -82,13 +82,13 @@ namespace Nya.Configuration
             }
 
             var selectedSfwEndpoint = SelectedEndpoints[SelectedAPI].SelectedSfwEndpoint;
-            if (selectedSfwEndpoint != "Empty" && !ImageSources.Sources[SelectedAPI].SfwEndpoints.Contains(selectedSfwEndpoint))
+            if (!ImageSources.GlobalEndpoints.Contains(selectedSfwEndpoint) && !ImageSources.Sources[SelectedAPI].SfwEndpoints.Contains(selectedSfwEndpoint))
             {
                 SelectedEndpoints[SelectedAPI].SelectedSfwEndpoint = ImageSources.Sources[SelectedAPI].SfwEndpoints.FirstOrDefault() ?? "Empty";
             }
             
             var selectedNsfwEndpoint = SelectedEndpoints[SelectedAPI].SelectedNsfwEndpoint;
-            if (selectedSfwEndpoint != "Empty" && !ImageSources.Sources[SelectedAPI].SfwEndpoints.Contains(selectedSfwEndpoint))
+            if (!ImageSources.GlobalEndpoints.Contains(selectedNsfwEndpoint) && !ImageSources.Sources[SelectedAPI].SfwEndpoints.Contains(selectedSfwEndpoint))
             {
                 SelectedEndpoints[SelectedAPI].SelectedNsfwEndpoint = ImageSources.Sources[SelectedAPI].NsfwEndpoints.FirstOrDefault() ?? "Empty";
             }
