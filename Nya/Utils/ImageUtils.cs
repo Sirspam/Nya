@@ -143,18 +143,39 @@ namespace Nya.Utils
 
                         break;
                     case ImageSources.DataMode.Local:
-                        var type = _pluginConfig.NsfwImages ? "nsfw" : "sfw";
+                        string folder;
+                        if (!_pluginConfig.NsfwImages)
+                        {
+                            folder = "sfw";
+                            var endpoint = _pluginConfig.SelectedEndpoints["Local Files"].SelectedSfwEndpoint;
+                            if (endpoint != "sfw")
+                            {
+                                folder = Path.Combine(folder, endpoint);
+                            }
+                        }
+                        else
+                        {
+                            folder = "nsfw";
+                            var endpoint = _pluginConfig.SelectedEndpoints["Local Files"].SelectedNsfwEndpoint;
+                            if (endpoint != "nsfw")
+                            {
+                                folder = Path.Combine(folder, endpoint);
+                            }
+                        }
                         var oldImageURL = _nyaImageURL;
                         while (_nyaImageURL == oldImageURL)
                         {
-                            var files = Directory.GetFiles(Path.Combine(ImageSources.Sources[_pluginConfig.SelectedAPI].BaseEndpoint, type));
+                            var path = Path.Combine(ImageSources.Sources[_pluginConfig.SelectedAPI].BaseEndpoint, folder);
+                            var files = Directory.GetFiles(path).Where(file => file.EndsWith(".png") || file.EndsWith(".jpeg") || file.EndsWith(".jpg") || file.EndsWith(".gif") || file.EndsWith(".apng")).ToArray();
                             switch (files.Length)
                             {
                                 case 0:
-                                    _siraLog.Error($"No local files for type: {type}");
+                                    _siraLog.Error($"No suitable files in folder: {path}");
                                     LoadErrorSprite(image);
+                                    callback?.Invoke();
                                     return;
                                 case 1 when oldImageURL != null:
+                                    callback?.Invoke();
                                     return;
                                 default:
                                     _nyaImageURL = files[_random.Next(files.Length)];

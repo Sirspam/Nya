@@ -64,11 +64,24 @@ namespace Nya.Utils
                 {
                     BaseEndpoint = Path.Combine(UnityGame.UserDataPath, "Nya"),
                     Mode = DataMode.Local,
-                    SfwEndpoints = new List<string> { "/sfw" },
-                    NsfwEndpoints = new List<string> { "/nsfw" }
+                    SfwEndpoints = PopulateLocalEndpoints(false),
+                    NsfwEndpoints = PopulateLocalEndpoints(true)
                 }
             }
         };
+
+        private static List<string> PopulateLocalEndpoints(bool nsfw)
+        {
+            var baseFolder = nsfw ? "nsfw" : "sfw";
+            var endpoints = new List<string> {baseFolder};
+
+            foreach (var folder in Directory.GetDirectories(Path.Combine(UnityGame.UserDataPath, "Nya", baseFolder)))
+            {
+                endpoints.Add(Path.GetFileName(folder));
+            }
+
+            return endpoints;
+        }
 
         internal struct SourceData
         {
