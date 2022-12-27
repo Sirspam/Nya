@@ -13,13 +13,14 @@ namespace Nya.Utils
                 {
                     BaseEndpoint = "https://api.waifu.pics/",
                     Mode = DataMode.Json,
+                    // Removed 'kill' endpoint because it makes me sad :(
                     SfwEndpoints = new List<string>
                     {
                         "sfw/neko", "sfw/waifu", "sfw/awoo", "sfw/shinobu", "sfw/megumin", "sfw/cuddle", "sfw/cry",
                         "sfw/hug", "sfw/kiss", "sfw/lick", "sfw/pat", "sfw/smug", "sfw/bonk", "sfw/yeet", "sfw/blush",
                         "sfw/smile", "sfw/wave", "sfw/highfive", "sfw/nom", "sfw/bite", "sfw/glomp", "sfw/slap",
                         "sfw/kick", "sfw/happy", "sfw/wink", "sfw/poke", "sfw/dance"
-                    }, // No 'kill' endpoint because it makes me sad :(
+                    },
                     NsfwEndpoints = new List<string> { "nsfw/neko", "nsfw/waifu", "nsfw/trap", "nsfw/blowjob" }
                 }
             },
@@ -41,7 +42,8 @@ namespace Nya.Utils
                 {
                     BaseEndpoint = "https://anime-api.hisoka17.repl.co/img/",
                     Mode = DataMode.Json,
-                    SfwEndpoints = new List<string> { "hug", "kiss", "slap", "wink", "pat", "kill", "cuddle", "punch", "waifu" },
+                    // Removed 'kill' endpoint because, once again, it makes me a bit sad :(
+                    SfwEndpoints = new List<string> { "hug", "kiss", "slap", "wink", "pat", "cuddle", "punch", "waifu" },
                     NsfwEndpoints = new List<string> { "nsfw/hentai", "nsfw/boobs", "nsfw/lesbian" }
                 }
             },
