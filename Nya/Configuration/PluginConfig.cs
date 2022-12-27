@@ -31,7 +31,7 @@ namespace Nya.Configuration
         public virtual Color BackgroundColor { get; set; } = new Color(0.745f, 0.745f, 0.745f);
         public virtual bool RainbowBackgroundColor { get; set; } = false;
         public virtual bool PersistantAutoNya { get; set; } = false;
-        public virtual int AutoNyaWait { get; set; } = 4;
+        public virtual int AutoNyaWait { get; set; } = 5;
         public virtual int ImageScaleValue { get; set; } = 512; // 0 means scaling disabled
         public virtual bool EasterEggs { get; set; } = true;
         public virtual string SelectedAPI { get; set; } = ImageSources.Sources.Keys.First();
@@ -68,9 +68,9 @@ namespace Nya.Configuration
         /// </remark>
         private void FixConfigIssues()
         {
-            if (AutoNyaWait < 4)
+            if (AutoNyaWait < 3)
             {
-                AutoNyaWait = 4;
+                AutoNyaWait = 3;
             }
 
             if (SelectedEndpoints.Count != ImageSources.Sources.Count)

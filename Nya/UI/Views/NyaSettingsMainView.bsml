@@ -17,7 +17,7 @@
 
         <tab tab-name="Behaviour" tags="settings-tab" horizontal-fit="PreferredSize" vertical-fit="PreferredSize">
             <vertical child-expand-width="true" horizontal-fit="PreferredSize" vertical-fit="PreferredSize" anchor-pos-y="10">
-                <slider-setting id="auto-wait-slider" text="Auto Nya wait time" hover-hint="How many seconds Auto Nya will wait for before getting a new image" increment="1" min="4" max="30" integer-only="true" value="auto-wait-value" bind-value="true" apply-on-change="true"/>
+                <slider-setting id="auto-wait-slider" text="Auto Nya wait time" hover-hint="How many seconds Auto Nya will wait for before getting a new image" increment="1" min="3" max="30" integer-only="true" value="auto-wait-value" bind-value="true" apply-on-change="true"/>
                 <checkbox-setting text="Persistant Auto Nya" hover-hint="Auto Nya will re-enable whenever Nya is active" value="persistant-auto-nya" bind-value="true" apply-on-change="true"/>
                 <dropdown-list-setting id="scale-dropdown" text="Downscale images" hover-hint="Image downscaling helps reduce the stutter whenever loading a new image. It's recommended to keep this enabled" value="scaling-value" choices="scaling-choices" bind-value="true" apply-on-change="true"/>
                 <checkbox-setting id="easter-eggs-checkbox" text="Easter Eggs" hover-hint="They're funny please I swear" value="easter-eggs" bind-value="true" apply-on-change="true"/>
