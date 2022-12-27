@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -284,7 +285,10 @@ namespace Nya.UI.ViewControllers.ModalControllers
         [UIAction("format-source")]
         protected string FormatSource(string value)
         {
-            return value.Split('/').Last().Replace("_", " ");
+            value = value.Split('/').Last().Replace("_", " ");
+            var charArray = value.ToCharArray();
+            charArray[0] = char.ToUpper(charArray[0]);
+            return new string(charArray);
         }
 
         #endregion
