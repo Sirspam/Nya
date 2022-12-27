@@ -397,7 +397,10 @@ namespace Nya.UI.ViewControllers.ModalControllers
         {
             SfwDropDownListSetting.values.Clear();
             SfwDropDownListSetting.values = ImageSources.Sources[APIValue].SfwEndpoints.Cast<object>().ToList();
-            SfwDropDownListSetting.values.Add("Random");
+            if (SfwDropDownListSetting.values.Count < 1)
+            {
+                SfwDropDownListSetting.values.Add("Random");
+            }
             SfwDropDownListSetting.Value = SfwValue;
             SfwDropDownListSetting.UpdateChoices();
 
@@ -411,7 +414,10 @@ namespace Nya.UI.ViewControllers.ModalControllers
                 
                 NsfwDropDownListSetting.values.Clear();
                 NsfwDropDownListSetting.values = ImageSources.Sources[APIValue].NsfwEndpoints.Cast<object>().ToList();
-                NsfwDropDownListSetting.values.Add("Random");
+                if (NsfwDropDownListSetting.values.Count < 1)
+                {
+                    NsfwDropDownListSetting.values.Add("Random");
+                }
                 NsfwDropDownListSetting.Value = NsfwValue;
                 NsfwDropDownListSetting.UpdateChoices();
             }
@@ -421,9 +427,15 @@ namespace Nya.UI.ViewControllers.ModalControllers
         {
             APIList = ImageSources.Sources.Keys.Cast<object>().ToList();
             SfwList = ImageSources.Sources[APIValue].SfwEndpoints.Cast<object>().ToList();
-            SfwList.Add("Random");
+            if (SfwList.Count < 1)
+            {
+                SfwList.Add("Random");
+            }
             NsfwList = ImageSources.Sources[APIValue].NsfwEndpoints.Cast<object>().ToList();
-            NsfwList.Add("Random");
+            if (NsfwList.Count < 1)
+            {
+                NsfwList.Add("Random");
+            }
         }
     }
 }
