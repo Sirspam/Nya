@@ -68,29 +68,29 @@ namespace Nya.Configuration
         /// </remark>
         private void FixConfigIssues()
         {
+            using var _ = ChangeTransaction;
+            
             if (AutoNyaWait < 3)
             {
                 AutoNyaWait = 3;
             }
-
-            if (SelectedEndpoints.Count != ImageSources.Sources.Count)
-            {
-                using var _ = ChangeTransaction;
-                SelectedEndpoints.Clear();
-                foreach (var key in ImageSources.Sources.Keys)
-                {
-                    SelectedEndpoints.Add(key, new EndpointData
-                    {
-                        SelectedSfwEndpoint = ImageSources.Sources[key].SfwEndpoints.FirstOrDefault() ?? "Empty",
-                        SelectedNsfwEndpoint = ImageSources.Sources[key].NsfwEndpoints.FirstOrDefault() ?? "Empty"
-                    });
-                }
-            }
-
+            
             if (!ImageSources.Sources.ContainsKey(SelectedAPI))
             {
                 SelectedEndpoints.Remove(SelectedAPI);
                 SelectedAPI = ImageSources.Sources.First().Key;
+            }
+
+            var selectedSfwEndpoint = SelectedEndpoints[SelectedAPI].SelectedSfwEndpoint;
+            if (selectedSfwEndpoint != "Empty" && !ImageSources.Sources[SelectedAPI].SfwEndpoints.Contains(selectedSfwEndpoint))
+            {
+                SelectedEndpoints[SelectedAPI].SelectedSfwEndpoint = ImageSources.Sources[SelectedAPI].SfwEndpoints.FirstOrDefault() ?? "Empty";
+            }
+            
+            var selectedNsfwEndpoint = SelectedEndpoints[SelectedAPI].SelectedNsfwEndpoint;
+            if (selectedSfwEndpoint != "Empty" && !ImageSources.Sources[SelectedAPI].SfwEndpoints.Contains(selectedSfwEndpoint))
+            {
+                SelectedEndpoints[SelectedAPI].SelectedNsfwEndpoint = ImageSources.Sources[SelectedAPI].NsfwEndpoints.FirstOrDefault() ?? "Empty";
             }
         }
     }
