@@ -17,7 +17,7 @@ Nya features a floating screen, allowing Nya to be accessed outside of the gamep
 ### Local Files
 Nya can load images which are saved within ``Beat Saber\UserData\Nya\sfw`` and ``Beat Saber\UserData\Nya\nsfw``. Additionally Nya will treat any subfolders in these directories as 'endpoints', meaning you can switch from local files saved in different folders.
 
-# ADD EXAMPLE IMAGE HERE K THX
+![Local Files Example](LocalFilesExample.png)
 
 Nya will only load images with the file type of `png`, `jpg`, `jpeg`, `gif` or `apng`.
 
