@@ -55,13 +55,13 @@ namespace Nya.UI.ViewControllers.ModalControllers
 		private readonly ModalContent[] _modalContents =
 		{
 			new ModalContent("Woah There!", "Are you sure you want to enable NSFW features? You have to be 18+ to do this!", "Nya.Resources.Chocola_Surprised.png", "No", "Yes, I'm 18+", true, false),
-			new ModalContent("Are you sure?", "Are you reallllyyyy certain that your age is 18 or above?", "Nya.Resources.Chocola_Question_Mark.png", "No, I'm not", "Yes, I'm certain", true, true),
-			new ModalContent("Are you very very sure?", "If you're lying I will find out and tell your parents. \r\n(They will be very disappointed with you)", "Nya.Resources.Chocola_Angry.png", "Sorry, I lied", "Yes, I'm not lying", true, true),
+			new ModalContent("Are you sure?", "Are you realllyyy sure you're 18 years old or above?", "Nya.Resources.Chocola_Question_Mark.png", "No, I'm not", "Yes, I'm certain", true, true),
+			new ModalContent("Are you very sure?", "If you're lying I will find out and tell your parents. \r\n(They will be very disappointed with you)", "Nya.Resources.Chocola_Angry.png", "Sorry, I lied", "Yes, I'm not lying", true, true),
 			new ModalContent("Just double checking", "Okay so you're absolutely positive that you're 18+ and want to enable NSFW features?", "Nya.Resources.Chocola_Howdidyoudothat.png", "No", "Yes", true, true),
 			new ModalContent("Surprise math question!", "To confirm that you're really 18, let's do a maths question! \r\nWhat is 6 + 9 * (4 - 2) + 0?", "Nya.Resources.Chocola_Laugh.png", "No", "Yes", true, true, true, true),
 			new ModalContent("Correct!", "If you got that right then you must be a smart and sensible adult!", "Nya.Resources.Chocola_Happy.png", "but I'm not...", "I am! 😃", true, true),
-			new ModalContent("Wait!", "The NSFW features could be dangerous! \r\nWhy else would they be called Not Safe For Work??", "Nya.Resources.Chocola_Spooked.png", "That sounds risky!", "I am prepared", true, true),
-			new ModalContent("Last time I'll ask", "So you definitely want to enable NSFW and suffer the consequences which may entail from it?", "Nya.Resources.Chocola_Bashful.png", "No", "Yes", true, true)
+			new ModalContent("Wait!", "The NSFW features could be dangerous! \r\nWhy else would they be called \"Not Safe For Work??\"", "Nya.Resources.Chocola_Spooked.png", "That sounds risky!", "I am prepared", true, true),
+			new ModalContent("Last time I'll ask", "So you definitely want to enable the NSFW features and suffer the consequences which may entail from it?", "Nya.Resources.Chocola_Bashful.png", "No", "Yes", true, true)
 		};
 
 		private bool _parsed;
@@ -264,8 +264,8 @@ namespace Nya.UI.ViewControllers.ModalControllers
 					if (modalContent.ButtonIntractabilityCooldown)
 					{
 #if !DEBUG
-					IntractabilityCooldown(_mathSlider);
-					IntractabilityCooldown(_submitButton);
+						IntractabilityCooldown(_mathSlider);
+						IntractabilityCooldown(_submitButton);
 #endif
 					}
 				}
@@ -280,8 +280,8 @@ namespace Nya.UI.ViewControllers.ModalControllers
 					if (modalContent.ButtonIntractabilityCooldown)
 					{
 #if !DEBUG
-					IntractabilityCooldown(_noButton);
-					IntractabilityCooldown(_yesButton);
+						IntractabilityCooldown(_noButton);
+						IntractabilityCooldown(_yesButton);
 #endif
 					}
 				}	
@@ -291,14 +291,14 @@ namespace Nya.UI.ViewControllers.ModalControllers
 		private static async void IntractabilityCooldown(SliderSetting gameObject)
 		{
 			gameObject.interactable = false;
-			await AwaitSleep(2500);
+			await AwaitSleep(2000);
 			gameObject.interactable = true;
 		}
 
 		private static async void IntractabilityCooldown(Selectable gameObject)
 		{
 			gameObject.interactable = false;
-			await AwaitSleep(2500);
+			await AwaitSleep(2000);
 			gameObject.interactable = true;
 		}
 		
