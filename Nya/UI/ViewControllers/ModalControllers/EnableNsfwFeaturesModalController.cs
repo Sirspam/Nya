@@ -55,8 +55,8 @@ namespace Nya.UI.ViewControllers.ModalControllers
 		private readonly ModalContent[] _modalContents =
 		{
 			new ModalContent("Woah There!", "Are you sure you want to enable NSFW features? You have to be 18+ to do this!", "Nya.Resources.Chocola_Surprised.png", "No", "Yes, I'm 18+", true, false),
-			new ModalContent("Are you sure?", "Are you realllyyy sure you're 18 years old or above?", "Nya.Resources.Chocola_Question_Mark.png", "No, I'm not", "Yes, I'm certain", true, true),
-			new ModalContent("Are you very sure?", "If you're lying I will find out and tell your parents. \r\n(They will be very disappointed with you)", "Nya.Resources.Chocola_Angry.png", "Sorry, I lied", "Yes, I'm not lying", true, true),
+			new ModalContent("Are you sure?", "Mhm... you super sure you're 18 or older??", "Nya.Resources.Chocola_Question_Mark.png", "No, I'm not", "Yes, I'm certain", true, true),
+			new ModalContent("Are you very sure?", "If you're lying I will find out and tell your parents. \r\n(They will be very disappointed in you)", "Nya.Resources.Chocola_Angry.png", "Sorry, I lied", "Yes, I'm not lying", true, true),
 			new ModalContent("Just double checking", "Okay so you're absolutely positive that you're 18+ and want to enable NSFW features?", "Nya.Resources.Chocola_Howdidyoudothat.png", "No", "Yes", true, true),
 			new ModalContent("Surprise math question!", "To confirm that you're really 18, let's do a maths question! \r\nWhat is 6 + 9 * (4 - 2) + 0?", "Nya.Resources.Chocola_Laugh.png", "No", "Yes", true, true, true, true),
 			new ModalContent("Correct!", "If you got that right then you must be a smart and sensible adult!", "Nya.Resources.Chocola_Happy.png", "but I'm not...", "I am! 😃", true, true),
