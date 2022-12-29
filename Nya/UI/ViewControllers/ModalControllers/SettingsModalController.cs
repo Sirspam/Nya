@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -57,9 +56,6 @@ namespace Nya.UI.ViewControllers.ModalControllers
         [UIComponent("modal")] 
         public readonly ModalView ModalView = null!;
 
-        [UIComponent("modal")]
-        protected readonly RectTransform ModalTransform = null!;
-
         [UIComponent("settings-modal-tab-selector")]
         protected readonly TabSelector TabSelector = null!;
         
@@ -95,7 +91,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
 
         [UIComponent("api-dropdown")]
         protected readonly Transform ApiDropDownTransform = null!;
-
+        
         [UIComponent("sfw-dropdown")]
         protected readonly Transform SfwDropDownTransform = null!;
 
@@ -139,13 +135,27 @@ namespace Nya.UI.ViewControllers.ModalControllers
             {
                 BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.SettingsModalView.bsml"), parentTransform.gameObject, host);
                 ModalView.name = "NyaSettingsModal";
-                ModalView.SetField("_animateParentCanvas", true);
-                ApiDropDownTransform.Find("DropdownTableView").GetComponent<ModalView>().SetField("_animateParentCanvas", false);
-                SfwDropDownTransform.Find("DropdownTableView").GetComponent<ModalView>().SetField("_animateParentCanvas", false);
-                NsfwDropDownTransform.Find("DropdownTableView").GetComponent<ModalView>().SetField("_animateParentCanvas", false);
+                ModalView.gameObject.AddComponent<CanvasGroup>();
+                Button[] buttons = { ApiDropDownTransform.Find("DropDownButton").GetComponent<Button>(), SfwDropDownTransform.Find("DropDownButton").GetComponent<Button>(), NsfwDropDownTransform.Find("DropDownButton").GetComponent<Button>() };
+                foreach (var button in buttons)
+                {
+                    button.onClick.RemoveAllListeners();
+                    button.onClick.AddListener(() => DropDownButtonClicked(button.transform.parent.Find("DropdownTableView").GetComponent<ModalView>(), button));
+                }
                 
                 _parsed = true;
             }
+        }
+
+        private void DropDownButtonClicked(ModalView modalView, Button button)
+        {
+            modalView.SetupView(RootTransform);
+            modalView.SetField("_parentCanvasGroup", ModalView.gameObject.GetComponent<CanvasGroup>());
+            modalView.Show(true);
+            
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(() => modalView.Show(true));
+            button.GetComponent<SignalOnUIButtonClick>().Start();
         }
 
         protected void ShowModal(Transform parentTransform, object host)
