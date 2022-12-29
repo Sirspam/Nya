@@ -56,9 +56,6 @@ namespace Nya.UI.ViewControllers.ModalControllers
         [UIComponent("modal")] 
         public readonly ModalView ModalView = null!;
 
-        [UIComponent("modal")]
-        protected readonly RectTransform ModalTransform = null!;
-
         [UIComponent("settings-modal-tab-selector")]
         protected readonly TabSelector TabSelector = null!;
         
@@ -94,7 +91,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
 
         [UIComponent("api-dropdown")]
         protected readonly Transform ApiDropDownTransform = null!;
-
+        
         [UIComponent("sfw-dropdown")]
         protected readonly Transform SfwDropDownTransform = null!;
 
@@ -138,13 +135,27 @@ namespace Nya.UI.ViewControllers.ModalControllers
             {
                 BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.SettingsModalView.bsml"), parentTransform.gameObject, host);
                 ModalView.name = "NyaSettingsModal";
-                ModalView.SetField("_animateParentCanvas", true);
-                ApiDropDownTransform.Find("DropdownTableView").GetComponent<ModalView>().SetField("_animateParentCanvas", false);
-                SfwDropDownTransform.Find("DropdownTableView").GetComponent<ModalView>().SetField("_animateParentCanvas", false);
-                NsfwDropDownTransform.Find("DropdownTableView").GetComponent<ModalView>().SetField("_animateParentCanvas", false);
+                ModalView.gameObject.AddComponent<CanvasGroup>();
+                Button[] buttons = { ApiDropDownTransform.Find("DropDownButton").GetComponent<Button>(), SfwDropDownTransform.Find("DropDownButton").GetComponent<Button>(), NsfwDropDownTransform.Find("DropDownButton").GetComponent<Button>() };
+                foreach (var button in buttons)
+                {
+                    button.onClick.RemoveAllListeners();
+                    button.onClick.AddListener(() => DropDownButtonClicked(button.transform.parent.Find("DropdownTableView").GetComponent<ModalView>(), button));
+                }
                 
                 _parsed = true;
             }
+        }
+
+        private void DropDownButtonClicked(ModalView modalView, Button button)
+        {
+            modalView.SetupView(RootTransform);
+            modalView.SetField("_parentCanvasGroup", ModalView.gameObject.GetComponent<CanvasGroup>());
+            modalView.Show(true);
+            
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(() => modalView.Show(true));
+            button.GetComponent<SignalOnUIButtonClick>().Start();
         }
 
         protected void ShowModal(Transform parentTransform, object host)
@@ -284,7 +295,10 @@ namespace Nya.UI.ViewControllers.ModalControllers
         [UIAction("format-source")]
         protected string FormatSource(string value)
         {
-            return value.Split('/').Last().Replace("_", " ");
+            value = value.Split('/').Last().Replace("_", " ");
+            var charArray = value.ToCharArray();
+            charArray[0] = char.ToUpper(charArray[0]);
+            return new string(charArray);
         }
 
         #endregion
@@ -393,9 +407,13 @@ namespace Nya.UI.ViewControllers.ModalControllers
         {
             SfwDropDownListSetting.values.Clear();
             SfwDropDownListSetting.values = ImageSources.Sources[APIValue].SfwEndpoints.Cast<object>().ToList();
-            SfwDropDownListSetting.UpdateChoices();
+            if (SfwDropDownListSetting.values.Count > 1)
+            {
+                SfwDropDownListSetting.values.Add("Random");
+            }
             SfwDropDownListSetting.Value = SfwValue;
-            
+            SfwDropDownListSetting.UpdateChoices();
+
             if (CheckNsfwListHasEndpoints())
             {
                 if (NsfwDropDownListSetting.interactable == false)
@@ -406,6 +424,10 @@ namespace Nya.UI.ViewControllers.ModalControllers
                 
                 NsfwDropDownListSetting.values.Clear();
                 NsfwDropDownListSetting.values = ImageSources.Sources[APIValue].NsfwEndpoints.Cast<object>().ToList();
+                if (NsfwDropDownListSetting.values.Count > 1)
+                {
+                    NsfwDropDownListSetting.values.Add("Random");
+                }
                 NsfwDropDownListSetting.Value = NsfwValue;
                 NsfwDropDownListSetting.UpdateChoices();
             }
@@ -415,7 +437,15 @@ namespace Nya.UI.ViewControllers.ModalControllers
         {
             APIList = ImageSources.Sources.Keys.Cast<object>().ToList();
             SfwList = ImageSources.Sources[APIValue].SfwEndpoints.Cast<object>().ToList();
-            NsfwList = NsfwList = ImageSources.Sources[APIValue].NsfwEndpoints.Cast<object>().ToList();
+            if (SfwList.Count > 1)
+            {
+                SfwList.Add("Random");
+            }
+            NsfwList = ImageSources.Sources[APIValue].NsfwEndpoints.Cast<object>().ToList();
+            if (NsfwList.Count > 1)
+            {
+                NsfwList.Add("Random");
+            }
         }
     }
 }

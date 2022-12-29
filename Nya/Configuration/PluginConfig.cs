@@ -31,7 +31,7 @@ namespace Nya.Configuration
         public virtual Color BackgroundColor { get; set; } = new Color(0.745f, 0.745f, 0.745f);
         public virtual bool RainbowBackgroundColor { get; set; } = false;
         public virtual bool PersistantAutoNya { get; set; } = false;
-        public virtual int AutoNyaWait { get; set; } = 4;
+        public virtual int AutoNyaWait { get; set; } = 5;
         public virtual int ImageScaleValue { get; set; } = 512; // 0 means scaling disabled
         public virtual bool EasterEggs { get; set; } = true;
         public virtual string SelectedAPI { get; set; } = ImageSources.Sources.Keys.First();
@@ -68,29 +68,29 @@ namespace Nya.Configuration
         /// </remark>
         private void FixConfigIssues()
         {
-            if (AutoNyaWait < 4)
+            using var _ = ChangeTransaction;
+            
+            if (AutoNyaWait < 3)
             {
-                AutoNyaWait = 4;
+                AutoNyaWait = 3;
             }
-
-            if (SelectedEndpoints.Count != ImageSources.Sources.Count)
-            {
-                using var _ = ChangeTransaction;
-                SelectedEndpoints.Clear();
-                foreach (var key in ImageSources.Sources.Keys)
-                {
-                    SelectedEndpoints.Add(key, new EndpointData
-                    {
-                        SelectedSfwEndpoint = ImageSources.Sources[key].SfwEndpoints.FirstOrDefault() ?? "Empty",
-                        SelectedNsfwEndpoint = ImageSources.Sources[key].NsfwEndpoints.FirstOrDefault() ?? "Empty"
-                    });
-                }
-            }
-
+            
             if (!ImageSources.Sources.ContainsKey(SelectedAPI))
             {
                 SelectedEndpoints.Remove(SelectedAPI);
                 SelectedAPI = ImageSources.Sources.First().Key;
+            }
+
+            var selectedSfwEndpoint = SelectedEndpoints[SelectedAPI].SelectedSfwEndpoint;
+            if (!ImageSources.GlobalEndpoints.Contains(selectedSfwEndpoint) && !ImageSources.Sources[SelectedAPI].SfwEndpoints.Contains(selectedSfwEndpoint))
+            {
+                SelectedEndpoints[SelectedAPI].SelectedSfwEndpoint = ImageSources.Sources[SelectedAPI].SfwEndpoints.FirstOrDefault() ?? "Empty";
+            }
+            
+            var selectedNsfwEndpoint = SelectedEndpoints[SelectedAPI].SelectedNsfwEndpoint;
+            if (!ImageSources.GlobalEndpoints.Contains(selectedNsfwEndpoint) && !ImageSources.Sources[SelectedAPI].SfwEndpoints.Contains(selectedSfwEndpoint))
+            {
+                SelectedEndpoints[SelectedAPI].SelectedNsfwEndpoint = ImageSources.Sources[SelectedAPI].NsfwEndpoints.FirstOrDefault() ?? "Empty";
             }
         }
     }

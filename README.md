@@ -4,9 +4,9 @@ Beat Saber mod for displaying nya-tastic images from various anime themed web AP
 ### Accessing Nya's Settings
 Nya's settings can be accessed from the ⚙️ button, pressing this will bring up a modal for common settings, such as the currently selected API. Further settings can be accessed from the ➕ tab.
 
-Alternatively settings can be accessed from BSML's Mod Settings view.
+Alternatively settings can also be accessed from BSML's Mod Settings view.
 ### Resetting Nya's Floating Screen Position
-Nya features a floating screen, allowing Nya to be accessed outside of the gameplay setup panel. In the event that this floating screen gets stuck somewhere inaccessible it's position can be reset from BSML's mod settings panel. The position can also be reset from Nya's settings modal and settings view. 
+Nya features a floating screen, allowing Nya to be accessed outside of the gameplay setup panel. In the event that this floating screen gets stuck somewhere inaccessible it's position can be reset from Nya's settings. 
 ### Supported Image Sources
 **Note: I don't own any of these sources so I can't guarantee the images will always be appropriate**
 * [Waifu.Pics](https://waifu.pics/)
@@ -15,9 +15,13 @@ Nya features a floating screen, allowing Nya to be accessed outside of the gamep
 * [Catboys](https://catboys.com/)
 * [Local Files](#local-files)
 ### Local Files
-In order for local files to work there must be compatible images in the sfw / nsfw files found in Nya's UserData folder.
-The compatible file types are PNG, JPEG, GIF and APNG.
-Images which are downloaded via Nya will also be placed in the sfw / nsfw folders.
+Nya can load images which are saved within ``Beat Saber\UserData\Nya\sfw`` and ``Beat Saber\UserData\Nya\nsfw``. Additionally Nya will treat any subfolders in these directories as 'endpoints', meaning you can switch from local files saved in different folders.
+
+![Local Files Example](LocalFilesExample.png)
+
+Nya will only load images with the file type of `png`, `jpg`, `jpeg`, `gif` or `apng`.
+
+Images which are downloaded via Nya will be saved in the sfw / nsfw folders.
 ## Installation
 [Install](https://bsmg.wiki/pc-modding.html#install-mods) the latest version of [Nya](https://github.com/Sirspam/Nya/releases/latest) and the dependencies listed below.
 ### Dependencies

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -74,6 +75,15 @@ namespace Nya.Utils
         {
             try
             {
+                if (endpoint == "Random")
+                {
+                    var endpoints = !_pluginConfig.NsfwImages
+                        ? ImageSources.Sources[_pluginConfig.SelectedAPI].SfwEndpoints
+                        : ImageSources.Sources[_pluginConfig.SelectedAPI].NsfwEndpoints;
+                    
+                    endpoint = endpoints[_random.Next(endpoints.Count)];
+                }
+                
                 var path = ImageSources.Sources[_pluginConfig.SelectedAPI].BaseEndpoint + endpoint;
                 _siraLog.Info($"Attempting to get image url from {path}");
                 var response = await GetWebDataToBytesAsync(path);
@@ -108,7 +118,7 @@ namespace Nya.Utils
 
                 switch (ImageSources.Sources[_pluginConfig.SelectedAPI].Mode)
                 {
-                    case DataMode.Json:
+                    case ImageSources.DataMode.Json:
                         var newUrl = _nyaImageURL;
                         _nyaImageURL = await GetImageURL(selectedEndpoint);
                         var count = 0;
@@ -132,19 +142,40 @@ namespace Nya.Utils
                         }
 
                         break;
-                    case DataMode.Local:
-                        var type = _pluginConfig.NsfwImages ? "nsfw" : "sfw";
+                    case ImageSources.DataMode.Local:
+                        string folder;
+                        if (!_pluginConfig.NsfwImages)
+                        {
+                            folder = "sfw";
+                            var endpoint = _pluginConfig.SelectedEndpoints["Local Files"].SelectedSfwEndpoint;
+                            if (endpoint != "sfw")
+                            {
+                                folder = Path.Combine(folder, endpoint);
+                            }
+                        }
+                        else
+                        {
+                            folder = "nsfw";
+                            var endpoint = _pluginConfig.SelectedEndpoints["Local Files"].SelectedNsfwEndpoint;
+                            if (endpoint != "nsfw")
+                            {
+                                folder = Path.Combine(folder, endpoint);
+                            }
+                        }
                         var oldImageURL = _nyaImageURL;
                         while (_nyaImageURL == oldImageURL)
                         {
-                            var files = Directory.GetFiles(Path.Combine(ImageSources.Sources[_pluginConfig.SelectedAPI].BaseEndpoint, type));
+                            var path = Path.Combine(ImageSources.Sources[_pluginConfig.SelectedAPI].BaseEndpoint, folder);
+                            var files = Directory.GetFiles(path).Where(file => file.EndsWith(".png") || file.EndsWith(".jpeg") || file.EndsWith(".jpg") || file.EndsWith(".gif") || file.EndsWith(".apng")).ToArray();
                             switch (files.Length)
                             {
                                 case 0:
-                                    _siraLog.Error($"No local files for type: {type}");
+                                    _siraLog.Error($"No suitable files in folder: {path}");
                                     LoadErrorSprite(image);
+                                    callback?.Invoke();
                                     return;
                                 case 1 when oldImageURL != null:
+                                    callback?.Invoke();
                                     return;
                                 default:
                                     _nyaImageURL = files[_random.Next(files.Length)];
@@ -154,7 +185,7 @@ namespace Nya.Utils
                         
                         _nyaImageBytes = File.ReadAllBytes(_nyaImageURL!);
                         break;
-                    case DataMode.Unsupported:
+                    case ImageSources.DataMode.Unsupported:
                     default:
                         _siraLog.Warn($"Unsupported data mode for endpoint: {_pluginConfig.SelectedAPI}");
                         return;
@@ -163,7 +194,7 @@ namespace Nya.Utils
                 _nyaImageBytes = await GetWebDataToBytesAsync(_nyaImageURL!);
                 LoadCurrentNyaImage(image, () => callback?.Invoke());
             }
-            catch (Exception e) // e for dEez nuts
+            catch (Exception e)
             {
                 _siraLog.Error(e);
                 LoadErrorSprite(image);
