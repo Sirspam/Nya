@@ -50,6 +50,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
 
         private SiraLog _siraLog = null!;
         private UIUtils _uiUtils = null!;
+        private DiContainer _diContainer = null!;
         private PluginConfig _pluginConfig = null!;
         private PluginMetadata _pluginMetadata = null!;
         private ISiraSyncService _siraSyncService = null!;
@@ -60,10 +61,11 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         private EnableNsfwFeaturesModalController _enableNsfwFeaturesModalController = null!;
 
         [Inject]
-        public void Constructor(SiraLog siraLog, UIUtils uiUtils, PluginConfig pluginConfig, UBinder<Plugin, PluginMetadata> pluginMetadata, ISiraSyncService siraSyncService, FloatingScreenUtils floatingScreenUtils, TimeTweeningManager timeTweeningManager, MainFlowCoordinator mainFlowCoordinator, MenuTransitionsHelper menuTransitionsHelper, EnableNsfwFeaturesModalController enableNsfwFeaturesModalController)
+        public void Constructor(SiraLog siraLog, UIUtils uiUtils, DiContainer diContainer, PluginConfig pluginConfig, UBinder<Plugin, PluginMetadata> pluginMetadata, ISiraSyncService siraSyncService, FloatingScreenUtils floatingScreenUtils, TimeTweeningManager timeTweeningManager, MainFlowCoordinator mainFlowCoordinator, MenuTransitionsHelper menuTransitionsHelper, EnableNsfwFeaturesModalController enableNsfwFeaturesModalController)
         {
             _siraLog = siraLog;
             _uiUtils = uiUtils;
+            _diContainer = diContainer;
             _pluginConfig = pluginConfig;
             _pluginMetadata = pluginMetadata.Value;
             _siraSyncService = siraSyncService;
@@ -84,8 +86,8 @@ namespace Nya.UI.ViewControllers.SettingsControllers
                 _topPanel.gameObject.GetComponent<Canvas>().additionalShaderChannels = AdditionalCanvasShaderChannels.TexCoord1 | AdditionalCanvasShaderChannels.TexCoord2;
                 _chocolaImage.name = "ChocolaImage";
                 _vanillaImage.name = "VanillaImage";
-                _chocolaImage.gameObject.AddComponent<NyaSettingsClickableImage>();
-                _vanillaImage.gameObject.AddComponent<NyaSettingsClickableImage>();
+                _diContainer.InstantiateComponent<NyaSettingsClickableImage>(_chocolaImage.gameObject);
+                _diContainer.InstantiateComponent<NyaSettingsClickableImage>(_vanillaImage.gameObject);
 
                 BgColorSetting.modalColorPicker.doneEvent += dontCareDidntAsk => _pluginConfig.UseBackgroundColor = true;
                 BgColorSetting.modalColorPicker.cancelEvent += BgColorSettingCancelled;
@@ -342,6 +344,16 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         private void PostParse()
         {
             AssignValues();
+
+            if (Plugin.IsAprilFirst)
+            {
+                _chocolaImage.SetImage("Nya.Resources.Good_Boy.png");
+                _vanillaImage.SetImage("Nya.Resources.Good_Boy.png");
+                var localScale = _vanillaImage.transform.localScale;
+                localScale.x *= -1;
+                // ReSharper disable once Unity.InefficientPropertyAccess SHUT UP RESHARPER
+                _vanillaImage.transform.localScale = localScale;
+            }
         }
 
         [UIAction("floating-screen-scale-changed")]

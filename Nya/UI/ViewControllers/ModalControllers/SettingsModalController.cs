@@ -115,7 +115,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
         #region values
 
         [UIValue("nsfw-features")]
-        protected bool NsfwFeatures => PluginConfig.NsfwFeatures;
+        protected bool NsfwFeatures => PluginConfig.NsfwFeatures && !Plugin.IsAprilFirst;
 
         [UIValue("show-handle")]
         protected bool PauseHandle

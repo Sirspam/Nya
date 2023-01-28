@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using IPA;
 using IPA.Config;
 using IPA.Config.Stores;
@@ -13,6 +14,9 @@ namespace Nya
     [Plugin(RuntimeOptions.DynamicInit)][NoEnableDisable]
     public class Plugin
     {
+        // Surely this innocent looking boolean won't be used for anything silly or goofy :clueless:
+        public static bool IsAprilFirst { get; private set; }
+
         [Init]
         public Plugin(Config config, Logger logger, Zenjector zenjector)
         {
@@ -31,6 +35,8 @@ namespace Nya
             {
                 pluginConfig.NsfwImages = false;
             }
+
+            IsAprilFirst = DateTime.Now is {Month: 4, Day: 1} && pluginConfig.EasterEggs;
             
             zenjector.Install<NyaAppInstaller>(Location.App, pluginConfig);
             zenjector.Install<NyaMenuInstaller>(Location.Menu);
