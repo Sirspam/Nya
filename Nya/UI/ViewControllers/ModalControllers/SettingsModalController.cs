@@ -296,6 +296,8 @@ namespace Nya.UI.ViewControllers.ModalControllers
         protected string FormatSource(string value)
         {
             value = value.Split('/').Last().Replace("_", " ");
+            value = value.Replace("?", " ");
+            value = value.Replace("=", " ");
             var charArray = value.ToCharArray();
             charArray[0] = char.ToUpper(charArray[0]);
             return new string(charArray);
