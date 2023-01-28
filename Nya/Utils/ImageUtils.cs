@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -14,18 +13,21 @@ using Nya.Configuration;
 using Nya.Entries;
 using SiraUtil.Logging;
 using SiraUtil.Web;
+using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
+using Random = System.Random;
 
 namespace Nya.Utils
 {
     internal class ImageUtils
     {
         public static event Action? ErrorSpriteLoadedEvent;
-        
+
+        private string? _nyaImageURL;
         private byte[]? _nyaImageBytes;
         private string? _nyaImageEndpoint;
-        private string? _nyaImageURL;
+        private Material? _uiRoundEdgeMaterial;
 
         private readonly Random _random;
         private readonly SiraLog _siraLog;
@@ -38,6 +40,19 @@ namespace Nya.Utils
             _siraLog = siraLog;
             _httpService = httpService;
             _pluginConfig = pluginConfig;
+        }
+
+        public Material UIRoundEdgeMaterial
+        {
+            get
+            {
+                if (_uiRoundEdgeMaterial is null)
+                {
+                    _uiRoundEdgeMaterial = Resources.FindObjectsOfTypeAll<Material>().Last(x => x.name == "UINoGlowRoundEdge");
+                }
+
+                return _uiRoundEdgeMaterial;
+            }
         }
         
         public void DownloadNyaImage()
