@@ -45,7 +45,7 @@ namespace Nya.Configuration
         public virtual IDisposable ChangeTransaction => null!;
 
         // Surely this innocent looking boolean won't be used for anything silly or goofy :clueless:
-        public virtual bool IsAprilFirst => EasterEggs;//DateTime.Now is {Month: 4, Day: 1} && EasterEggs;
+        public virtual bool IsAprilFirst => DateTime.Now is {Month: 4, Day: 1} && EasterEggs;
         
         /// <summary>
         /// This is called whenever BSIPA reads the config from disk (including when file changes are detected).
