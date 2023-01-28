@@ -135,9 +135,6 @@ namespace Nya.UI.ViewControllers.ModalControllers
 		[UIComponent("slider")]
 		private readonly SliderSetting _mathSlider = null!;
 		
-		[UIComponent("submit-button")]
-		private readonly Button _submitButton = null!;
-
 		[UIParams] 
 		private readonly BSMLParserParams _parserParams = null!;
 

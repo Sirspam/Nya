@@ -17,7 +17,7 @@
                 </horizontal>
                 <horizontal id="slider-layout" active="false" pref-width="88">
                     <slider-setting id="slider" text="Value" min="0" max="60" increment="1" show-buttons="true" integer-only="true" pref-width="60"/>
-                    <button id="submit-button" text="Submit" on-click="submit-clicked" pref-width="25" pref-height="10"/>
+                    <button text="Submit" on-click="submit-clicked" pref-width="25" pref-height="10"/>
                 </horizontal>
             </vertical>
             <horizontal id="horny-pastry-puffer-layout" active="false">
