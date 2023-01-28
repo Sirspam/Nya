@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -14,18 +13,21 @@ using Nya.Configuration;
 using Nya.Entries;
 using SiraUtil.Logging;
 using SiraUtil.Web;
+using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
+using Random = System.Random;
 
 namespace Nya.Utils
 {
     internal class ImageUtils
     {
         public static event Action? ErrorSpriteLoadedEvent;
-        
+
+        private string? _nyaImageURL;
         private byte[]? _nyaImageBytes;
         private string? _nyaImageEndpoint;
-        private string? _nyaImageURL;
+        private Material? _uiRoundEdgeMaterial;
 
         private readonly Random _random;
         private readonly SiraLog _siraLog;
@@ -38,6 +40,19 @@ namespace Nya.Utils
             _siraLog = siraLog;
             _httpService = httpService;
             _pluginConfig = pluginConfig;
+        }
+
+        public Material UIRoundEdgeMaterial
+        {
+            get
+            {
+                if (_uiRoundEdgeMaterial is null)
+                {
+                    _uiRoundEdgeMaterial = Resources.FindObjectsOfTypeAll<Material>().Last(x => x.name == "UINoGlowRoundEdge");
+                }
+
+                return _uiRoundEdgeMaterial;
+            }
         }
         
         public void DownloadNyaImage()
@@ -64,9 +79,9 @@ namespace Nya.Utils
 
                 return await response.ReadAsByteArrayAsync();
             }
-            catch (HttpRequestException error)
+            catch (HttpRequestException exception)
             {
-                _siraLog.Error($"Error getting data from {url}, Message: {error}");
+                _siraLog.Error($"Error getting data from {url}, Message: {exception}");
                 return null;
             }
         }
@@ -84,7 +99,7 @@ namespace Nya.Utils
                     endpoint = endpoints[_random.Next(endpoints.Count)];
                 }
                 
-                var path = ImageSources.Sources[_pluginConfig.SelectedAPI].BaseEndpoint + endpoint;
+                var path = _pluginConfig.IsAprilFirst ? "https://nekos.life/api/v2/img/woof" : ImageSources.Sources[_pluginConfig.SelectedAPI].BaseEndpoint + endpoint;
                 _siraLog.Info($"Attempting to get image url from {path}");
                 var response = await GetWebDataToBytesAsync(path);
                 if (response == null)
@@ -116,7 +131,7 @@ namespace Nya.Utils
                     ? _pluginConfig.SelectedEndpoints[_pluginConfig.SelectedAPI].SelectedNsfwEndpoint
                     : _pluginConfig.SelectedEndpoints[_pluginConfig.SelectedAPI].SelectedSfwEndpoint;
 
-                switch (ImageSources.Sources[_pluginConfig.SelectedAPI].Mode)
+                switch (ImageSources.Sources[_pluginConfig.IsAprilFirst ? "nekos.life" : _pluginConfig.SelectedAPI].Mode)
                 {
                     case ImageSources.DataMode.Json:
                         var newUrl = _nyaImageURL;
@@ -194,9 +209,9 @@ namespace Nya.Utils
                 _nyaImageBytes = await GetWebDataToBytesAsync(_nyaImageURL!);
                 LoadCurrentNyaImage(image, () => callback?.Invoke());
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                _siraLog.Error(e);
+                _siraLog.Error(exception);
                 LoadErrorSprite(image);
             }
         }

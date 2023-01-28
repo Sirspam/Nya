@@ -5,7 +5,6 @@ using BeatSaberMarkupLanguage.Parser;
 using HMUI;
 using IPA.Utilities;
 using UnityEngine;
-using Zenject;
 
 namespace Nya.UI.ViewControllers.ModalControllers
 {

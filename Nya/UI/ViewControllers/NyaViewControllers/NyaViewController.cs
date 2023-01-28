@@ -58,6 +58,7 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
         [UIAction("#post-parse")]
         protected void NyaPostParse()
         {
+            NyaImage.material = ImageUtils.UIRoundEdgeMaterial;
             NyaButton.interactable = false;
             ImageUtils.LoadCurrentNyaImage(NyaImage, () => NyaButton.interactable = true);
         }

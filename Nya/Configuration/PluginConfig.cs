@@ -27,7 +27,7 @@ namespace Nya.Configuration
         public virtual Vector3 MenuRotation { get; set; } = FloatingScreenUtils.DefaultRotation.eulerAngles;
         public virtual Vector3 PausePosition { get; set; } = FloatingScreenUtils.DefaultPosition;
         public virtual Vector3 PauseRotation { get; set; } = FloatingScreenUtils.DefaultRotation.eulerAngles;
-        public virtual bool UseBackgroundColor { get; set; }
+        public virtual bool UseBackgroundColor { get; set; } = false;
         public virtual Color BackgroundColor { get; set; } = new Color(0.745f, 0.745f, 0.745f);
         public virtual bool RainbowBackgroundColor { get; set; } = false;
         public virtual bool PersistantAutoNya { get; set; } = false;
@@ -38,6 +38,14 @@ namespace Nya.Configuration
 
         [NonNullable][UseConverter(typeof(DictionaryConverter<EndpointData>))]
         public virtual Dictionary<string, EndpointData> SelectedEndpoints { get; set; } = new Dictionary<string, EndpointData>();
+        
+        /// <summary>
+        /// Some magic stuff to save config changes to disk deferred
+        /// </summary>
+        public virtual IDisposable ChangeTransaction => null!;
+
+        // Surely this innocent looking boolean won't be used for anything silly or goofy :clueless:
+        public virtual bool IsAprilFirst => DateTime.Now is {Month: 4, Day: 1} && EasterEggs;
         
         /// <summary>
         /// This is called whenever BSIPA reads the config from disk (including when file changes are detected).
@@ -57,36 +65,39 @@ namespace Nya.Configuration
             FixConfigIssues();
         }
 
-        /// <summary>
-        /// Some magic stuff to save config changes to disk deferred
-        /// </summary>
-        public virtual IDisposable ChangeTransaction => null!;
-
-        /// <remark>
-        /// May have to make this check more than just the count in the future but for now this works
-        /// Let's pray that the user never dare tampers with the config otherwise values in the SelectedEndpoints will never fix themselves
-        /// </remark>
         private void FixConfigIssues()
         {
+            // Stops any changes to the config happening until this method is done
             using var _ = ChangeTransaction;
             
+            // Checks auto nya's wait time hasn't been set to below 3 seconds
+            // Stops users from spamming the fuck out of an API
             if (AutoNyaWait < 3)
             {
                 AutoNyaWait = 3;
             }
             
+            // Checks if the currently selected API is supported
             if (!ImageSources.Sources.ContainsKey(SelectedAPI))
             {
                 SelectedEndpoints.Remove(SelectedAPI);
                 SelectedAPI = ImageSources.Sources.First().Key;
             }
 
+            // Adds a supported API to the selected endpoints dictionary
+            if (!SelectedEndpoints.ContainsKey(SelectedAPI))
+            {
+                SelectedEndpoints.Add(SelectedAPI, new EndpointData());
+            }
+
+            // Checks the sfw endpoint on the selected API exists
             var selectedSfwEndpoint = SelectedEndpoints[SelectedAPI].SelectedSfwEndpoint;
             if (!ImageSources.GlobalEndpoints.Contains(selectedSfwEndpoint) && !ImageSources.Sources[SelectedAPI].SfwEndpoints.Contains(selectedSfwEndpoint))
             {
                 SelectedEndpoints[SelectedAPI].SelectedSfwEndpoint = ImageSources.Sources[SelectedAPI].SfwEndpoints.FirstOrDefault() ?? "Empty";
             }
             
+            // Checks the nsfw endpoint on the selected API exists
             var selectedNsfwEndpoint = SelectedEndpoints[SelectedAPI].SelectedNsfwEndpoint;
             if (!ImageSources.GlobalEndpoints.Contains(selectedNsfwEndpoint) && !ImageSources.Sources[SelectedAPI].SfwEndpoints.Contains(selectedSfwEndpoint))
             {
