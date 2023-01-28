@@ -61,32 +61,40 @@ namespace Nya.Configuration
         /// Some magic stuff to save config changes to disk deferred
         /// </summary>
         public virtual IDisposable ChangeTransaction => null!;
-
-        /// <remark>
-        /// May have to make this check more than just the count in the future but for now this works
-        /// Let's pray that the user never dare tampers with the config otherwise values in the SelectedEndpoints will never fix themselves
-        /// </remark>
+        
         private void FixConfigIssues()
         {
+            // Stops any changes to the config happening until this method is done
             using var _ = ChangeTransaction;
             
+            // Checks auto nya's wait time hasn't been set to below 3 seconds
+            // Stops users from spamming the fuck out of an API
             if (AutoNyaWait < 3)
             {
                 AutoNyaWait = 3;
             }
             
+            // Checks if the currently selected API is supported
             if (!ImageSources.Sources.ContainsKey(SelectedAPI))
             {
                 SelectedEndpoints.Remove(SelectedAPI);
                 SelectedAPI = ImageSources.Sources.First().Key;
             }
 
+            // Adds a supported API to the selected endpoints dictionary
+            if (!SelectedEndpoints.ContainsKey(SelectedAPI))
+            {
+                SelectedEndpoints.Add(SelectedAPI, new EndpointData());
+            }
+
+            // Checks the sfw endpoint on the selected API exists
             var selectedSfwEndpoint = SelectedEndpoints[SelectedAPI].SelectedSfwEndpoint;
             if (!ImageSources.GlobalEndpoints.Contains(selectedSfwEndpoint) && !ImageSources.Sources[SelectedAPI].SfwEndpoints.Contains(selectedSfwEndpoint))
             {
                 SelectedEndpoints[SelectedAPI].SelectedSfwEndpoint = ImageSources.Sources[SelectedAPI].SfwEndpoints.FirstOrDefault() ?? "Empty";
             }
             
+            // Checks the nsfw endpoint on the selected API exists
             var selectedNsfwEndpoint = SelectedEndpoints[SelectedAPI].SelectedNsfwEndpoint;
             if (!ImageSources.GlobalEndpoints.Contains(selectedNsfwEndpoint) && !ImageSources.Sources[SelectedAPI].SfwEndpoints.Contains(selectedSfwEndpoint))
             {
