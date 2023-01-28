@@ -13,6 +13,7 @@ Nya features a floating screen, allowing Nya to be accessed outside of the gamep
 * [Nekos.Life](https://nekos.life/)
 * [Anime-Images API](https://anime-api.hisoka17.repl.co/)
 * [Catboys](https://catboys.com/)
+* [BocchiTheAPI](https://github.com/rithik-b/BocchiTheAPI/)
 * [Local Files](#local-files)
 ### Local Files
 Nya can load images which are saved within ``Beat Saber\UserData\Nya\sfw`` and ``Beat Saber\UserData\Nya\nsfw``. Additionally Nya will treat any subfolders in these directories as 'endpoints', meaning you can switch from local files saved in different folders.
