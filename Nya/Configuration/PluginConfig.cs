@@ -27,7 +27,7 @@ namespace Nya.Configuration
         public virtual Vector3 MenuRotation { get; set; } = FloatingScreenUtils.DefaultRotation.eulerAngles;
         public virtual Vector3 PausePosition { get; set; } = FloatingScreenUtils.DefaultPosition;
         public virtual Vector3 PauseRotation { get; set; } = FloatingScreenUtils.DefaultRotation.eulerAngles;
-        public virtual bool UseBackgroundColor { get; set; }
+        public virtual bool UseBackgroundColor { get; set; } = false;
         public virtual Color BackgroundColor { get; set; } = new Color(0.745f, 0.745f, 0.745f);
         public virtual bool RainbowBackgroundColor { get; set; } = false;
         public virtual bool PersistantAutoNya { get; set; } = false;
@@ -38,6 +38,14 @@ namespace Nya.Configuration
 
         [NonNullable][UseConverter(typeof(DictionaryConverter<EndpointData>))]
         public virtual Dictionary<string, EndpointData> SelectedEndpoints { get; set; } = new Dictionary<string, EndpointData>();
+        
+        /// <summary>
+        /// Some magic stuff to save config changes to disk deferred
+        /// </summary>
+        public virtual IDisposable ChangeTransaction => null!;
+
+        // Surely this innocent looking boolean won't be used for anything silly or goofy :clueless:
+        public virtual bool IsAprilFirst => EasterEggs;//DateTime.Now is {Month: 4, Day: 1} && EasterEggs;
         
         /// <summary>
         /// This is called whenever BSIPA reads the config from disk (including when file changes are detected).
@@ -57,11 +65,6 @@ namespace Nya.Configuration
             FixConfigIssues();
         }
 
-        /// <summary>
-        /// Some magic stuff to save config changes to disk deferred
-        /// </summary>
-        public virtual IDisposable ChangeTransaction => null!;
-        
         private void FixConfigIssues()
         {
             // Stops any changes to the config happening until this method is done

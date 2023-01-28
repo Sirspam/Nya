@@ -99,7 +99,7 @@ namespace Nya.Utils
                     endpoint = endpoints[_random.Next(endpoints.Count)];
                 }
                 
-                var path = Plugin.IsAprilFirst ? "https://nekos.life/api/v2/img/woof" : ImageSources.Sources[_pluginConfig.SelectedAPI].BaseEndpoint + endpoint;
+                var path = _pluginConfig.IsAprilFirst ? "https://nekos.life/api/v2/img/woof" : ImageSources.Sources[_pluginConfig.SelectedAPI].BaseEndpoint + endpoint;
                 _siraLog.Info($"Attempting to get image url from {path}");
                 var response = await GetWebDataToBytesAsync(path);
                 if (response == null)
@@ -131,7 +131,7 @@ namespace Nya.Utils
                     ? _pluginConfig.SelectedEndpoints[_pluginConfig.SelectedAPI].SelectedNsfwEndpoint
                     : _pluginConfig.SelectedEndpoints[_pluginConfig.SelectedAPI].SelectedSfwEndpoint;
 
-                switch (ImageSources.Sources[Plugin.IsAprilFirst ? "nekos.life" : _pluginConfig.SelectedAPI].Mode)
+                switch (ImageSources.Sources[_pluginConfig.IsAprilFirst ? "nekos.life" : _pluginConfig.SelectedAPI].Mode)
                 {
                     case ImageSources.DataMode.Json:
                         var newUrl = _nyaImageURL;

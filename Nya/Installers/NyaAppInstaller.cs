@@ -20,7 +20,7 @@ namespace Nya.Installers
             Container.Bind<ImageUtils>().AsSingle();
             Container.Bind<FloatingScreenUtils>().AsSingle();
             Container.BindInstance(_pluginConfig).AsSingle();
-            if (Plugin.IsAprilFirst)
+            if (_pluginConfig.IsAprilFirst)
             {
                 Container.BindInterfacesTo<GoodBoyPatch>().AsSingle();
             }

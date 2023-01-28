@@ -40,7 +40,7 @@ namespace Nya.Components
 
 		public void OnPointerClick(PointerEventData eventData)
 		{
-			if (Plugin.IsAprilFirst || (_isBogShamb && _pluginConfig.EasterEggs))
+			if (_pluginConfig.IsAprilFirst || (_isBogShamb && _pluginConfig.EasterEggs))
 			{
 				_basicUIAudioManagerAudioSource.PlayOneShot(_audioClips[0]);
 			}

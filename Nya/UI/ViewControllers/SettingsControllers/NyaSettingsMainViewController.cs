@@ -126,7 +126,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         }
         
         [UIValue("restart-required")]
-        private bool RestartRequired => InMenu != _pluginConfig.InMenu && isActiveAndEnabled;
+        private bool RestartRequired => (InMenu != _pluginConfig.InMenu || EasterEggs != _pluginConfig.EasterEggs) && isActiveAndEnabled;
 
         [UIValue("in-menu")]
         private bool InMenu
@@ -250,6 +250,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
             {
                 _easterEggs = value;
                 NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(RestartRequired));
             }
         }
 
@@ -345,7 +346,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         {
             AssignValues();
 
-            if (Plugin.IsAprilFirst)
+            if (_pluginConfig.IsAprilFirst)
             {
                 _chocolaImage.SetImage("Nya.Resources.Good_Boy.png");
                 _vanillaImage.SetImage("Nya.Resources.Good_Boy.png");
@@ -449,6 +450,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
             _pluginConfig.PersistantAutoNya = PersistantAutoNya;
             _pluginConfig.ImageScaleValue = _scaleValue;
             _pluginConfig.SeparatePositions = SeparatePositions;
+            _pluginConfig.EasterEggs = EasterEggs;
             _pluginConfig.NsfwFeatures = NsfwFeatures;
             _pluginConfig.RememberNsfw = RememberNsfw;
             _pluginConfig.SkipNsfw = SkipNsfw;
