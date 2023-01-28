@@ -136,7 +136,9 @@ namespace Nya.UI.ViewControllers.ModalControllers
 		private readonly SliderSetting _mathSlider = null!;
 		
 		[UIComponent("submit-button")]
+#pragma warning disable CS0414
 		private readonly Button _submitButton = null!;
+#pragma warning restore CS0414
 
 		[UIParams] 
 		private readonly BSMLParserParams _parserParams = null!;
