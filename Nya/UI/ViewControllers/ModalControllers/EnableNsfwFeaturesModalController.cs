@@ -12,7 +12,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 using static SiraUtil.Extras.Utilities;
-using Component = UnityEngine.Component;
 
 namespace Nya.UI.ViewControllers.ModalControllers
 {

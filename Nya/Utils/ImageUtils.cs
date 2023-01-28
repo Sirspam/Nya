@@ -79,9 +79,9 @@ namespace Nya.Utils
 
                 return await response.ReadAsByteArrayAsync();
             }
-            catch (HttpRequestException error)
+            catch (HttpRequestException exception)
             {
-                _siraLog.Error($"Error getting data from {url}, Message: {error}");
+                _siraLog.Error($"Error getting data from {url}, Message: {exception}");
                 return null;
             }
         }
@@ -209,9 +209,9 @@ namespace Nya.Utils
                 _nyaImageBytes = await GetWebDataToBytesAsync(_nyaImageURL!);
                 LoadCurrentNyaImage(image, () => callback?.Invoke());
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                _siraLog.Error(e);
+                _siraLog.Error(exception);
                 LoadErrorSprite(image);
             }
         }

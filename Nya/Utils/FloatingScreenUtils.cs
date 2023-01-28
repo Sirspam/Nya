@@ -5,7 +5,6 @@ using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.FloatingScreen;
 using HMUI;
 using Nya.Configuration;
-using SiraUtil.Logging;
 using Tweening;
 using UnityEngine;
 using Object = UnityEngine.Object;

@@ -1,5 +1,4 @@
-﻿using System;
-using HMUI;
+﻿using HMUI;
 using Tweening;
 using UnityEngine;
 

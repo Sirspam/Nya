@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using BeatSaberMarkupLanguage;
-using ModestTree;
 using Nya.Configuration;
 using UnityEngine;
 using UnityEngine.EventSystems;
