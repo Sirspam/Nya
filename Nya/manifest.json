@@ -3,8 +3,8 @@
   "id": "Nya",
   "name": "Nya",
   "author": "Sirspam",
-  "version": "0.6.1",
-  "description": "BeatSaber mod for displaying nya-tastic images from various anime themed web APIs",
+  "version": "0.6.2",
+  "description": "BeatSaber mod for displaying nya-tastic images from various web APIs",
   "gameVersion": "1.21.0",
   "icon": "Nya.Resources.Chocola_Mini_Sitting.png",
   "dependsOn": {

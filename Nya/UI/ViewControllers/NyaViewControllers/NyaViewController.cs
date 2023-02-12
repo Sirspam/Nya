@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using BeatSaberMarkupLanguage.Attributes;
 using HMUI;
 using Nya.Configuration;
@@ -59,15 +60,17 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
         protected void NyaPostParse()
         {
             NyaImage.material = ImageUtils.UIRoundEdgeMaterial;
-            NyaButton.interactable = false;
-            ImageUtils.LoadCurrentNyaImage(NyaImage, () => NyaButton.interactable = true);
+            SetNyaButtonsInteractability(false);
+            var time = DateTime.Now;
+            ImageUtils.LoadCurrentNyaImage(NyaImage, () => Task.Run(() => NyaButtonCooldown(time)));
         }
 
         [UIAction("nya-click")]
         protected void NyaClicked()
         {
-            NyaButton.interactable = false;
-            ImageUtils.LoadNewNyaImage(NyaImage, () => NyaButton.interactable = true);
+            SetNyaButtonsInteractability(false);
+            var time = DateTime.Now;
+            ImageUtils.LoadNewNyaImage(NyaImage, () => Task.Run(() => NyaButtonCooldown(time)));
         }
 
         [UIAction("nya-auto-clicked")]
@@ -89,6 +92,19 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
             ImageUtils.ErrorSpriteLoadedEvent -= ImageUtilsOnErrorSpriteLoadedEvent;
         }
 
+        private void SetNyaButtonsInteractability(bool value)
+        {
+            NyaButton.interactable = value;
+            NyaAutoButton.interactable = value;
+        }
+
+        private async void NyaButtonCooldown(DateTime pressedTime)
+        {
+            pressedTime = pressedTime.AddSeconds(1.25f);
+            await Task.Delay((int) Math.Max(0, (pressedTime - DateTime.Now).TotalMilliseconds));
+            SetNyaButtonsInteractability(true);
+        }
+        
         private void ImageUtilsOnErrorSpriteLoadedEvent()
         {
             if (AutoNyaActive)
@@ -123,7 +139,7 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
                 }
             }
         }
-
+        
         private class AutoNyaManager : ILateTickable
         {
             public bool DoingDaThing;
