@@ -1,5 +1,5 @@
 # Nya <img src="https://raw.githubusercontent.com/Sirspam/Sirspam/main/chocola_mini_sitting.png" align="right" width="150">
-Beat Saber mod for displaying nya-tastic images from various anime themed web APIs
+Beat Saber mod for displaying nya-tastic images from various web APIs
 ## Usage
 ### Accessing Nya's Settings
 Nya's settings can be accessed from the ⚙️ button, pressing this will bring up a modal for common settings, such as the currently selected API. Further settings can be accessed from the ➕ tab.
