@@ -11,7 +11,7 @@ using Object = UnityEngine.Object;
 
 namespace Nya.Utils
 {
-	internal class FloatingScreenUtils
+	internal class FloatingScreenUtils : IDisposable
 	{
 		public static Vector3 DefaultPosition = new Vector3(0f, 3.75f, 4f);
 		public static Quaternion DefaultRotation = Quaternion.Euler(332f, 0f, 0f);
@@ -51,24 +51,22 @@ namespace Nya.Utils
 			switch (type)
 			{
 				case FloatingScreenType.Game:
-					if (_pluginConfig.SeparatePositions)
-					{
-						GameFloatingScreen = CreateNyaFloatingScreen(host, _pluginConfig.PausePosition, _pluginConfig.PauseRotation);
-						GameFloatingScreen.gameObject.name = "NyaGameFloatingScreen";
-						break;
-					}
-					GameFloatingScreen = CreateNyaFloatingScreen(host, _pluginConfig.MenuPosition, _pluginConfig.MenuRotation);
+					GameFloatingScreen = _pluginConfig.SeparatePositions
+						? CreateNyaFloatingScreen(host, _pluginConfig.PausePosition, _pluginConfig.PauseRotation)
+						: CreateNyaFloatingScreen(host, _pluginConfig.MenuPosition, _pluginConfig.MenuRotation);
 					GameFloatingScreen.gameObject.name = "NyaGameFloatingScreen";
+					GameFloatingScreen.HandleGrabbed += GameFloatingScreenOnHandleGrabbed;
 					break;
 					
 				case FloatingScreenType.Menu:
 				default:
 					MenuFloatingScreen = CreateNyaFloatingScreen(host, _pluginConfig.MenuPosition, _pluginConfig.MenuRotation);
 					MenuFloatingScreen.gameObject.name = "NyaMenuFloatingScreen";
+					MenuFloatingScreen.HandleGrabbed += MenuFloatingScreenOnHandleGrabbed;
 					break;
 			}
 		}
-
+		
 		private FloatingScreen CreateNyaFloatingScreen(object host, Vector3 position, Vector3 rotation)
 		{
 			var floatingScreen = FloatingScreen.CreateFloatingScreen(new Vector2(100f, 80f), true, position, Quaternion.Euler(rotation), 220, true);
@@ -128,43 +126,46 @@ namespace Nya.Utils
 			}
 		}
 		
-		public void TweenToDefaultPosition(bool saveValuesToConfig = true)
+		public void TweenToDefaultPosition(bool saveToConfig = true) => TweenToPosition(DefaultPosition, DefaultRotation, saveToConfig);
+
+		public void TweenToSavedPosition()
 		{
 			var floatingScreen = GetActiveFloatingScreen();
-
-			if (floatingScreen == null)
-			{
-				return;
-			}
 			
-			_timeTweeningManager.KillAllTweens(floatingScreen);
-			var transform = floatingScreen.gameObject.transform;
-			var oldPosition = transform.position;
-			var oldRotation = transform.rotation;
-			var time = (float) Math.Sqrt(Vector3.Distance(oldPosition, DefaultPosition) / 2);
-			if (time < 0.5f)
-			{
-				time = (float) Math.Sqrt(Quaternion.Angle(oldRotation, DefaultRotation) / 100); // Should probably change this
-			}
-			var positionTween = new FloatTween(0f, 1f, val => transform.position = Vector3.Lerp(oldPosition, DefaultPosition, val), time, EaseType.OutQuart);
-			var rotationTween = new FloatTween(0f, 1f, val => transform.rotation = Quaternion.Lerp(oldRotation, DefaultRotation, val), time, EaseType.OutQuart);
-			_timeTweeningManager.AddTween(positionTween, floatingScreen);
-			_timeTweeningManager.AddTween(rotationTween, floatingScreen);
-
-			if (!saveValuesToConfig)
+			if (floatingScreen == null)
 			{
 				return;
 			}
 			
 			if (floatingScreen.gameObject.name == "NyaGameFloatingScreen" && _pluginConfig.SeparatePositions)
 			{
-				_pluginConfig.PausePosition = DefaultPosition;
-				_pluginConfig.PauseRotation = DefaultRotation.eulerAngles;
+				TweenToPosition(floatingScreen, _pluginConfig.SavedPausePosition, Quaternion.Euler(_pluginConfig.SavedPauseRotation), true);
 			}
 			else
 			{
-				_pluginConfig.MenuPosition = DefaultPosition;
-				_pluginConfig.MenuRotation = DefaultRotation.eulerAngles;
+				TweenToPosition(floatingScreen, _pluginConfig.SavedMenuPosition, Quaternion.Euler(_pluginConfig.SavedMenuRotation), true);
+			}
+		}
+
+		public void SaveCurrentPosition()
+		{
+			var floatingScreen = GetActiveFloatingScreen();
+			
+			if (floatingScreen == null)
+			{
+				return;
+			}
+			
+			var gameObject = floatingScreen.gameObject;
+			if (gameObject.name == "NyaGameFloatingScreen" && _pluginConfig.SeparatePositions)
+			{
+				_pluginConfig.SavedPausePosition = gameObject.transform.position;
+				_pluginConfig.SavedPauseRotation = gameObject.transform.eulerAngles;
+			}
+			else
+			{
+				_pluginConfig.SavedMenuPosition = gameObject.transform.position;
+				_pluginConfig.SavedMenuRotation = gameObject.transform.eulerAngles;
 			}
 		}
 
@@ -213,6 +214,75 @@ namespace Nya.Utils
 			}
 			else
 			{
+				_pluginConfig.MenuRotation = newRotation.eulerAngles;
+			}
+		}
+
+		public void TweenToPosition(Vector3? newPosition, Quaternion? newRotation, bool saveToConfig)
+		{
+			var floatingScreen = GetActiveFloatingScreen();
+			
+			if (floatingScreen == null || (newPosition is null && newRotation is null))
+			{
+				return;
+			}
+
+			var transform = floatingScreen.transform;
+			var position = transform.position;
+			var rotation = transform.rotation;
+			
+			if (newPosition is not null)
+			{
+				position = (Vector3) newPosition;
+			}
+
+			if (newRotation is not null)
+			{
+				rotation = (Quaternion) newRotation;
+			}
+			
+			TweenToPosition(floatingScreen, position, rotation, saveToConfig);
+		}
+		
+		public void TweenToPosition(FloatingScreen floatingScreen, Vector3 newPosition, Quaternion newRotation, bool saveToConfig)
+		{
+			var transform = floatingScreen.gameObject.transform;
+			var startPosition = transform.position;
+			var startRotation = transform.rotation;
+
+			_timeTweeningManager.KillAllTweens(floatingScreen);
+			if (startPosition == newPosition && startRotation == newRotation)
+			{
+				return;
+			}
+
+			var maxDuration = 1.2f;
+			var positionDuration = maxDuration / Vector3.Distance(startPosition, newPosition);
+			var rotationDuration = maxDuration / Quaternion.Angle(startRotation, newRotation);
+			var duration = Mathf.Max(positionDuration, rotationDuration);
+			// min time
+			duration = Mathf.Max(duration, 0.85f);
+			// max time
+			duration = Mathf.Min(duration, maxDuration);
+
+			var positionTween = new FloatTween(0f, 1f, val => transform.position = Vector3.Lerp(startPosition, newPosition, val), duration, EaseType.OutQuad);
+			var rotationTween = new FloatTween(0f, 1f, val => transform.rotation = Quaternion.Lerp(startRotation, newRotation, val), duration, EaseType.OutCubic);
+			_timeTweeningManager.AddTween(positionTween, floatingScreen);
+			_timeTweeningManager.AddTween(rotationTween, floatingScreen);
+
+			if (!saveToConfig)
+			{
+				return;
+			}
+			
+			if (floatingScreen.gameObject.name == "NyaGameFloatingScreen" && _pluginConfig.SeparatePositions)
+			{
+				_pluginConfig.PausePosition = newPosition;
+				_pluginConfig.PauseRotation = newRotation.eulerAngles;
+			}
+			else
+			{
+				_pluginConfig.MenuPosition = newPosition;
 				_pluginConfig.MenuRotation = newRotation.eulerAngles;
 			}
 		}
@@ -297,6 +367,29 @@ namespace Nya.Utils
             color.a = 0.5f;
             material.color = color;
             return material;
+        }
+
+        private void GameFloatingScreenOnHandleGrabbed(object sender, FloatingScreenHandleEventArgs e)
+        {
+	        _timeTweeningManager.KillAllTweens(GameFloatingScreen);
+        }
+
+        private void MenuFloatingScreenOnHandleGrabbed(object sender, FloatingScreenHandleEventArgs e)
+        {
+	        _timeTweeningManager.KillAllTweens(MenuFloatingScreen);
+        }
+        
+        public void Dispose()
+        {
+	        if (GameFloatingScreen is not null)
+	        {
+		        GameFloatingScreen.HandleGrabbed -= GameFloatingScreenOnHandleGrabbed;
+	        }
+
+	        if (MenuFloatingScreen is not null)
+	        {
+		        MenuFloatingScreen.HandleGrabbed -= MenuFloatingScreenOnHandleGrabbed;
+	        }
         }
 	}
 }

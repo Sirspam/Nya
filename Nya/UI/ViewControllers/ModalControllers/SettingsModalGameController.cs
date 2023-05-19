@@ -1,4 +1,5 @@
-﻿using Nya.Configuration;
+﻿using BeatSaberMarkupLanguage.Attributes;
+using Nya.Configuration;
 using Nya.Utils;
 using Tweening;
 using UnityEngine;
@@ -17,5 +18,8 @@ namespace Nya.UI.ViewControllers.ModalControllers
             ShowModal(parentTransform, this);
             MoreSettingsTab.IsVisible = false;
         }
+
+        [UIValue("saved-position-button-text")]
+        protected override string SavedPositionButtonText => PluginConfig.SeparatePositions ? "Saved Game Position" : "Saved Position";
     }
 }

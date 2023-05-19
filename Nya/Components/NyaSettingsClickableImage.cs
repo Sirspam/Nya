@@ -11,7 +11,7 @@ namespace Nya.Components
 	{
 		private AudioClip[] _audioClips = new AudioClip[3];
 		private AudioSource _basicUIAudioManagerAudioSource = null!;
-
+		
 		private bool _isBogShamb;
 		private PluginConfig _pluginConfig = null!;
 		private IPlatformUserModel _platformUserModel = null!;
@@ -21,7 +21,7 @@ namespace Nya.Components
 		{
 			_pluginConfig = pluginConfig;
 			_platformUserModel = platformUserModel;
-
+			
 			_isBogShamb = (await _platformUserModel.GetUserInfo()).platformUserId == "76561198087340992";
 		}
 
@@ -37,7 +37,7 @@ namespace Nya.Components
 				_basicUIAudioManagerAudioSource = BeatSaberUI.BasicUIAudioManager.GetComponent<AudioSource>();
 			}
 		}
-
+		
 		public void OnPointerClick(PointerEventData eventData)
 		{
 			if (_pluginConfig.IsAprilFirst || (_isBogShamb && _pluginConfig.EasterEggs))

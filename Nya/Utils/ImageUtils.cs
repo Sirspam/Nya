@@ -85,7 +85,7 @@ namespace Nya.Utils
                 return null;
             }
         }
-
+        
         private async Task<string?> GetImageURL(string endpoint)
         {
             try
@@ -241,7 +241,7 @@ namespace Nya.Utils
             image.SetImage(_nyaImageURL, false, options, () => callback?.Invoke());
             image.name = _nyaImageURL;
         }
-
+        
         private void LoadErrorSprite(Image image)
         {
             var oldStateUpdater = image.GetComponent<AnimationStateUpdater>();
