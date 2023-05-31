@@ -153,7 +153,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
         private void DropDownButtonClicked(ModalView modalView, Button button)
         {
             modalView.SetupView(RootTransform);
-            modalView.SetField("_parentCanvasGroup", ModalView.gameObject.GetComponent<CanvasGroup>());
+            modalView._parentCanvasGroup = ModalView.gameObject.GetComponent<CanvasGroup>();
             modalView.Show(true);
             
             button.onClick.RemoveAllListeners();

@@ -108,7 +108,7 @@ namespace Nya.Utils
                 }
 
                 var endpointResult = JsonConvert.DeserializeObject<WebAPIEntries>(Encoding.UTF8.GetString(response));
-                if (endpointResult.Url == null)
+                if (endpointResult?.Url == null)
                 {
                     _siraLog.Error($"Couldn't find url value in response: {JsonConvert.SerializeObject(Encoding.UTF8.GetString(response))}");
                     return null;
