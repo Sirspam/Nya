@@ -4,12 +4,12 @@
   "name": "Nya",
   "author": "Sirspam",
   "version": "0.6.2",
-  "description": "BeatSaber mod for displaying nya-tastic images from various web APIs",
+  "description": "A BeatSaber mod for displaying nya-tastic images from various web APIs",
   "gameVersion": "1.30.0",
   "icon": "Nya.Resources.Chocola_Mini_Sitting.png",
   "dependsOn": {
     "BSIPA": "^4.3.0",
-    "BeatSaberMarkupLanguage": "^1.6.8",
+    "BeatSaberMarkupLanguage": "^1.7.1",
     "SiraUtil": "^3.0.5"
   },
   "links": {
