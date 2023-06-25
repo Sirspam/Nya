@@ -85,7 +85,7 @@ namespace Nya.Utils
                 return null;
             }
         }
-
+        
         private async Task<string?> GetImageURL(string endpoint)
         {
             try
@@ -108,7 +108,7 @@ namespace Nya.Utils
                 }
 
                 var endpointResult = JsonConvert.DeserializeObject<WebAPIEntries>(Encoding.UTF8.GetString(response));
-                if (endpointResult.Url == null)
+                if (endpointResult?.Url == null)
                 {
                     _siraLog.Error($"Couldn't find url value in response: {JsonConvert.SerializeObject(Encoding.UTF8.GetString(response))}");
                     return null;
@@ -241,7 +241,7 @@ namespace Nya.Utils
             image.SetImage(_nyaImageURL, false, options, () => callback?.Invoke());
             image.name = _nyaImageURL;
         }
-
+        
         private void LoadErrorSprite(Image image)
         {
             var oldStateUpdater = image.GetComponent<AnimationStateUpdater>();

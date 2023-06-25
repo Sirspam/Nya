@@ -126,7 +126,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         }
         
         [UIValue("restart-required")]
-        private bool RestartRequired => (InMenu != _pluginConfig.InMenu || EasterEggs != _pluginConfig.EasterEggs) && isActiveAndEnabled;
+        private bool RestartRequired => (InMenu != _pluginConfig.InMenu || SeparatePositions != _pluginConfig.SeparatePositions || EasterEggs != _pluginConfig.EasterEggs) && isActiveAndEnabled;
 
         [UIValue("in-menu")]
         private bool InMenu
@@ -232,6 +232,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
                 _separatePositions = value;
                 SeparatePositionsButOpposite = !value;
                 NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(RestartRequired));
             }
         }
 

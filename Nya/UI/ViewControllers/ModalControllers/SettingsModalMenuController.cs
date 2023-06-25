@@ -32,6 +32,9 @@ namespace Nya.UI.ViewControllers.ModalControllers
                 ScreenTab.IsVisible = false;
             }
         }
+        
+        [UIValue("saved-position-button-text")]
+        protected override string SavedPositionButtonText => PluginConfig.SeparatePositions ? "Saved Menu Position" : "Saved Position";
 
         [UIAction("show-nya-settings")]
         private void ShowNyaSettings()
