@@ -149,8 +149,8 @@ namespace Nya.UI.ViewControllers.ModalControllers
 			{
 				BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.EnableNsfwFeaturesModalView.bsml"), parentTransform.gameObject, this);
 				_modalView.name = "NyaEnableNsfwFeaturesModal";
-				_presentPanelAnimation = _modalView._presentPanelAnimations;
-				_dismissPanelAnimation = _modalView._dismissPanelAnimation;
+				_presentPanelAnimation = _modalView.GetField<PanelAnimationSO, ModalView>("_presentPanelAnimations");
+				_dismissPanelAnimation = _modalView.GetField<PanelAnimationSO, ModalView>("_dismissPanelAnimation");
 
 				_parsed = true;
 			}
