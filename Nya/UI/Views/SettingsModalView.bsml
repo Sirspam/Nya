@@ -25,11 +25,11 @@
             <tab id="screen-tab" tab-name="Screen" tags="settings-modal-tab">
                 <vertical horizontal-fit="PreferredSize" vertical-fit="PreferredSize" preferred-width="65" preferred-height="45" spacing="-3">
                     <checkbox-setting id="show-handle-checkbox" text="Show Nya's movement handle" value="show-handle" on-change="show-handle-changed" apply-on-change="true"/>
-                    <button id="face-headset-button" text="Face Headset" on-click="face-headset-clicked" min-height="10" min-width="34"/>
-                    <button id="set-upright-button" text="Set Upright" on-click="set-upright-clicked" min-height="10" min-width="34"/>
-                    <horizontal horizontal-fit="PreferredSize">
-                        <button id="saved-position-button" on-click="saved-position-clicked" text="~saved-position-button-text" min-height="10"/>
-                        <button id="save-position-button" on-click="save-position-clicked" text="💾" min-height="10"/>
+                    <button id="face-headset-button" text="Face Headset" on-click="face-headset-clicked" min-height="10" pref-width="28"/>
+                    <button id="set-upright-button" text="Set Upright" on-click="set-upright-clicked" min-height="10" pref-width="28"/>
+                    <horizontal horizontal-fit="PreferredSize" spacing="1">
+                        <button id="save-position-button" on-click="save-position-clicked" text="💾" font-size="5" min-height="10" pref-width="8"/>
+                        <button id="load-position-button" on-click="load-position-clicked" text="~load-position-button-text" min-height="10"/>
                     </horizontal>
                 </vertical>
             </tab>

@@ -33,8 +33,8 @@ namespace Nya.UI.ViewControllers.ModalControllers
             }
         }
         
-        [UIValue("saved-position-button-text")]
-        protected override string SavedPositionButtonText => PluginConfig.SeparatePositions ? "Saved Menu Position" : "Saved Position";
+        [UIValue("load-position-button-text")]
+        protected override string LoadPositionButtonText => PluginConfig.SeparatePositions ? "Load Menu Position" : "Load Position";
 
         [UIAction("show-nya-settings")]
         private void ShowNyaSettings()
