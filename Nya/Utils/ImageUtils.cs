@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using BeatSaberMarkupLanguage;
@@ -144,7 +145,7 @@ namespace Nya.Utils
                             {
                                 if (_nyaImageURL == null)
                                 {
-                                    LoadErrorSprite(image);
+                                    await LoadErrorSprite(image);
                                     callback?.Invoke();
                                     return;
                                 }
@@ -186,7 +187,7 @@ namespace Nya.Utils
                             {
                                 case 0:
                                     _siraLog.Error($"No suitable files in folder: {path}");
-                                    LoadErrorSprite(image);
+                                    await LoadErrorSprite(image);
                                     callback?.Invoke();
                                     return;
                                 case 1 when oldImageURL != null:
@@ -212,7 +213,7 @@ namespace Nya.Utils
             catch (Exception exception)
             {
                 _siraLog.Error(exception);
-                LoadErrorSprite(image);
+                await LoadErrorSprite(image);
             }
         }
         
@@ -242,19 +243,19 @@ namespace Nya.Utils
             image.name = _nyaImageURL;
         }
         
-        private void LoadErrorSprite(Image image)
+        private async Task LoadErrorSprite(Image image)
         {
             var oldStateUpdater = image.GetComponent<AnimationStateUpdater>();
             if (oldStateUpdater != null)
                 Object.DestroyImmediate(oldStateUpdater);
             
-            Utilities.GetData("Nya.Resources.Chocola_Dead.png", data =>
-            {
-                _nyaImageBytes = data;
-                _nyaImageURL = "Error Sprite";
-                image.sprite = Utilities.LoadSpriteRaw(data);
-                image.name = _nyaImageURL;
-            });
+            var data = await Utilities.GetResourceAsync(Assembly.GetExecutingAssembly(), "Nya.Resources.Chocola_Dead.png");
+            
+            _nyaImageBytes = data;
+            _nyaImageURL = "Error Sprite";
+            image.sprite = Utilities.LoadSpriteRaw(data);
+            image.name = _nyaImageURL;
+            
             _siraLog.Warn("Error sprite loaded");
             ErrorSpriteLoadedEvent?.Invoke();
         }
