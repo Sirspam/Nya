@@ -19,7 +19,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
             MoreSettingsTab.IsVisible = false;
         }
 
-        [UIValue("saved-position-button-text")]
-        protected override string SavedPositionButtonText => PluginConfig.SeparatePositions ? "Saved Game Position" : "Saved Position";
+        [UIValue("load-position-button-text")]
+        protected override string LoadPositionButtonText => PluginConfig.SeparatePositions ? "Load Game Position" : "Load Position";
     }
 }

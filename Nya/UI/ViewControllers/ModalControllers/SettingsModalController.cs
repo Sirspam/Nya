@@ -104,15 +104,12 @@ namespace Nya.UI.ViewControllers.ModalControllers
         [UIComponent("set-upright-button")]
         protected readonly Button SetUprightButton = null!;
 
-        [UIComponent("saved-position-button")]
-        protected readonly Button SavedPositionButton = null!;
+        [UIComponent("load-position-button")]
+        protected readonly Button LoadPositionButton = null!;
         
         [UIComponent("save-position-button")]
         protected readonly Button SavePositionButton = null!;
         
-        [UIComponent("show-handle-checkbox")]
-        protected readonly GenericInteractableSetting ShowHandleCheckbox = null!;
-
         #endregion components
 
         #region values
@@ -269,9 +266,9 @@ namespace Nya.UI.ViewControllers.ModalControllers
             get => CheckNsfwListHasEndpoints() ? PluginConfig.SelectedEndpoints[APIValue].SelectedNsfwEndpoint : "Empty";
             set => PluginConfig.SelectedEndpoints[APIValue].SelectedNsfwEndpoint = value;
         }
-
-        [UIValue("saved-position-button-text")]
-        protected abstract string SavedPositionButtonText
+        
+        [UIValue("load-position-button-text")]
+        protected abstract string LoadPositionButtonText
         {
             get;
         }
@@ -338,10 +335,10 @@ namespace Nya.UI.ViewControllers.ModalControllers
             _floatingScreenUtils.TweenUpright();
         }
 
-        [UIAction("saved-position-clicked")]
-        protected void SavedPositionClicked()
+        [UIAction("load-position-clicked")]
+        protected void LoadPositionClicked()
         {
-            _uiUtils.ButtonUnderlineClick(SavedPositionButton.gameObject);
+            _uiUtils.ButtonUnderlineClick(LoadPositionButton.gameObject);
             _floatingScreenUtils.TweenToSavedPosition();
         }
         
