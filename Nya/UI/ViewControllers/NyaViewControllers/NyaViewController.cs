@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using BeatSaberMarkupLanguage.Attributes;
 using HMUI;
+using IPA.Utilities.Async;
 using Nya.Configuration;
 using Nya.Utils;
 using TMPro;
@@ -62,7 +63,7 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
             NyaImage.material = ImageUtils.UIRoundEdgeMaterial;
             SetNyaButtonsInteractability(false);
             var time = DateTime.Now;
-            ImageUtils.LoadCurrentNyaImage(NyaImage, () => Task.Run(() => NyaButtonCooldown(time)));
+            ImageUtils.LoadCurrentNyaImage(NyaImage, () => UnityMainThreadTaskScheduler.Factory.StartNew(() =>  NyaButtonCooldown(time)));
         }
 
         [UIAction("nya-click")]
@@ -70,7 +71,7 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
         {
             SetNyaButtonsInteractability(false);
             var time = DateTime.Now;
-            ImageUtils.LoadNewNyaImage(NyaImage, () => Task.Run(() => NyaButtonCooldown(time)));
+            ImageUtils.LoadNewNyaImage(NyaImage, ()  => UnityMainThreadTaskScheduler.Factory.StartNew(() =>  NyaButtonCooldown(time)));
         }
 
         [UIAction("nya-auto-clicked")]
