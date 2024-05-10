@@ -9,6 +9,7 @@ Alternatively settings can also be accessed from BSML's Mod Settings view.
 Nya features a floating screen, allowing Nya to be accessed outside of the gameplay setup panel. In the event that this floating screen gets stuck somewhere inaccessible it's position can be reset from Nya's settings. 
 ### Supported Image Sources
 **Note: I don't own any of these sources so I can't guarantee the images will always be appropriate**
+* [Fluxpoint.dev](https://Fluxpoint.dev/)
 * [Waifu.Pics](https://waifu.pics/)
 * [Nekos.Life](https://nekos.life/)
 * [Anime-Images API](https://anime-api.hisoka17.repl.co/)
