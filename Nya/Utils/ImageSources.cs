@@ -9,6 +9,21 @@ namespace Nya.Utils
         internal static Dictionary<string, SourceData> Sources { get; } = new Dictionary<string, SourceData>
         {
             {
+                "fluxpoint.dev", new SourceData
+                {
+                    BaseEndpoint = "https://gallery.fluxpoint.dev/api/",
+                    Mode = DataMode.Json,
+                    SfwEndpoints = new List<string>
+                    {
+                        "sfw/anime", "sfw/azurlane", "sfw/chibi", "sfw/christmas", "sfw/halloween", "sfw/holo", "sfw/kitsune",
+                        "sfw/maid", "sfw/neko", "sfw/nekoboy", "sfw/nekopara", "sfw/senko", "sfw/wallpaper", "sfw/yeet", "sfw/blush",
+                        "sfw/smile", "sfw/wave", "sfw/highfive", "sfw/nom", "sfw/bite", "sfw/glomp", "sfw/slap",
+                        "sfw/kick", "sfw/happy", "sfw/wink", "sfw/poke", "sfw/dance"
+                    },
+                    NsfwEndpoints = new List<string> { "nsfw/neko", "nsfw/waifu", "nsfw/trap", "nsfw/blowjob" }
+                }
+            },
+            {
                 "waifu.pics", new SourceData
                 {
                     BaseEndpoint = "https://api.waifu.pics/",
