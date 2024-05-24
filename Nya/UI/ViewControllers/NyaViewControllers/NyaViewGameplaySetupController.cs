@@ -37,7 +37,10 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
 		{
 			base.Dispose();
 			
-			GameplaySetup.instance.RemoveTab("Nya");
+			if (GameplaySetup.IsSingletonAvailable)
+			{
+				GameplaySetup.instance.RemoveTab("Nya");
+			}
 			
 			_gameplaySetupViewController.didActivateEvent -= GameplaySetupViewControllerOnDidActivateEvent;
 			_gameplaySetupViewController.didDeactivateEvent -= GameplaySetupViewControllerOnDidDeactivateEvent;

@@ -16,7 +16,7 @@ namespace Nya.UI.FlowCoordinators
             _nyaSettingsRightViewController = nyaSettingsRightViewController;
         }
 
-        public override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
+        protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
         {
             ProvideInitialViewControllers(_nyaSettingsMainViewController, rightScreenViewController: _nyaSettingsRightViewController);
         }
