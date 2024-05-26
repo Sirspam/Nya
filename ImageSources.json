@@ -1,0 +1,83 @@
+﻿{
+  "waifu.pics": {
+    "Url": "https://api.waifu.pics/",
+    "SfwEndpoints": [
+      "sfw/neko",
+      "sfw/waifu",
+      "sfw/awoo",
+      "sfw/shinobu",
+      "sfw/megumin",
+      "sfw/cuddle",
+      "sfw/cry",
+      "sfw/hug",
+      "sfw/kiss",
+      "sfw/lick",
+      "sfw/pat",
+      "sfw/smug",
+      "sfw/bonk",
+      "sfw/yeet",
+      "sfw/blush",
+      "sfw/smile",
+      "sfw/wave",
+      "sfw/highfive",
+      "sfw/nom",
+      "sfw/bite",
+      "sfw/glomp",
+      "sfw/slap",
+      "sfw/kick",
+      "sfw/happy",
+      "sfw/wink",
+      "sfw/poke",
+      "sfw/dance"
+    ],
+    "NsfwEndpoints": ["nsfw/neko", "nsfw/waifu", "nsfw/trap", "nsfw/blowjob"]
+  },
+  "nekos.life": {
+    "Url": "https://nekos.life/api/v2/img/",
+    "SfwEndpoints": [
+      "neko",
+      "waifu",
+      "tickle",
+      "slap",
+      "pat",
+      "meow",
+      "lizard",
+      "kiss",
+      "hug",
+      "fox_girl",
+      "feed",
+      "cuddle",
+      "ngif",
+      "smug",
+      "woof",
+      "wallpaper",
+      "goose",
+      "gecg",
+      "avatar"
+    ],
+    "NsfwEndpoints": []
+  },
+  "BocchiTheAPI": {
+    "Url": "boccher.pixelboom.dev/api/",
+    "SfwEndpoints": [
+      "frames",
+      "frames?episode=1",
+      "frames?episode=2",
+      "frames?episode=3",
+      "frames?episode=4",
+      "frames?episode=5",
+      "frames?episode=6",
+      "frames?episode=7",
+      "frames?episode=8",
+      "frames?episode=9",
+      "frames?episode=10",
+      "frames?episode=11",
+      "frames?episode=12",
+      "frames?episode=OP",
+      "frames?episode=ED1",
+      "frames?episode=ED2",
+      "frames?episode=ED3"
+    ],
+    "NsfwEndpoints": []
+  }
+}
