@@ -38,10 +38,10 @@ namespace Nya.Configuration
         public virtual int AutoNyaWait { get; set; } = 5;
         public virtual int ImageScaleValue { get; set; } = 512; // 0 means scaling disabled
         public virtual bool EasterEggs { get; set; } = true;
-        public virtual string SelectedAPI { get; set; } = ImageSources.Sources.Keys.First();
+        public virtual string SelectedAPI { get; set; } = String.Empty;
 
         [NonNullable][UseConverter(typeof(DictionaryConverter<EndpointData>))]
-        public virtual Dictionary<string, EndpointData> SelectedEndpoints { get; set; } = new Dictionary<string, EndpointData>();
+        public virtual Dictionary<string, EndpointData> SelectedEndpoints { get; set; } = new();
         
         /// <summary>
         /// Some magic stuff to save config changes to disk deferred
@@ -66,7 +66,6 @@ namespace Nya.Configuration
         public virtual void Changed()
         {
             // Do stuff when the config is changed.
-            FixConfigIssues();
         }
 
         private void FixConfigIssues()
@@ -79,33 +78,6 @@ namespace Nya.Configuration
             if (AutoNyaWait < 3)
             {
                 AutoNyaWait = 3;
-            }
-            
-            // Checks if the currently selected API is supported
-            if (!ImageSources.Sources.ContainsKey(SelectedAPI))
-            {
-                SelectedEndpoints.Remove(SelectedAPI);
-                SelectedAPI = ImageSources.Sources.First().Key;
-            }
-
-            // Adds a supported API to the selected endpoints dictionary
-            if (!SelectedEndpoints.ContainsKey(SelectedAPI))
-            {
-                SelectedEndpoints.Add(SelectedAPI, new EndpointData());
-            }
-
-            // Checks the sfw endpoint on the selected API exists
-            var selectedSfwEndpoint = SelectedEndpoints[SelectedAPI].SelectedSfwEndpoint;
-            if (!ImageSources.GlobalEndpoints.Contains(selectedSfwEndpoint) && !ImageSources.Sources[SelectedAPI].SfwEndpoints.Contains(selectedSfwEndpoint))
-            {
-                SelectedEndpoints[SelectedAPI].SelectedSfwEndpoint = ImageSources.Sources[SelectedAPI].SfwEndpoints.FirstOrDefault() ?? "Empty";
-            }
-            
-            // Checks the nsfw endpoint on the selected API exists
-            var selectedNsfwEndpoint = SelectedEndpoints[SelectedAPI].SelectedNsfwEndpoint;
-            if (!ImageSources.GlobalEndpoints.Contains(selectedNsfwEndpoint) && !ImageSources.Sources[SelectedAPI].SfwEndpoints.Contains(selectedSfwEndpoint))
-            {
-                SelectedEndpoints[SelectedAPI].SelectedNsfwEndpoint = ImageSources.Sources[SelectedAPI].NsfwEndpoints.FirstOrDefault() ?? "Empty";
             }
         }
     }

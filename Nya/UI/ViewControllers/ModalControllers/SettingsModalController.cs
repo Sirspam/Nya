@@ -13,6 +13,7 @@ using BeatSaberMarkupLanguage.Parser;
 using HMUI;
 using IPA.Utilities;
 using Nya.Configuration;
+using Nya.Managers;
 using Nya.Utils;
 using Tweening;
 using UnityEngine;
@@ -32,18 +33,20 @@ namespace Nya.UI.ViewControllers.ModalControllers
         private readonly MainCamera _mainCamera;
         protected readonly PluginConfig PluginConfig;
         private readonly FloatingScreenUtils _floatingScreenUtils;
+        private readonly ImageSourcesManager _imageSourcesManager;
         private readonly TimeTweeningManager _timeTweeningManager;
         private readonly NsfwConfirmModalController _nsfwConfirmModalController;
 
         public event PropertyChangedEventHandler PropertyChanged = null!;
 
-        protected SettingsModalController(UIUtils uiUtils, ImageUtils imageUtils, MainCamera mainCamera, PluginConfig pluginConfig, FloatingScreenUtils floatingScreenUtils, TimeTweeningManager timeTweeningManager, NsfwConfirmModalController nsfwConfirmModalController)
+        protected SettingsModalController(UIUtils uiUtils, ImageUtils imageUtils, MainCamera mainCamera, PluginConfig pluginConfig, FloatingScreenUtils floatingScreenUtils, ImageSourcesManager imageSourcesManager, TimeTweeningManager timeTweeningManager, NsfwConfirmModalController nsfwConfirmModalController)
         {
             _uiUtils = uiUtils;
             _imageUtils = imageUtils;
             _mainCamera = mainCamera;
             PluginConfig = pluginConfig;
             _floatingScreenUtils = floatingScreenUtils;
+            _imageSourcesManager = imageSourcesManager;
             _timeTweeningManager = timeTweeningManager;
             _nsfwConfirmModalController = nsfwConfirmModalController;
         }
@@ -253,7 +256,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
         [UIValue("sfw-value")]
         protected string SfwValue
         {
-            get => PluginConfig.SelectedEndpoints[APIValue].SelectedSfwEndpoint;
+            get => PluginConfig.SelectedEndpoints[APIValue].SelectedSfwEndpoint ?? "Empty";
             set => PluginConfig.SelectedEndpoints[APIValue].SelectedSfwEndpoint = value;
         }
 
@@ -263,7 +266,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
         [UIValue("nsfw-value")]
         protected string NsfwValue
         {
-            get => CheckNsfwListHasEndpoints() ? PluginConfig.SelectedEndpoints[APIValue].SelectedNsfwEndpoint : "Empty";
+            get => PluginConfig.SelectedEndpoints[APIValue].SelectedNsfwEndpoint ?? "Empty";
             set => PluginConfig.SelectedEndpoints[APIValue].SelectedNsfwEndpoint = value;
         }
         
@@ -402,64 +405,70 @@ namespace Nya.UI.ViewControllers.ModalControllers
             PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(NsfwCheck)));
         }
 
-        private bool CheckNsfwListHasEndpoints() // Thanks Nekos.life for removing all of your 30+ nsfw endpoints
+        private void DisableNsfw()
         {
-            if (ImageSources.Sources[APIValue].NsfwEndpoints.Count == 0)
-            {
-                NsfwDropDownListSetting.values = new List<object> {"Empty"};
-                NsfwDropDownListSetting.UpdateChoices();
-                NsfwDropDownListSetting.Value = "Empty";
-                NsfwCheck = false;
-                NsfwCheckbox.interactable = false;
-                NsfwDropDownListSetting.interactable = false;
-                return false;
-            }
-
-            return true;
+            NsfwDropDownListSetting.values = new List<object> {"Empty"};
+            NsfwDropDownListSetting.UpdateChoices();
+            NsfwDropDownListSetting.Value = "Empty";
+            NsfwCheck = false;
+            NsfwCheckbox.interactable = false;
+            NsfwDropDownListSetting.interactable = false;
         }
 
-        private void UpdateLists()
+        private async void UpdateLists()
         {
+            var sources = await _imageSourcesManager.GetSourcesDictionary();
+            
             SfwDropDownListSetting.values.Clear();
-            SfwDropDownListSetting.values = ImageSources.Sources[APIValue].SfwEndpoints.Cast<object>().ToList();
+            SfwDropDownListSetting.values = sources[APIValue].SfwEndpoints.Cast<object>().ToList();
             if (SfwDropDownListSetting.values.Count > 1)
             {
                 SfwDropDownListSetting.values.Add("Random");
             }
             SfwDropDownListSetting.Value = SfwValue;
             SfwDropDownListSetting.UpdateChoices();
-
-            if (CheckNsfwListHasEndpoints())
+            
+            if (NsfwDropDownListSetting.interactable == false)
             {
-                if (NsfwDropDownListSetting.interactable == false)
-                {
-                    NsfwCheckbox.interactable = true;
-                    NsfwDropDownListSetting.interactable = true;
-                }
-                
-                NsfwDropDownListSetting.values.Clear();
-                NsfwDropDownListSetting.values = ImageSources.Sources[APIValue].NsfwEndpoints.Cast<object>().ToList();
-                if (NsfwDropDownListSetting.values.Count > 1)
-                {
-                    NsfwDropDownListSetting.values.Add("Random");
-                }
-                NsfwDropDownListSetting.Value = NsfwValue;
-                NsfwDropDownListSetting.UpdateChoices();
+                NsfwCheckbox.interactable = true;
+                NsfwDropDownListSetting.interactable = true;
             }
+                
+            NsfwDropDownListSetting.values.Clear();
+            NsfwDropDownListSetting.values = sources[APIValue].NsfwEndpoints.Cast<object>().ToList();
+            if (NsfwDropDownListSetting.values.Count > 1)
+            {
+                NsfwDropDownListSetting.values.Add("Random");
+            }
+            else if (NsfwDropDownListSetting.values.Count == 0)
+            {
+                DisableNsfw();
+            }
+            NsfwDropDownListSetting.Value = NsfwValue;
+            NsfwDropDownListSetting.UpdateChoices();
         }
 
-        public void Initialize()
+        public async void Initialize()
         {
-            APIList = ImageSources.Sources.Keys.Cast<object>().ToList();
-            SfwList = ImageSources.Sources[APIValue].SfwEndpoints.Cast<object>().ToList();
+            var sources = await _imageSourcesManager.GetSourcesDictionary();
+            
+            APIList = sources.Keys.Cast<object>().ToList();
+            SfwList = sources[APIValue].SfwEndpoints.Cast<object>().ToList();
+            NsfwList = sources[APIValue].NsfwEndpoints.Cast<object>().ToList();
+            
             if (SfwList.Count > 1)
             {
                 SfwList.Add("Random");
             }
-            NsfwList = ImageSources.Sources[APIValue].NsfwEndpoints.Cast<object>().ToList();
+            
             if (NsfwList.Count > 1)
             {
                 NsfwList.Add("Random");
+            }
+            else if (NsfwList.Count == 0)
+            {
+                NsfwList.Add("Empty");
+                DisableNsfw();
             }
         }
     }

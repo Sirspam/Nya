@@ -4,7 +4,7 @@ using IPA.Utilities;
 
 namespace Nya.Utils
 {
-    internal sealed class ImageSources
+    internal sealed class ImageSourcesDELETEME
     {
         internal static Dictionary<string, SourceData> Sources { get; } = new Dictionary<string, SourceData>
         {
@@ -69,7 +69,7 @@ namespace Nya.Utils
                         "frames", "frames?episode=1", "frames?episode=2", "frames?episode=3", "frames?episode=4",
                         "frames?episode=5", "frames?episode=6", "frames?episode=7", "frames?episode=8",
                         "frames?episode=9", "frames?episode=10", "frames?episode=11", "frames?episode=12",
-                        "frames?episode=OP", "frames?episode=ED1", "frames?episode=ED2", "frames?episode=ED3"    
+                        "frames?episode=OP", "frames?episode=ED1", "frames?episode=ED2", "frames?episode=ED3"
                     },
                     NsfwEndpoints = new List<string>()
                 }

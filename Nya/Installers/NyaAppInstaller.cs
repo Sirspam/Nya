@@ -1,5 +1,6 @@
 ﻿using Nya.AffinityPatches;
 using Nya.Configuration;
+using Nya.Managers;
 using Nya.Utils;
 using Zenject;
 
@@ -16,10 +17,11 @@ namespace Nya.Installers
 
         public override void InstallBindings()
         {
+            Container.BindInstance(_pluginConfig).AsSingle();
+            Container.Bind<ImageSourcesManager>().AsSingle();
             Container.Bind<UIUtils>().AsSingle();
             Container.Bind<ImageUtils>().AsSingle();
             Container.Bind<FloatingScreenUtils>().AsSingle();
-            Container.BindInstance(_pluginConfig).AsSingle();
             if (_pluginConfig.IsAprilFirst)
             {
                 Container.BindInterfacesTo<GoodBoyPatch>().AsSingle();

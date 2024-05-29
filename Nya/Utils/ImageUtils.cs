@@ -11,6 +11,7 @@ using IPA.Utilities;
 using Newtonsoft.Json;
 using Nya.Configuration;
 using Nya.Entries;
+using Nya.Managers;
 using SiraUtil.Logging;
 using SiraUtil.Web;
 using UnityEngine;
@@ -33,13 +34,15 @@ namespace Nya.Utils
         private readonly SiraLog _siraLog;
         private readonly IHttpService _httpService;
         private readonly PluginConfig _pluginConfig;
+        private readonly ImageSourcesManager _imageSourcesManager;
 
-        public ImageUtils(SiraLog siraLog, IHttpService httpService, PluginConfig pluginConfig)
+        public ImageUtils(SiraLog siraLog, IHttpService httpService, PluginConfig pluginConfig, ImageSourcesManager imageSourcesManager)
         {
             _random = new Random();
             _siraLog = siraLog;
             _httpService = httpService;
             _pluginConfig = pluginConfig;
+            _imageSourcesManager = imageSourcesManager;
         }
 
         public Material UIRoundEdgeMaterial
@@ -88,18 +91,20 @@ namespace Nya.Utils
         
         private async Task<string?> GetImageURL(string endpoint)
         {
+            var sources = await _imageSourcesManager.GetSourcesDictionary();
+            
             try
             {
                 if (endpoint == "Random")
                 {
                     var endpoints = !_pluginConfig.NsfwImages
-                        ? ImageSources.Sources[_pluginConfig.SelectedAPI].SfwEndpoints
-                        : ImageSources.Sources[_pluginConfig.SelectedAPI].NsfwEndpoints;
+                        ? sources[_pluginConfig.SelectedAPI].SfwEndpoints
+                        : sources[_pluginConfig.SelectedAPI].NsfwEndpoints;
                     
                     endpoint = endpoints[_random.Next(endpoints.Count)];
                 }
                 
-                var path = _pluginConfig.IsAprilFirst ? "https://nekos.life/api/v2/img/woof" : ImageSources.Sources[_pluginConfig.SelectedAPI].BaseEndpoint + endpoint;
+                var path = _pluginConfig.IsAprilFirst ? "https://nekos.life/api/v2/img/woof" : sources[_pluginConfig.SelectedAPI].Url + endpoint;
                 _siraLog.Info($"Attempting to get image url from {path}");
                 var response = await GetWebDataToBytesAsync(path);
                 if (response == null)
@@ -125,40 +130,50 @@ namespace Nya.Utils
 
         public async void LoadNewNyaImage(ImageView image, Action? callback)
         {
+            var sources = await _imageSourcesManager.GetSourcesDictionary();
+            
             try
             {
                 var selectedEndpoint = _pluginConfig.NsfwImages
                     ? _pluginConfig.SelectedEndpoints[_pluginConfig.SelectedAPI].SelectedNsfwEndpoint
                     : _pluginConfig.SelectedEndpoints[_pluginConfig.SelectedAPI].SelectedSfwEndpoint;
 
-                switch (ImageSources.Sources[_pluginConfig.IsAprilFirst ? "nekos.life" : _pluginConfig.SelectedAPI].Mode)
+                if (selectedEndpoint is null)
                 {
-                    case ImageSources.DataMode.Json:
-                        var newUrl = _nyaImageURL;
-                        _nyaImageURL = await GetImageURL(selectedEndpoint);
-                        var count = 0;
-                        while (_nyaImageURL == newUrl || _nyaImageURL == null)
+                    LoadErrorSprite(image);
+                    callback?.Invoke();
+                    return;
+                }
+
+                // switch (sources[_pluginConfig.IsAprilFirst ? "nekos.life" : _pluginConfig.SelectedAPI].Mode)
+                if (!sources[_pluginConfig.IsAprilFirst ? "nekos.life" : _pluginConfig.SelectedAPI].IsLocal)
+                {
+                    var newUrl = _nyaImageURL;
+                    _nyaImageURL = await GetImageURL(selectedEndpoint);
+                    var count = 0;
+                    while (_nyaImageURL == newUrl || _nyaImageURL == null)
+                    {
+                        count += 1;
+                        if (count == 3)
                         {
-                            count += 1;
-                            if (count == 3)
+                            if (_nyaImageURL == null)
                             {
-                                if (_nyaImageURL == null)
-                                {
-                                    LoadErrorSprite(image);
-                                    callback?.Invoke();
-                                    return;
-                                }
-                                
-                                break;
+                                LoadErrorSprite(image);
+                                callback?.Invoke();
+                                return;
                             }
 
-                            await Task.Delay(1000);
-                            _nyaImageURL = await GetImageURL(selectedEndpoint);
+                            break;
                         }
 
-                        break;
-                    case ImageSources.DataMode.Local:
-                        string folder;
+                        await Task.Delay(1000);
+                        _nyaImageURL = await GetImageURL(selectedEndpoint);
+                    }
+
+                }
+                else
+                {
+                    string folder;
                         if (!_pluginConfig.NsfwImages)
                         {
                             folder = "sfw";
@@ -180,7 +195,7 @@ namespace Nya.Utils
                         var oldImageURL = _nyaImageURL;
                         while (_nyaImageURL == oldImageURL)
                         {
-                            var path = Path.Combine(ImageSources.Sources[_pluginConfig.SelectedAPI].BaseEndpoint, folder);
+                            var path = Path.Combine(sources[_pluginConfig.SelectedAPI].Url, folder);
                             var files = Directory.GetFiles(path).Where(file => file.EndsWith(".png") || file.EndsWith(".jpeg") || file.EndsWith(".jpg") || file.EndsWith(".gif") || file.EndsWith(".apng")).ToArray();
                             switch (files.Length)
                             {
@@ -199,11 +214,6 @@ namespace Nya.Utils
                         }
                         
                         _nyaImageBytes = File.ReadAllBytes(_nyaImageURL!);
-                        break;
-                    case ImageSources.DataMode.Unsupported:
-                    default:
-                        _siraLog.Warn($"Unsupported data mode for endpoint: {_pluginConfig.SelectedAPI}");
-                        return;
                 }
                 
                 _nyaImageBytes = await GetWebDataToBytesAsync(_nyaImageURL!);
