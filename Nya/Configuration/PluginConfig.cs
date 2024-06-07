@@ -20,6 +20,7 @@ namespace Nya.Configuration
         public virtual bool SkipNsfw { get; set; } = false;
         public virtual bool InMenu { get; set; } = false;
         public virtual bool InPause { get; set; } = false;
+        public virtual bool InGameplay { get; set; } = false;
         public virtual float FloatingScreenScale { get; set; } = 1f;
         public virtual bool ShowHandle { get; set; } = false;
         public virtual bool SeparatePositions { get; set; } = false;

@@ -1,4 +1,4 @@
-﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
+﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd">
     <vertical anchor-pos-y="5">
         <clickable-image src="Nya.Resources.Chocola_Settings_Sign.png" on-click="settings-image-clicked" pref-width="68" pref-height="68" preserve-aspect="true"/>
     </vertical>

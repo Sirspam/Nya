@@ -1,4 +1,4 @@
-﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
+﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd">
     <vertical anchor-pos-x="-45" anchor-pos-y="-35" vertical-fit="PreferredSize" horizontal-fit="PreferredSize">
         <clickable-text id="version-text" text="~version-text-value" on-click="version-text-clicked" font-size="4" default-color="orange" highlight-color="yellow"/>
     </vertical>

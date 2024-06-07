@@ -1,4 +1,4 @@
-﻿<bg id="root" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
+﻿<bg id="root" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd">
     <modal id="modal" show-event="open-modal" hide-event="close-modal" clickerino-offerino-closerino="true" size-delta-x="71" size-delta-y="50" move-to-center="true">
         <vertical anchor-pos-y="10.3">
 

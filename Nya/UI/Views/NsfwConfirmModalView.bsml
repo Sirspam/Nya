@@ -1,4 +1,4 @@
-﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
+﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd">
     <modal id="modal" show-event="open-modal" hide-event="close-modal" size-delta-x="75" size-delta-y="58" move-to-center="true">
         <vertical pad-top="1" pref-width="70">
             <text text="Are you sure you want to enable NSFW images?" align="Center" word-wrapping="true" font-size="6.9"/>
