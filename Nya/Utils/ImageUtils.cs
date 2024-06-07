@@ -228,7 +228,7 @@ namespace Nya.Utils
         
         public void LoadCurrentNyaImage(ImageView image, Action? callback)
         {
-            if (_nyaImageBytes == null)
+            if (_nyaImageBytes is null || _nyaImageURL is null)
             {
                 LoadNewNyaImage(image, callback);
                 return;

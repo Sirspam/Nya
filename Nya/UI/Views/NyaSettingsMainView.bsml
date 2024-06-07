@@ -28,6 +28,7 @@
             <vertical child-expand-width="true" horizontal-fit="PreferredSize" vertical-fit="PreferredSize" anchor-pos-y="10">
                 <checkbox-setting id="in-menu-checkbox" text="Detach Nya in the menu" value="in-menu" bind-value="true" apply-on-change="true"/>
                 <checkbox-setting id="in-pause-checkbox" text="Show Nya in the pause menu" value="in-pause" bind-value="true" apply-on-change="true"/>
+                <checkbox-setting id="in-gameplay-checkbox" text="Show Nya during gameplay" hover-hint="Note that Nya will not be interactable" value="in-gameplay" bind-value="true" apply-on-change="true" />
                 <checkbox-setting id="separate-positions-checkbox" text="Separate menu Nya's and pause Nya's positions" value="separate-positions" bind-value="true" apply-on-change="true"/>
                 <horizontal>
                     <button active="~separate-positions-but-opposite" text="Reset Nya's position" hover-hint="Resets Nya's screen to it's default position" on-click="reset-menu-clicked"/>
@@ -58,7 +59,7 @@
         </tab>
     </vertical>
 
-    <vertical anchor-pos-y="-26.5">
+    <vertical anchor-pos-y="-28">
         <text active="~restart-required" text="Applying these settings will require the game to internally restart" hover-hint="You know, that annoying thing where the whole screen goes black for awhile then you have to wait for everything to load again" anchor-pos-x="55" anchor-pos-y="-47" font-size="5" italics="true" color="red" align="Center"/>
     </vertical>
 

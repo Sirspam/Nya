@@ -1,10 +1,10 @@
 ﻿<bg id="root" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd">
     <vertical ignore-layout="true">
-        <text text="So all the text tags fucking die if this isnt here. If anyone knows a fix please tell me :pleading:" color="#00000000"/>
+        <text text="So all the text tags can die if this isnt here. If anyone knows a fix please tell me :pleading:" color="#00000000"/>
     </vertical>
 
     <vertical pad-top="2">
-        <img id="nya-image" preserve-aspect="true" pref-width="95" pref-height="70"/>
+        <img id="nya-image" preserve-aspect="true" pref-width="95" pref-height="74"/>
         <horizontal spacing="10" horizontal-fit="PreferredSize" pref-width="70">
             <button id="auto-button" text="Auto Nya" font-size="4.5" on-click="nya-auto-clicked" active="true" min-width="20"/>
             <primary-button id="nya-button" text="Nya" font-size="4.5" on-click="nya-click" active="true" min-width="20"/>

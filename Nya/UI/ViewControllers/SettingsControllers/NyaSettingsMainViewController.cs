@@ -31,6 +31,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         private bool _updateAvailable;
         private bool _inMenu;
         private bool _inPause;
+        private bool _inGameplay;
         private float _floatingScreenScale;
         private Color _backgroundColor;
         private int _autoNyaWait;
@@ -147,6 +148,18 @@ namespace Nya.UI.ViewControllers.SettingsControllers
             set
             {
                 _inPause = value;
+                _inGameplayToggle.interactable = value;
+                NotifyPropertyChanged();
+            }
+        }
+        
+        [UIValue("in-gameplay")]
+        private bool InGameplay
+        {
+            get => _inGameplay;
+            set
+            {
+                _inGameplay = value;
                 NotifyPropertyChanged();
             }
         }
@@ -318,6 +331,9 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         
         [UIComponent("vanilla-image")]
         private readonly ImageView _vanillaImage = null!;
+        
+        [UIComponent("in-gameplay-checkbox")]
+        private readonly ToggleSetting _inGameplayToggle = null!;
 
         [UIComponent("bg-color-setting")]
         public readonly ColorSetting BgColorSetting = null!;
@@ -424,6 +440,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         {
             InMenu = _pluginConfig.InMenu;
             InPause = _pluginConfig.InPause;
+            InGameplay = _pluginConfig.InGameplay;
             FloatingScreenScale = _pluginConfig.FloatingScreenScale;
             BackgroundColor = _pluginConfig.BackgroundColor;
             AutoNyaWait = _pluginConfig.AutoNyaWait;
@@ -445,6 +462,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         {
             _pluginConfig.InMenu = InMenu;
             _pluginConfig.InPause = InPause;
+            _pluginConfig.InGameplay = InGameplay;
             _pluginConfig.FloatingScreenScale = FloatingScreenScale;
             _pluginConfig.BackgroundColor = BackgroundColor;
             _pluginConfig.AutoNyaWait = AutoNyaWait;

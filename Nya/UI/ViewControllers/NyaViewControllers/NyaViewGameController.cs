@@ -34,7 +34,19 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
                 _floatingScreenUtils.CreateNyaFloatingScreen(this, FloatingScreenUtils.FloatingScreenType.Game);
             }
 
-            _floatingScreenUtils.GameFloatingScreen!.gameObject.SetActive(false);
+            if (!PluginConfig.InGameplay)
+            {
+                _floatingScreenUtils.GameFloatingScreen!.gameObject.SetActive(false);
+            }
+            else
+            {
+                NyaButtonsSetActive(false);
+                if (AutoNyaActive && PluginConfig.PersistantAutoNya)
+                {
+                    ToggleAutoNya(true);
+                }
+            }
+            
             _floatingScreenUtils.GameFloatingScreen!.HandleReleased += FloatingScreen_HandleReleased;
 
             _gamePause.didPauseEvent += GamePause_didPauseEvent;
@@ -66,22 +78,31 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
         private void GamePause_didPauseEvent()
         {
             _floatingScreenUtils.GameFloatingScreen!.gameObject.SetActive(true);
+            NyaButtonsSetActive(true);
             
-            if (PluginConfig.PersistantAutoNya && AutoNyaButtonToggle && !AutoNyaActive)
+            if (PluginConfig.PersistantAutoNya && AutoNyaButtonToggle && !AutoNyaActive && !PluginConfig.InGameplay)
             {
-                ToggleAutoNya(true);   
+                ToggleAutoNya(true);
             }
         }
 
         private void GamePause_didResumeEvent()
         {
-            if (AutoNyaActive)
+            if (AutoNyaActive && !PluginConfig.InGameplay)
             {
                 ToggleAutoNya(false);
             }
             
             _settingsModalGameController.HideModal();
-            _floatingScreenUtils.GameFloatingScreen!.gameObject.SetActive(false);
+
+            if (PluginConfig.InGameplay)
+            {
+                NyaButtonsSetActive(false);
+            }
+            else
+            {
+                _floatingScreenUtils.GameFloatingScreen!.gameObject.SetActive(false);
+            }
         }
 
         private void FloatingScreen_HandleReleased(object sender, FloatingScreenHandleEventArgs args)
@@ -106,6 +127,13 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
             {
                 ToggleAutoNya(true);
             }
+        }
+        
+        private void NyaButtonsSetActive(bool active)
+        {
+            NyaButton.gameObject.SetActive(active);
+            NyaAutoButton.gameObject.SetActive(active);
+            NyaSettingsButton.gameObject.SetActive(active);
         }
 
         [UIAction("settings-button-clicked")]

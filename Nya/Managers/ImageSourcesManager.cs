@@ -41,7 +41,6 @@ namespace Nya.Managers
             
             //var jsonString = File.ReadAllText("E:\\Documents\\Github\\Nya\\ImageSources.json");
             
-            // TODO: Swap this over to main before release
 #if DEVIMAGESOURCE
             var sourceLink = $"https://raw.githubusercontent.com/{_pluginMetadata.Author}/{_pluginMetadata.Name}/dev/ImageSources.json";
 #else
