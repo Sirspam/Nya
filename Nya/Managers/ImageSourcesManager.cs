@@ -63,6 +63,17 @@ namespace Nya.Managers
                     }   
                 }
             }
+
+                // Add fluxpoint.dev as a new source
+                sources["fluxpoint.dev"] = new ImageSourceEntry
+                {
+                    DisplayName = "Fluxpoint",
+                    SfwEndpoints = new List<string> { "https://gallery.fluxpoint.dev/api/sfw/img/anime" },
+                    NsfwEndpoints = new List<string> { "https://gallery.fluxpoint.dev/api/nsfw/img" } // Example NSFW endpoint
+                };
+
+                _sourceFetchSuccesful = true;
+        }
             catch (Exception e)
             {
                 _siraLog.Error("Failed to fetch image sources from " + Plugin.ImageSourcesJsonLink);
