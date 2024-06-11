@@ -39,32 +39,33 @@ namespace Nya.Managers
         {
             Dictionary<string, ImageSourceEntry> sources = new Dictionary<string, ImageSourceEntry>();
             
-            //var jsonString = File.ReadAllText("E:\\Documents\\Github\\Nya\\ImageSources.json");
-            
-#if DEVIMAGESOURCE
-            var sourceLink = $"https://raw.githubusercontent.com/{_pluginMetadata.Author}/{_pluginMetadata.Name}/dev/ImageSources.json";
-#else
-            var sourceLink = $"https://raw.githubusercontent.com/{_pluginMetadata.Author}/{_pluginMetadata.Name}/main/ImageSources.json";
-#endif
             _sourceFetchSuccesful = false;
             try
             {
-                var response = await _httpService.GetAsync(sourceLink);
-
-                if (!response.Successful)
+                if (new Uri(Plugin.ImageSourcesJsonLink).IsFile)
                 {
-                    _siraLog.Error("Failed to fetch image sources from " + sourceLink);
-                    _siraLog.Error(response.Error());
+                    var jsonString = File.ReadAllText(Plugin.ImageSourcesJsonLink);
+                    sources = JsonConvert.DeserializeObject<Dictionary<string, ImageSourceEntry>>(jsonString);
                 }
                 else
                 {
-                    var jsonString = await response.ReadAsStringAsync();
-                    sources = JsonConvert.DeserializeObject<Dictionary<string, ImageSourceEntry>>(jsonString);
+                    var response = await _httpService.GetAsync(Plugin.ImageSourcesJsonLink);
+
+                    if (!response.Successful)
+                    {
+                        _siraLog.Error("Failed to fetch image sources from " + Plugin.ImageSourcesJsonLink);
+                        _siraLog.Error(response.Error());
+                    }
+                    else
+                    {
+                        var jsonString = await response.ReadAsStringAsync();
+                        sources = JsonConvert.DeserializeObject<Dictionary<string, ImageSourceEntry>>(jsonString);
+                    }   
                 }
             }
             catch (Exception e)
             {
-                _siraLog.Error("Failed to fetch image sources from " + sourceLink);
+                _siraLog.Error("Failed to fetch image sources from " + Plugin.ImageSourcesJsonLink);
                 _siraLog.Error(e);
             }
             

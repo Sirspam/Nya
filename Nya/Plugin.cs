@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using IPA;
 using IPA.Config;
 using IPA.Config.Stores;
@@ -14,6 +13,15 @@ namespace Nya
     [Plugin(RuntimeOptions.DynamicInit)][NoEnableDisable]
     public class Plugin
     {
+        // ImageSourcesJsonLink can also be a local path!
+#if DEVIMAGESOURCE
+        public static string ImageSourcesJsonLink =
+            "https://raw.githubusercontent.com/Sirspam/Nya/dev/ImageSources.json";
+#else
+        public static string ImageSourcesJsonLink =
+            "https://raw.githubusercontent.com/Sirspam/Nya/main/ImageSources.json";
+#endif
+        
         [Init]
         public Plugin(Config config, Logger logger, Zenjector zenjector)
         {
