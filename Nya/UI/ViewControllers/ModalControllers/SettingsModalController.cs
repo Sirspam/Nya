@@ -145,6 +145,8 @@ namespace Nya.UI.ViewControllers.ModalControllers
                     button.onClick.RemoveAllListeners();
                     button.onClick.AddListener(() => DropDownButtonClicked(button.transform.parent.Find("DropdownTableView").GetComponent<ModalView>(), button));
                 }
+
+                UpdateEndpointLists();
                 
                 _parsed = true;
             }
@@ -284,7 +286,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
         protected void ApiChange(string value)
         {
             APIValue = value;
-            UpdateLists();
+            UpdateEndpointLists();
         }
 
         [UIAction("sfw-change")]
@@ -415,7 +417,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
             NsfwDropDownListSetting.interactable = false;
         }
 
-        private async void UpdateLists()
+        private async void UpdateEndpointLists()
         {
             var sources = await _imageSourcesManager.GetSourcesDictionary();
             
@@ -425,6 +427,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
             {
                 SfwDropDownListSetting.values.Add("Random");
             }
+            
             SfwDropDownListSetting.Value = SfwValue;
             SfwDropDownListSetting.UpdateChoices();
             
@@ -452,24 +455,9 @@ namespace Nya.UI.ViewControllers.ModalControllers
         {
             var sources = await _imageSourcesManager.GetSourcesDictionary();
             
-            APIList = sources.Keys.Cast<object>().ToList();
-            SfwList = sources[APIValue].SfwEndpoints.Cast<object>().ToList();
-            NsfwList = sources[APIValue].NsfwEndpoints.Cast<object>().ToList();
-            
-            if (SfwList.Count > 1)
-            {
-                SfwList.Add("Random");
-            }
-            
-            if (NsfwList.Count > 1)
-            {
-                NsfwList.Add("Random");
-            }
-            else if (NsfwList.Count == 0)
-            {
-                NsfwList.Add("Empty");
-                DisableNsfw();
-            }
+            APIList = sources.Keys.Cast<object>().ToList();   
+            SfwList = new List<object> { PluginConfig.SelectedEndpoints[PluginConfig.SelectedAPI].SelectedSfwEndpoint ?? "Empty" };
+            NsfwList = new List<object> { PluginConfig.SelectedEndpoints[PluginConfig.SelectedAPI].SelectedNsfwEndpoint ?? "Empty" };
         }
     }
 }
