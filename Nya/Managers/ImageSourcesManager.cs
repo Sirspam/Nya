@@ -37,9 +37,33 @@ namespace Nya.Managers
 
         private async Task<Dictionary<string, ImageSourceEntry>> PopulateSources()
         {
+            var remoteSources = await FetchRemoteSources();
+            var customSources =  FetchCustomSources();
+            var localSources = FetchLocalSources();
+
             Dictionary<string, ImageSourceEntry> sources = new Dictionary<string, ImageSourceEntry>();
+            // TODO: Check if source already in dictionary
+            foreach (var item in remoteSources)
+            {
+                sources[item.Key] = item.Value;
+            }
+            foreach (var item in customSources)
+            {
+                sources[item.Key] = item.Value;
+            }
+            foreach (var item in localSources)
+            {
+                sources[item.Key] = item.Value;
+            }
             
+            return sources;
+        }
+
+        private async Task<Dictionary<string, ImageSourceEntry>> FetchRemoteSources()
+        {
+            Dictionary<string, ImageSourceEntry> sources = new Dictionary<string, ImageSourceEntry>();
             _sourceFetchSuccesful = false;
+            
             try
             {
                 if (new Uri(Plugin.ImageSourcesJsonLink).IsFile)
@@ -70,7 +94,29 @@ namespace Nya.Managers
             }
             
             _sourceFetchSuccesful = true;
-            
+            return sources;
+        }
+        
+        private Dictionary<string, ImageSourceEntry> FetchCustomSources()
+        {
+            try 
+            {
+                var jsonString = File.ReadAllText(Plugin.CustomImageSourcesPath);
+                
+                var commentedImageSourcesEntries = JsonConvert.DeserializeObject<CommentedImageSourcesEntries>(jsonString);
+                return commentedImageSourcesEntries.Sources;
+            }
+            catch (Exception e)
+            {
+                _siraLog.Error("Uh oh! Looks like there was an issue in CustomImageSources.json, make sure there's no errors in it!");
+                return new Dictionary<string, ImageSourceEntry>();;
+            }
+        }
+        
+        private Dictionary<string, ImageSourceEntry> FetchLocalSources()
+        {
+            Dictionary<string, ImageSourceEntry> sources = new Dictionary<string, ImageSourceEntry>();
+
             sources["Local Files"] = new ImageSourceEntry
             {
                 Url = Path.Combine(UnityGame.UserDataPath, "Nya"),
