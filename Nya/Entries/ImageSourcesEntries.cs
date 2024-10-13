@@ -1,20 +1,22 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Nya.Entries
 {
-    internal class ImageSourceEntry
+    internal sealed class ImageSourceEntry
     {
         internal enum ResponseTypeEnum
         {
-            Url,
-            Image
+            URL,
+            Image,
         }
         
         /// <summary>
         /// The URL to request the image from
         /// </summary>
         [JsonProperty("Url")]
+        [JsonRequired]
         public string Url { get; set; } = null!;
 
         /// <summary>
@@ -22,18 +24,30 @@ namespace Nya.Entries
         /// (URL to image or the image itself)
         /// </summary>
         [JsonProperty("ResponseType")]
+        [JsonRequired]
+        [JsonConverter(typeof(StringEnumConverter), true)]
         public ResponseTypeEnum ResponseType { get; set; }
+        
+        /// <summary>
+        /// Specifies the entry in the API response that contains the URL to the image
+        /// Only required if ResponseType is URL
+        /// </summary>
+        [JsonProperty("UrlResponseEntry")]
+        public string? UrlResponseEntry { get; set; }
         
         /// <summary>
         /// List of SFW endpoints which the API supports
         /// </summary>
         [JsonProperty("SfwEndpoints")]
+        [JsonRequired]
         public List<string> SfwEndpoints { get; set; } = null!;
 
         /// <summary>
         /// List of NSFW endpoints which the API supports
+        /// List can be empty be is required
         /// </summary>
         [JsonProperty("NsfwEndpoints")]
+        [JsonRequired]
         public List<string> NsfwEndpoints { get; set; } = null!;
         
         /// <summary>

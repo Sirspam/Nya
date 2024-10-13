@@ -2,6 +2,7 @@
   "waifu.pics": {
     "Url": "https://api.waifu.pics/",
     "ResponseType": "url",
+    "UrlResponseEntry": "url",
     "SfwEndpoints": [
       "sfw/neko",
       "sfw/waifu",
@@ -36,6 +37,7 @@
   "nekos.life": {
     "Url": "https://nekos.life/api/v2/img/",
     "ResponseType": "url",
+    "UrlResponseEntry": "url",
     "SfwEndpoints": [
       "neko",
       "waifu",
@@ -62,6 +64,7 @@
   "BocchiTheAPI": {
     "Url": "boccher.pixelboom.dev/api/",
     "ResponseType": "url",
+    "UrlResponseEntry": "url",
     "SfwEndpoints": [
       "frames",
       "frames?episode=1",
