@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
+using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using HMUI;
 using IPA.Utilities.Async;
 using Nya.Configuration;
+using Nya.Managers;
 using Nya.Utils;
+using SiraUtil.Logging;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,22 +16,28 @@ using Zenject;
 
 namespace Nya.UI.ViewControllers.NyaViewControllers
 {
-    internal abstract class NyaViewController
+    internal abstract class NyaViewController : IInitializable, IDisposable
     {
+        private const float NyaButtonCooldownTime = 1.0f;
         protected static bool AutoNyaActive;
         protected static bool AutoNyaButtonToggle;
+        private DateTime _lastNyaPressedTime = DateTime.MinValue;
 
-        protected readonly ImageUtils ImageUtils;
+        private readonly SiraLog _siraLog;
+        private readonly ImageUtils _imageUtils;
         protected readonly PluginConfig PluginConfig;
-        private readonly AutoNyaManager _autoNyaManager;
+        private readonly AutoNyaTicker _autoNyaTicker;
         private readonly TickableManager _tickableManager;
-        
-        protected NyaViewController(ImageUtils imageUtils, PluginConfig pluginConfig, TickableManager tickableManager)
+        private readonly NyaImageManager _nyaImageManager;
+
+        protected NyaViewController(SiraLog siraLog, ImageUtils imageUtils, PluginConfig pluginConfig, TickableManager tickableManager, NyaImageManager nyaImageManager)
         {
-            ImageUtils = imageUtils;
+            _siraLog = siraLog;
+            _imageUtils = imageUtils;
             PluginConfig = pluginConfig;
-            _autoNyaManager = new AutoNyaManager(ImageUtils, PluginConfig, this);
+            _autoNyaTicker = new AutoNyaTicker(nyaImageManager);
             _tickableManager = tickableManager;
+            _nyaImageManager = nyaImageManager;
         }
 
         #region components
@@ -60,18 +70,28 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
         [UIAction("#post-parse")]
         protected void NyaPostParse()
         {
-            NyaImage.material = ImageUtils.UIRoundEdgeMaterial;
+            var className = ToString();
+            var imageName = className.Substring(className.LastIndexOf(".", StringComparison.Ordinal) + 1).Replace("Controller", "Image");
+            NyaImage.name = imageName;
+            NyaImage.material = _imageUtils.UIRoundEdgeMaterial;
             SetNyaButtonsInteractability(false);
-            var time = DateTime.Now;
-            ImageUtils.LoadCurrentNyaImage(NyaImage, () => UnityMainThreadTaskScheduler.Factory.StartNew(() =>  NyaButtonCooldown(time)));
+            _imageUtils.SetImageViewSprite(NyaImage, _nyaImageManager.NyaImageSprite, () =>
+            {
+                if (_nyaImageManager.NyaImageSprite.name == nameof(Utilities.ImageResources.BlankSprite))
+                {
+                    return;
+                }
+                
+                UnityMainThreadTaskScheduler.Factory.StartNew(NyaButtonCooldown);
+            });
         }
 
         [UIAction("nya-click")]
-        protected void NyaClicked()
+        protected async void NyaClicked()
         {
             SetNyaButtonsInteractability(false);
-            var time = DateTime.Now;
-            ImageUtils.LoadNewNyaImage(NyaImage, ()  => UnityMainThreadTaskScheduler.Factory.StartNew(() =>  NyaButtonCooldown(time)));
+            _lastNyaPressedTime = DateTime.UtcNow;
+            await _nyaImageManager.RequestNewNyaImage();
         }
 
         [UIAction("nya-auto-clicked")]
@@ -83,14 +103,35 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
 
         #endregion actions
 
-        public virtual void Initialize()
+        private void NyaImageManagerOnNyaImageChanged(object sender, EventArgs e)
         {
-            ImageUtils.ErrorSpriteLoadedEvent += ImageUtilsOnErrorSpriteLoadedEvent;
+            _siraLog.Info($"Received new Nya image");
+            
+            Action callback = () => UnityMainThreadTaskScheduler.Factory.StartNew(NyaButtonCooldown);
+            
+            if (AutoNyaActive)
+            {
+                callback = () =>
+                {
+                    AutoNyaTicker.LastNyaTime = DateTime.Now.AddSeconds(PluginConfig.AutoNyaWait);
+                    _autoNyaTicker.ImageLoading = false;
+
+                    if (!AutoNyaActive)
+                    {
+                        NyaButton.interactable = true;
+                    }
+                };
+            }
+            
+            _imageUtils.SetImageViewSprite(NyaImage, _nyaImageManager.NyaImageSprite, callback);
         }
         
-        public virtual void Dispose()
+        private void NyaImageManagerOnErrorSpriteLoaded(object sender, EventArgs e)
         {
-            ImageUtils.ErrorSpriteLoadedEvent -= ImageUtilsOnErrorSpriteLoadedEvent;
+            if (AutoNyaActive)
+            {
+                ToggleAutoNya(false);
+            }
         }
 
         private void SetNyaButtonsInteractability(bool value)
@@ -99,19 +140,19 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
             NyaAutoButton.interactable = value;
         }
 
-        private async void NyaButtonCooldown(DateTime pressedTime)
-        {
-            pressedTime = pressedTime.AddSeconds(1.25f);
-            await Task.Delay((int) Math.Max(0, (pressedTime - DateTime.Now).TotalMilliseconds));
-            SetNyaButtonsInteractability(true);
-        }
-        
-        private void ImageUtilsOnErrorSpriteLoadedEvent()
+        private async void NyaButtonCooldown()
         {
             if (AutoNyaActive)
             {
-                ToggleAutoNya(false);
+                return;
             }
+            
+            var enableTime = _lastNyaPressedTime.AddSeconds(1.25f);
+            await Task.Delay((int) Math.Max(0, (enableTime - DateTime.UtcNow).TotalMilliseconds));
+            
+            SetNyaButtonsInteractability(false);
+            await Task.Delay(TimeSpan.FromSeconds(NyaButtonCooldownTime));
+            SetNyaButtonsInteractability(true);
         }
 
         protected void ToggleAutoNya(bool active)
@@ -120,7 +161,8 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
             {
                 case true:
                     AutoNyaActive = true;
-                    _tickableManager.AddLate(_autoNyaManager);
+                    _autoNyaTicker.CancellationTokenSource = new CancellationTokenSource();
+                    _tickableManager.AddLate(_autoNyaTicker);
                 
                     NyaAutoButton.gameObject.transform.Find("Underline").gameObject.GetComponent<ImageView>().color = Color.green;
                     NyaButton.interactable = false;
@@ -128,9 +170,10 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
                 case false:
                 {
                     AutoNyaActive = false;
-                    _tickableManager.RemoveLate(_autoNyaManager);
+                    _autoNyaTicker.CancellationTokenSource.Cancel();
+                    _tickableManager.RemoveLate(_autoNyaTicker);
 
-                    if (!_autoNyaManager.DoingDaThing)
+                    if (!_autoNyaTicker.ImageLoading)
                     {
                         NyaButton.interactable = true;
                     }
@@ -141,36 +184,38 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
             }
         }
         
-        private class AutoNyaManager : ILateTickable
+        public virtual void Initialize()
         {
-            public bool DoingDaThing;
-            private readonly ImageUtils _imageUtils;
-            private readonly PluginConfig _pluginConfig;
-            private static DateTime _lastNyaTime = DateTime.Now;
-            private readonly NyaViewController _nyaViewController;
+            _nyaImageManager.NyaImageChanged += NyaImageManagerOnNyaImageChanged;
+            _nyaImageManager.ErrorSpriteLoaded += NyaImageManagerOnErrorSpriteLoaded;
+        }
 
-            public AutoNyaManager(ImageUtils imageUtils, PluginConfig pluginConfig, NyaViewController nyaViewController)
+        public virtual void Dispose()
+        {
+            _nyaImageManager.NyaImageChanged -= NyaImageManagerOnNyaImageChanged;
+            _nyaImageManager.ErrorSpriteLoaded -= NyaImageManagerOnErrorSpriteLoaded;
+        }
+        
+        private class AutoNyaTicker : ILateTickable
+        {
+            public bool ImageLoading;
+            public CancellationTokenSource CancellationTokenSource = null!;
+            public static DateTime LastNyaTime = DateTime.Now;
+            
+            private readonly NyaImageManager _nyaImageManager;
+
+
+            public AutoNyaTicker(NyaImageManager nyaImageManager)
             {
-                _imageUtils = imageUtils;
-                _pluginConfig = pluginConfig;
-                _nyaViewController = nyaViewController;
+                _nyaImageManager = nyaImageManager;
             }
 
-            public void LateTick()
+            public async void LateTick()
             {
-                if (_lastNyaTime.TimeOfDay < DateTime.Now.TimeOfDay && !DoingDaThing)
+                if (LastNyaTime.TimeOfDay < DateTime.Now.TimeOfDay && !ImageLoading)
                 {
-                    DoingDaThing = true;
-                    _imageUtils.LoadNewNyaImage(_nyaViewController.NyaImage, () =>
-                    {
-                        _lastNyaTime = DateTime.Now.AddSeconds(_pluginConfig.AutoNyaWait);
-                        DoingDaThing = false;
-
-                        if (!AutoNyaActive)
-                        {
-                            _nyaViewController.NyaButton.interactable = true;
-                        }
-                    });
+                    ImageLoading = true;
+                    await _nyaImageManager.RequestNewNyaImage(CancellationTokenSource.Token);
                 }
             }
         }

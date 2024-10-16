@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Nya.Entries
 {
-    internal class CommentedImageSourcesEntries
+    internal sealed class CommentedImageSourcesEntries
     {
         [JsonProperty("_comment")]
         public string Comment { get; set; } = null!;

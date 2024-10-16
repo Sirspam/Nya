@@ -38,23 +38,37 @@ namespace Nya.Managers
         private async Task<Dictionary<string, ImageSourceEntry>> PopulateSources()
         {
             var remoteSources = await FetchRemoteSources();
-            var customSources =  FetchCustomSources();
+            var customSources = FetchCustomSources();
             var localSources = FetchLocalSources();
 
             Dictionary<string, ImageSourceEntry> sources = new Dictionary<string, ImageSourceEntry>();
-            // TODO: Check if source already in dictionary
             foreach (var item in remoteSources)
             {
+                // Move this over to a method if more checks are needed
+                if (item.Value.ResponseType == ImageSourceEntry.ResponseTypeEnum.URL && item.Value.UrlResponseEntry is null)
+                {
+                    _siraLog.Error($"{item.Key} has a URL response type but no URL response entry, skipping");
+                    continue;
+                }
+                
                 sources[item.Key] = item.Value;
             }
             foreach (var item in customSources)
             {
+                if (item.Value.ResponseType == ImageSourceEntry.ResponseTypeEnum.URL && item.Value.UrlResponseEntry is null)
+                {
+                    _siraLog.Error($"{item.Key} has a URL response type but no URL response entry, skipping");
+                    continue;
+                }
+                
                 sources[item.Key] = item.Value;
             }
             foreach (var item in localSources)
             {
                 sources[item.Key] = item.Value;
             }
+            
+            _siraLog.Info($"Loaded following APIs: [ {string.Join(", ", sources.Keys)} ]");
             
             return sources;
         }
@@ -108,7 +122,7 @@ namespace Nya.Managers
             }
             catch (Exception e)
             {
-                _siraLog.Error("Uh oh! Looks like there was an issue in CustomImageSources.json, make sure there's no errors in it!");
+                _siraLog.Error($"Failed to read CustomImageSources.json: {e.Message}");
                 return new Dictionary<string, ImageSourceEntry>();;
             }
         }

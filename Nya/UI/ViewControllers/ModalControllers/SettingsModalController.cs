@@ -32,6 +32,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
         private readonly ImageUtils _imageUtils;
         private readonly MainCamera _mainCamera;
         protected readonly PluginConfig PluginConfig;
+        private readonly NyaImageManager _nyaImageManager;
         private readonly FloatingScreenUtils _floatingScreenUtils;
         private readonly ImageSourcesManager _imageSourcesManager;
         private readonly TimeTweeningManager _timeTweeningManager;
@@ -39,12 +40,13 @@ namespace Nya.UI.ViewControllers.ModalControllers
 
         public event PropertyChangedEventHandler PropertyChanged = null!;
 
-        protected SettingsModalController(UIUtils uiUtils, ImageUtils imageUtils, MainCamera mainCamera, PluginConfig pluginConfig, FloatingScreenUtils floatingScreenUtils, ImageSourcesManager imageSourcesManager, TimeTweeningManager timeTweeningManager, NsfwConfirmModalController nsfwConfirmModalController)
+        protected SettingsModalController(UIUtils uiUtils, ImageUtils imageUtils, MainCamera mainCamera, PluginConfig pluginConfig, NyaImageManager nyaImageManager, FloatingScreenUtils floatingScreenUtils, ImageSourcesManager imageSourcesManager, TimeTweeningManager timeTweeningManager, NsfwConfirmModalController nsfwConfirmModalController)
         {
             _uiUtils = uiUtils;
             _imageUtils = imageUtils;
             _mainCamera = mainCamera;
             PluginConfig = pluginConfig;
+            _nyaImageManager = nyaImageManager;
             _floatingScreenUtils = floatingScreenUtils;
             _imageSourcesManager = imageSourcesManager;
             _timeTweeningManager = timeTweeningManager;
@@ -210,7 +212,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
         protected void DownloadNya()
         {
             _uiUtils.ButtonUnderlineClick(NyaDownloadButton.gameObject);
-            Task.Run(() => _imageUtils.DownloadNyaImage());
+            Task.Run(() => _imageUtils.SaveSpriteImage(_nyaImageManager.NyaImageSprite));
         }
 
         [UIAction("nya-open-clicked")]

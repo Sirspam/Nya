@@ -2,29 +2,31 @@
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.FloatingScreen;
 using Nya.Configuration;
+using Nya.Managers;
 using Nya.UI.ViewControllers.ModalControllers;
 using Nya.Utils;
+using SiraUtil.Logging;
 using Tweening;
 using Zenject;
 
 namespace Nya.UI.ViewControllers.NyaViewControllers
 {
-    internal class NyaViewGameController : NyaViewController, IInitializable, IDisposable
+    internal class NyaViewGameController : NyaViewController
     {
         private readonly IGamePause _gamePause;
         private readonly FloatingScreenUtils _floatingScreenUtils;
         private readonly TimeTweeningManager _timeTweeningManager;
         private readonly SettingsModalGameController _settingsModalGameController;
         
-        public NyaViewGameController(ImageUtils imageUtils, PluginConfig pluginConfig, TickableManager tickableManager, IGamePause gamePause, FloatingScreenUtils floatingScreenUtils, TimeTweeningManager timeTweeningManager, SettingsModalGameController settingsModalGameController)
-            : base(imageUtils, pluginConfig, tickableManager)
+        public NyaViewGameController(SiraLog siraLog, ImageUtils imageUtils, PluginConfig pluginConfig, TickableManager tickableManager, NyaImageManager nyaImageManager, IGamePause gamePause, FloatingScreenUtils floatingScreenUtils, TimeTweeningManager timeTweeningManager, SettingsModalGameController settingsModalGameController)
+            : base(siraLog, imageUtils, pluginConfig, tickableManager, nyaImageManager)
         {
             _gamePause = gamePause;
             _floatingScreenUtils = floatingScreenUtils;
             _timeTweeningManager = timeTweeningManager;
             _settingsModalGameController = settingsModalGameController;
         }
-
+        
         public override void Initialize()
         {
             base.Initialize();

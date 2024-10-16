@@ -2,8 +2,10 @@
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.FloatingScreen;
 using Nya.Configuration;
+using Nya.Managers;
 using Nya.UI.ViewControllers.ModalControllers;
 using Nya.Utils;
+using SiraUtil.Logging;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
@@ -11,14 +13,14 @@ using Object = UnityEngine.Object;
 
 namespace Nya.UI.ViewControllers.NyaViewControllers
 {
-    internal class NyaViewMenuController : NyaViewController, IInitializable, IDisposable
+    internal class NyaViewMenuController : NyaViewController
     {
         private readonly GameScenesManager _gameScenesManager;
         private readonly FloatingScreenUtils _floatingScreenUtils;
         private readonly SettingsModalMenuController _settingsModalMenuController;
         
-        public NyaViewMenuController(ImageUtils imageUtils, PluginConfig pluginConfig,  TickableManager tickableManager, GameScenesManager gameScenesManager, FloatingScreenUtils floatingScreenUtils, SettingsModalMenuController settingsModalMenuController)
-            : base(imageUtils, pluginConfig, tickableManager)
+        public NyaViewMenuController(SiraLog siraLog, ImageUtils imageUtils, PluginConfig pluginConfig,  TickableManager tickableManager, NyaImageManager nyaImageManager,  GameScenesManager gameScenesManager, FloatingScreenUtils floatingScreenUtils, SettingsModalMenuController settingsModalMenuController)
+            : base(siraLog, imageUtils, pluginConfig, tickableManager, nyaImageManager)
         {
             _gameScenesManager = gameScenesManager;
             _floatingScreenUtils = floatingScreenUtils;
@@ -98,15 +100,15 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
                 _floatingScreenUtils.MenuFloatingScreen.handle.SetActive(PluginConfig.ShowHandle);
             }
 
-            NyaButton.interactable = false;
-            ImageUtils.LoadCurrentNyaImage(NyaImage, () =>
+            /*NyaButton.interactable = false;
+            ImageUtils.SetImageViewSprite(NyaImage, () =>
             {
                 NyaButton.interactable = true;
                 if (PluginConfig.PersistantAutoNya && AutoNyaButtonToggle && !AutoNyaActive)
                 {
                     ToggleAutoNya(true);
                 }
-            });
+            });*/
         }
         
         private void MenuDeactivated(ScenesTransitionSetupDataSO transitionSetupData, DiContainer diContainer)

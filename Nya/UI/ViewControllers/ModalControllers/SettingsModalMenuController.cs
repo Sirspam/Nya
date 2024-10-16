@@ -17,8 +17,8 @@ namespace Nya.UI.ViewControllers.ModalControllers
         private readonly NyaSettingsFlowCoordinator _nyaSettingsFlowCoordinator;
         private readonly NyaSettingsMainViewController _nyaSettingsMainViewController;
 
-        public SettingsModalMenuController(UIUtils uiUtils, ImageUtils imageUtils, MainCamera mainCamera, PluginConfig pluginConfig, FloatingScreenUtils floatingScreenUtils, ImageSourcesManager imageSourcesManager, TimeTweeningManager timeTweeningManager, NsfwConfirmModalController nsfwConfirmModalController, MainFlowCoordinator mainFlowCoordinator, NyaSettingsFlowCoordinator nyaSettingsFlowCoordinator, NyaSettingsMainViewController nyaSettingsMainViewController)
-            : base(uiUtils, imageUtils, mainCamera, pluginConfig, floatingScreenUtils, imageSourcesManager, timeTweeningManager, nsfwConfirmModalController)
+        public SettingsModalMenuController(UIUtils uiUtils, ImageUtils imageUtils, MainCamera mainCamera, PluginConfig pluginConfig, NyaImageManager nyaImageManager, FloatingScreenUtils floatingScreenUtils, ImageSourcesManager imageSourcesManager, TimeTweeningManager timeTweeningManager, NsfwConfirmModalController nsfwConfirmModalController, MainFlowCoordinator mainFlowCoordinator, NyaSettingsFlowCoordinator nyaSettingsFlowCoordinator, NyaSettingsMainViewController nyaSettingsMainViewController)
+            : base(uiUtils, imageUtils, mainCamera, pluginConfig, nyaImageManager, floatingScreenUtils, imageSourcesManager, timeTweeningManager, nsfwConfirmModalController)
         {
             _mainFlowCoordinator = mainFlowCoordinator;
             _nyaSettingsFlowCoordinator = nyaSettingsFlowCoordinator;

@@ -3,20 +3,22 @@ using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.GameplaySetup;
 using Nya.Components;
 using Nya.Configuration;
+using Nya.Managers;
 using Nya.UI.ViewControllers.ModalControllers;
 using Nya.Utils;
+using SiraUtil.Logging;
 using Zenject;
 
 namespace Nya.UI.ViewControllers.NyaViewControllers
 {
-	internal class NyaViewGameplaySetupController : NyaViewController, IInitializable, IDisposable
+	internal class NyaViewGameplaySetupController : NyaViewController
 	{
 		private readonly DiContainer _diContainer;
 		private readonly SettingsModalMenuController _settingsModalMenuController;
 		private readonly GameplaySetupViewController _gameplaySetupViewController;
 		
-		public NyaViewGameplaySetupController(ImageUtils imageUtils, PluginConfig pluginConfig, TickableManager tickableManager, DiContainer diContainer, SettingsModalMenuController settingsModalMenuController, GameplaySetupViewController gameplaySetupViewController)
-			: base(imageUtils, pluginConfig, tickableManager)
+		public NyaViewGameplaySetupController(SiraLog siraLog, ImageUtils imageUtils, PluginConfig pluginConfig, TickableManager tickableManager, NyaImageManager nyaImageManager, DiContainer diContainer, SettingsModalMenuController settingsModalMenuController, GameplaySetupViewController gameplaySetupViewController)
+			: base(siraLog, imageUtils, pluginConfig, tickableManager, nyaImageManager)
 		{
 			_diContainer = diContainer;
 			_settingsModalMenuController = settingsModalMenuController;
@@ -70,15 +72,15 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
 			}
 			else
 			{
-				NyaButton.interactable = false;
-				ImageUtils.LoadCurrentNyaImage(NyaImage, () =>
+				/*NyaButton.interactable = false;
+				ImageUtils.SetImageViewSprite(NyaImage, () =>
 				{
 					NyaButton.interactable = true;
 					if (PluginConfig.PersistantAutoNya && AutoNyaButtonToggle && !AutoNyaActive)
 					{
 						ToggleAutoNya(true);
 					}
-				});
+				});*/
 			}
 		}
 

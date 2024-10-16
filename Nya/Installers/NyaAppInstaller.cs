@@ -19,7 +19,9 @@ namespace Nya.Installers
         {
             Container.BindInstance(_pluginConfig).AsSingle();
             Container.Bind<ImageSourcesManager>().AsSingle();
+            Container.BindInterfacesAndSelfTo<NyaImageManager>().AsSingle();
             Container.Bind<UIUtils>().AsSingle();
+            Container.Bind<WebUtils>().AsSingle();
             Container.Bind<ImageUtils>().AsSingle();
             Container.Bind<FloatingScreenUtils>().AsSingle();
             if (_pluginConfig.IsAprilFirst)

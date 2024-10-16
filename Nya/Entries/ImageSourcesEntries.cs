@@ -54,5 +54,10 @@ namespace Nya.Entries
         /// Indicates if the source is saved locally on the user's machine.
         /// </summary>
         public bool IsLocal { get; set; } = false;
+
+        public List<string> GetSelectedEndpoints(bool nsfw)
+        {
+            return nsfw ? NsfwEndpoints : SfwEndpoints;
+        }
     }
 }

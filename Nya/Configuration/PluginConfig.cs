@@ -49,7 +49,7 @@ namespace Nya.Configuration
         /// </summary>
         public virtual IDisposable ChangeTransaction => null!;
 
-        // Surely this innocent looking boolean won't be used for anything silly or goofy :clueless:
+        // Surely this innocent looking boolean won't be used for any mischief
         public virtual bool IsAprilFirst => DateTime.Now is {Month: 4, Day: 1} && EasterEggs;
         
         /// <summary>
@@ -69,12 +69,17 @@ namespace Nya.Configuration
             // Do stuff when the config is changed.
         }
 
+        public string GetSelectedEndpoint()
+        {
+            return (NsfwImages ? SelectedEndpoints[SelectedAPI].SelectedNsfwEndpoint : SelectedEndpoints[SelectedAPI].SelectedSfwEndpoint) ?? string.Empty;
+        }
+
         private void FixConfigIssues()
         {
             // Stops any changes to the config happening until this method is done
             using var _ = ChangeTransaction;
             
-            // Checks auto nya's wait time hasn't been set to below 3 seconds
+            // Checks auto Nya's wait time hasn't been set to below 3 seconds
             // Stops users from spamming the fuck out of an API
             if (AutoNyaWait < 3)
             {
