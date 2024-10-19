@@ -59,9 +59,11 @@ namespace Nya.Managers
                 selectedEndpoint = _pluginConfig.GetSelectedEndpoint();
             }
             
+            var imageSource = sources[selectedApi];
+            
             if (selectedEndpoint.ToLower() == "random")
             {
-                var endpoints = sources[selectedApi].GetSelectedEndpoints(_pluginConfig.NsfwImages);
+                var endpoints = imageSource.GetSelectedEndpoints(_pluginConfig.NsfwImages);
                 selectedEndpoint = endpoints[_random.Next(endpoints.Count)];
             }
             
@@ -70,7 +72,7 @@ namespace Nya.Managers
                 byte[]? newImageBytes = null;
                 var spriteName = "Nya Sprite";
                 
-                if (sources[selectedApi].IsLocal)
+                if (imageSource.IsLocal)
                 {
                     var folder = _pluginConfig.NsfwImages ? "nsfw" : "sfw";
 
@@ -101,14 +103,15 @@ namespace Nya.Managers
                 }
                 else
                 {
-                    var url = Path.Combine(sources[selectedApi].Url, selectedEndpoint);
+                    var url = Path.Combine(imageSource.Url, selectedEndpoint);
                     _siraLog.Info($"Requesting image from {url}");
-
-                    switch (sources[selectedApi].ResponseType)
+                    
+                    switch (imageSource.ResponseType)
                     {
                         case ImageSourceEntry.ResponseTypeEnum.URL:
-                            var jsonObject = await _webUtils.GetAsync<JObject>(url, cancellationToken.Value);
-                            if (jsonObject is not null && jsonObject.TryGetValue(sources[selectedApi].UrlResponseEntry!, out var imageUrl))
+                            var httpResponse = await _webUtils.GetAsync(url, cancellationToken.Value);
+                            var jsonObject = await _webUtils.ParseWebResponse<JObject>(httpResponse!);
+                            if (jsonObject is not null && jsonObject.TryGetValue(imageSource.UrlResponseEntry!, out var imageUrl))
                             {
                                 _siraLog.Info(imageUrl.ToString());
                                 var urlResponse = await _webUtils.GetAsync(imageUrl.ToString(), cancellationToken.Value);
@@ -127,7 +130,7 @@ namespace Nya.Managers
                                 _siraLog.Error("Failed to get image URL from JSON response");
                                 if (jsonObject != null)
                                 {
-                                    _siraLog.Info($"Couldn't find entry {sources[selectedApi].UrlResponseEntry} in JSON object");
+                                    _siraLog.Info($"Couldn't find entry {imageSource.UrlResponseEntry} in JSON object");
                                     _siraLog.Debug(jsonObject.ToString());
                                 }
                                 SetErrorSprite();

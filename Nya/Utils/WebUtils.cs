@@ -21,35 +21,38 @@ namespace Nya.Utils
 
         internal async Task<IHttpResponse?> GetAsync(string url, CancellationToken cancellationToken = default)
         {
+            return await GetAsync(url, null, null, cancellationToken);
+        }
+
+        internal async Task<IHttpResponse?> GetAsync(string url, string? token, string? queryParameters, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                token = null;
+            }
+            
+            if (!string.IsNullOrWhiteSpace(queryParameters))
+            {
+                if (queryParameters!.StartsWith("?"))
+                {
+                    queryParameters = queryParameters.Substring(1);
+                }
+                
+                url += $"?{queryParameters}";
+            }
+            
             try
             {
+                _httpService.Token = token;
                 var response = await _httpService.GetAsync(url, cancellationToken: cancellationToken);
                 
+                _httpService.Token = null;
                 return response;
             }
             catch (Exception e)
             {
-                if (e is TaskCanceledException)
-                {
-                    return default;
-                }
+                _httpService.Token = null;
                 
-                _siraLog.Critical(e);
-                return default;
-            }
-        }
-        
-        internal async Task<T?> GetAsync<T>(string url, CancellationToken cancellationToken = default)
-        {
-            try
-            {
-                var response = await _httpService.GetAsync(url, cancellationToken: cancellationToken);
-
-                var parsed = await ParseWebResponse<T>(response);
-                return parsed;
-            }
-            catch (Exception e)
-            {
                 if (e is TaskCanceledException)
                 {
                     return default;
@@ -60,7 +63,7 @@ namespace Nya.Utils
             }
         }
 
-        private async Task<T?> ParseWebResponse<T>(IHttpResponse webResponse)
+        internal async Task<T?> ParseWebResponse<T>(IHttpResponse webResponse)
         {
             if (!webResponse.Successful)
             {

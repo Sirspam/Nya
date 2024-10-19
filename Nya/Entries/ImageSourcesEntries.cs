@@ -36,6 +36,22 @@ namespace Nya.Entries
         public string? UrlResponseEntry { get; set; }
         
         /// <summary>
+        /// !!! NOT TESTED !!! Please report any issues
+        /// Optional property, specifies a token to use when making requests to the API
+        /// Intended for authentication purposes
+        /// </summary>
+        [JsonProperty("Token")]
+        public string? Token { get; set; }
+        
+        /// <summary>
+        /// !!! NOT TESTED !!! Please report any issues
+        /// Optional property, specifies query parameters to append to the URL when making requests to the API
+        /// Intended for authentication purposes
+        /// </summary>
+        [JsonProperty("QueryParameters")]
+        public string? QueryParameters { get; set; }
+        
+        /// <summary>
         /// List of SFW endpoints which the API supports
         /// </summary>
         [JsonProperty("SfwEndpoints")]
