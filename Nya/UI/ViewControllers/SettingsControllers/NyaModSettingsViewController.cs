@@ -23,14 +23,14 @@ namespace Nya.UI.ViewControllers.SettingsControllers
 
 		public void Initialize()
 		{
-			BSMLSettings.instance.AddSettingsMenu("Nya", "Nya.UI.Views.NyaModSettingsView.bsml", this);
+			BSMLSettings.Instance.AddSettingsMenu("Nya", "Nya.UI.Views.NyaModSettingsView.bsml", this);
 		}
 
 		public void Dispose()
 		{
-			if (BSMLSettings.instance != null)
+			if (BSMLSettings.Instance != null)
 			{
-				BSMLSettings.instance.RemoveSettingsMenu(this);
+				BSMLSettings.Instance.RemoveSettingsMenu(this);
 			}
 		}
 

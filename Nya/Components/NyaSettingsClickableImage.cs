@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Threading;
 using BeatSaberMarkupLanguage;
 using Nya.Configuration;
 using UnityEngine;
@@ -22,7 +23,7 @@ namespace Nya.Components
 			_pluginConfig = pluginConfig;
 			_platformUserModel = platformUserModel;
 			
-			_isBogShamb = (await _platformUserModel.GetUserInfo()).platformUserId == "76561198087340992";
+			_isBogShamb = (await _platformUserModel.GetUserInfo(CancellationToken.None)).platformUserId == "76561198087340992";
 		}
 
 		private void Awake()

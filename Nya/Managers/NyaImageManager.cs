@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using BeatSaberMarkupLanguage;
@@ -153,8 +154,9 @@ namespace Nya.Managers
                             break;
                     }
                 }
-                
-                SetNyaImageSprite(Utilities.LoadSpriteRaw(newImageBytes), spriteName);
+
+                var sprite = await Utilities.LoadSpriteAsync(newImageBytes);
+                SetNyaImageSprite(sprite, spriteName);
             }
             catch (Exception exception)
             {
@@ -170,12 +172,10 @@ namespace Nya.Managers
             NyaImageChanged?.Invoke(this, EventArgs.Empty);
         }
         
-        private void SetErrorSprite()
+        private async void SetErrorSprite()
         {
-            Utilities.GetData("Nya.Resources.Chocola_Dead.png", data =>
-            {
-                SetNyaImageSprite(Utilities.LoadSpriteRaw(data), "Error Sprite");
-            });
+            var sprite = await Utilities.LoadSpriteFromAssemblyAsync(Assembly.GetExecutingAssembly(), "Nya.Resources.Chocola_Dead.png");
+            SetNyaImageSprite(sprite, "Error Sprite");
             
             _siraLog.Warn("Error sprite set");
             ErrorSpriteLoaded?.Invoke(this, EventArgs.Empty);

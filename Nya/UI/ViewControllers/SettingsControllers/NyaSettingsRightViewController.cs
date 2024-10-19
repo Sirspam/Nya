@@ -73,7 +73,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
                 _floatingScreenUtils.ToggleRainbowNyaBg(true);
                 _pluginConfig.RainbowBackgroundColor = true;
                 _pluginConfig.BackgroundColor = _nyaSettingsMainViewController.BgColorSetting.CurrentColor;
-                _nyaSettingsMainViewController.BgColorSetting.interactable = false;
+                _nyaSettingsMainViewController.BgColorSetting.Interactable = false;
                 _nyaSettingsMainViewController.BgColorDefaultButton.interactable = false;
             }
             else
@@ -82,7 +82,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
                 KindlyAskRainbowTextToShowUpThenHaveItSodOffAfterTwoSeconds();
                 _floatingScreenUtils.ToggleRainbowNyaBg(false);
                 _pluginConfig.RainbowBackgroundColor = false;
-                _nyaSettingsMainViewController.BgColorSetting.interactable = true;
+                _nyaSettingsMainViewController.BgColorSetting.Interactable = true;
                 _nyaSettingsMainViewController.BgColorDefaultButton.interactable = true;
             }
         }

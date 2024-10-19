@@ -71,19 +71,19 @@ namespace Nya.Utils
 		{
 			var floatingScreen = FloatingScreen.CreateFloatingScreen(new Vector2(100f, 80f), true, position, Quaternion.Euler(rotation), 220, true);
 			
-			BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.NyaView.bsml"), floatingScreen.gameObject, host);
+			BSMLParser.Instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.NyaView.bsml"), floatingScreen.gameObject, host);
 			var gameObject = floatingScreen.gameObject;
 			gameObject.transform.localScale = new Vector3(0.02f * _pluginConfig.FloatingScreenScale,  0.02f * _pluginConfig.FloatingScreenScale, 0.02f * _pluginConfig.FloatingScreenScale);;
 			gameObject.layer = 5;
 			
-			floatingScreen.handle.transform.localPosition = new Vector3(0f, -floatingScreen.ScreenSize.y / 1.8f, -5f);
+			floatingScreen.Handle.transform.localPosition = new Vector3(0f, -floatingScreen.ScreenSize.y / 1.8f, -5f);
 			HandleScale = new Vector3(floatingScreen.ScreenSize.x * 0.8f, floatingScreen.ScreenSize.y / 15f, floatingScreen.ScreenSize.y / 15f);
-			floatingScreen.handle.transform.localScale = HandleScale;
-			floatingScreen.handle.gameObject.layer = 5;
+			floatingScreen.Handle.transform.localScale = HandleScale;
+			floatingScreen.Handle.gameObject.layer = 5;
 			floatingScreen.HighlightHandle = true;
 			if (!_pluginConfig.ShowHandle)
 			{
-				floatingScreen.handle.gameObject.SetActive(false);
+				floatingScreen.Handle.gameObject.SetActive(false);
 			}
 
 			if (_pluginConfig.UseBackgroundColor || _pluginConfig.RainbowBackgroundColor)

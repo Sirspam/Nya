@@ -90,8 +90,8 @@ namespace Nya.UI.ViewControllers.SettingsControllers
                 _diContainer.InstantiateComponent<NyaSettingsClickableImage>(_chocolaImage.gameObject);
                 _diContainer.InstantiateComponent<NyaSettingsClickableImage>(_vanillaImage.gameObject);
 
-                BgColorSetting.modalColorPicker.doneEvent += dontCareDidntAsk => _pluginConfig.UseBackgroundColor = true;
-                BgColorSetting.modalColorPicker.cancelEvent += BgColorSettingCancelled;
+                BgColorSetting.ModalColorPicker.DoneEvent += _ => _pluginConfig.UseBackgroundColor = true;
+                BgColorSetting.ModalColorPicker.CancelEvent += BgColorSettingCancelled;
                             
                 var gitVersion = await _siraSyncService.LatestVersion();
                 if (gitVersion != null && gitVersion > _pluginMetadata.HVersion)
@@ -110,7 +110,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
 
             if (_pluginConfig.RainbowBackgroundColor)
             {
-                BgColorSetting.interactable = false;
+                BgColorSetting.Interactable = false;
                 BgColorDefaultButton.interactable = false;
             }
         }
@@ -148,7 +148,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
             set
             {
                 _inPause = value;
-                _inGameplayToggle.interactable = value;
+                _inGameplayToggle.Interactable = value;
                 NotifyPropertyChanged();
             }
         }
@@ -359,14 +359,14 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         }
         
         [UIAction("#post-parse")]
-        private void PostParse()
+        private async void PostParse()
         {
             AssignValues();
 
             if (_pluginConfig.IsAprilFirst)
             {
-                _chocolaImage.SetImage("Nya.Resources.Good_Boy.png");
-                _vanillaImage.SetImage("Nya.Resources.Good_Boy.png");
+                await _chocolaImage.SetImageAsync("Nya.Resources.Good_Boy.png");
+                await _vanillaImage.SetImageAsync("Nya.Resources.Good_Boy.png");
                 var localScale = _vanillaImage.transform.localScale;
                 localScale.x *= -1;
                 // ReSharper disable once Unity.InefficientPropertyAccess SHUT UP RESHARPER

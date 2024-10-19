@@ -36,7 +36,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
 		{
 			if (!_parsed)
 			{
-				BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.GitHubPageModal.bsml"), parentTransform.gameObject, this);
+				BSMLParser.Instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.GitHubPageModal.bsml"), parentTransform.gameObject, this);
 				ModalText = $"Open {pluginName}'s GitHub Page?"; // Might be a bit silly to set the text like this but it felt odd having the version text get everything from the manifest while the modal was static
 				_githubPath = githubPath;
 				_modalView.name = "NyaGitHubModal";				

@@ -147,10 +147,10 @@ namespace Nya.UI.ViewControllers.ModalControllers
 		{
 			if (!_modalView && !_parsed)
 			{
-				BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.EnableNsfwFeaturesModalView.bsml"), parentTransform.gameObject, this);
+				BSMLParser.Instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Nya.UI.Views.EnableNsfwFeaturesModalView.bsml"), parentTransform.gameObject, this);
 				_modalView.name = "NyaEnableNsfwFeaturesModal";
-				_presentPanelAnimation = _modalView.GetField<PanelAnimationSO, ModalView>("_presentPanelAnimations");
-				_dismissPanelAnimation = _modalView.GetField<PanelAnimationSO, ModalView>("_dismissPanelAnimation");
+				_presentPanelAnimation = _modalView._presentPanelAnimations;
+				_dismissPanelAnimation = _modalView._dismissPanelAnimation;
 
 				_parsed = true;
 			}
@@ -234,7 +234,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
 			_dismissPanelAnimation.ExecuteAnimation(_rootVerticalGameObject, FinishedCallback);
 		}
 		
-		private void ChangeModalContent(ModalContent modalContent)
+		private async void ChangeModalContent(ModalContent modalContent)
 		{
 			if (modalContent.Animated)
 			{
@@ -252,7 +252,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
 			
 			_topText.text = modalContent.TopText;
 			_midText.text = modalContent.MidText;
-			_midImage.SetImage(modalContent.MidImagePath);
+			await _midImage.SetImageAsync(modalContent.MidImagePath);
 
 			if (modalContent.ShowInputs)
 			{
@@ -291,9 +291,9 @@ namespace Nya.UI.ViewControllers.ModalControllers
 
 		private static async void IntractabilityCooldown(SliderSetting gameObject)
 		{
-			gameObject.interactable = false;
+			gameObject.Interactable = false;
 			await AwaitSleep(2000);
-			gameObject.interactable = true;
+			gameObject.Interactable = true;
 		}
 
 		private static async void IntractabilityCooldown(Selectable gameObject)
