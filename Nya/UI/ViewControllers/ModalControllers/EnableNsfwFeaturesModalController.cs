@@ -6,7 +6,6 @@ using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.Parser;
 using HMUI;
-using IPA.Utilities;
 using Tweening;
 using UnityEngine;
 using UnityEngine.UI;
@@ -33,10 +32,11 @@ namespace Nya.UI.ViewControllers.ModalControllers
 			internal readonly string YesButtonText;
 			internal readonly bool ButtonIntractabilityCooldown;
 			internal bool Animated;
+			internal readonly bool ButtonsSwapped;
 			internal readonly bool ShowInputs;
 			internal readonly bool MathTime;
 
-			public ModalContent(string topText, string midText, string midImagePath, string noButtonText, string yesButtonText, bool buttonIntractabilityCooldown, bool animated, bool showInputs = true, bool mathTime = false)
+			public ModalContent(string topText, string midText, string midImagePath, string noButtonText, string yesButtonText, bool buttonIntractabilityCooldown, bool animated, bool buttonsSwapped = false, bool showInputs = true, bool mathTime = false)
 			{
 				TopText = topText;
 				MidText = midText;
@@ -45,6 +45,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
 				YesButtonText = yesButtonText;
 				ButtonIntractabilityCooldown = buttonIntractabilityCooldown;
 				Animated = animated;
+				ButtonsSwapped = buttonsSwapped;
 				ShowInputs = showInputs;
 				MathTime = mathTime;
 				
@@ -56,23 +57,19 @@ namespace Nya.UI.ViewControllers.ModalControllers
 			new ModalContent("Woah There!", "Are you sure you want to enable NSFW features? You have to be 18+ to do this!", "Nya.Resources.Chocola_Surprised.png", "No", "Yes, I'm 18+", true, false),
 			new ModalContent("Are you sure?", "Mhm... you super sure you're 18 or older??", "Nya.Resources.Chocola_Question_Mark.png", "No, I'm not", "Yes, I'm certain", true, true),
 			new ModalContent("Are you very sure?", "If you're lying I will find out and tell your parents. \r\n(They will be very disappointed in you)", "Nya.Resources.Chocola_Angry.png", "Sorry, I lied", "Yes, I'm not lying", true, true),
-			new ModalContent("Just double checking", "Okay so you're absolutely positive that you're 18+ and want to enable NSFW features?", "Nya.Resources.Chocola_Howdidyoudothat.png", "No", "Yes", true, true),
-			new ModalContent("Surprise math question!", "To confirm that you're really 18, let's do a maths question! \r\nWhat is 6 + 9 * (4 - 2) + 0?", "Nya.Resources.Chocola_Laugh.png", "No", "Yes", true, true, true, true),
+			new ModalContent("Just double checking", "Okay so you're absolutely positive that you're 18+ and want to enable NSFW features?", "Nya.Resources.Chocola_Howdidyoudothat.png", "Yes", "No", true, true, true),
+			new ModalContent("Surprise math question!", "To confirm that you're really 18, let's do a maths question! \r\nWhat is 6 + 9 * (4 - 2) + 0?", "Nya.Resources.Chocola_Laugh.png", string.Empty, string.Empty, true, true, false,true, true),
 			new ModalContent("Correct!", "If you got that right then you must be a smart and sensible adult!", "Nya.Resources.Chocola_Happy.png", "but I'm not...", "I am! 😃", true, true),
 			new ModalContent("Wait!", "The NSFW features could be dangerous! \r\nWhy else would they be called \"Not Safe For Work??\"", "Nya.Resources.Chocola_Spooked.png", "That sounds risky!", "I am prepared", true, true),
 			new ModalContent("Last time I'll ask", "So you definitely want to enable the NSFW features and suffer the consequences which may entail from it?", "Nya.Resources.Chocola_Bashful.png", "No", "Yes", true, true)
 		};
 
 		private bool _parsed;
-
+		private bool _buttonsSwapped;
 		private int _confirmationStage;
-
 		private Action? _yesButtonPressedCallback;
-
 		private PanelAnimationSO _presentPanelAnimation = null!;
-
 		private PanelAnimationSO _dismissPanelAnimation = null!;
-		
 		private TimeTweeningManager _timeTweeningManager = null!;
 
 		[Inject]
@@ -274,6 +271,8 @@ namespace Nya.UI.ViewControllers.ModalControllers
 				{
 					_buttonsLayoutGameObject.SetActive(true);
 					_sliderLayoutGameObject.SetActive(false);
+					
+					_buttonsSwapped = modalContent.ButtonsSwapped;
 				
 					_noButton.SetButtonText(modalContent.NoButtonText);
 					_yesButton.SetButtonText(modalContent.YesButtonText);
@@ -306,12 +305,26 @@ namespace Nya.UI.ViewControllers.ModalControllers
 		[UIAction("yes-clicked")]
 		private void YesClicked()
 		{
+			if (_buttonsSwapped)
+			{
+				_buttonsSwapped = false;
+				NoClicked();
+				return;
+			}
+			
 			ConfirmationStage += 1;
 		}
 
 		[UIAction("no-clicked")]
 		private void NoClicked()
 		{
+			if (_buttonsSwapped)
+			{
+				_buttonsSwapped = false;
+				YesClicked();
+				return;
+			}
+			
 			HideModal();
 		}
 		
