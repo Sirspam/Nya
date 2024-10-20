@@ -210,7 +210,7 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         }
 
         [UIValue("scaling-choices")] 
-        private List<object> _scalingChoices = new List<object> { "Disabled", 128, 256, 512, 1024 };
+        private List<object> _scalingChoices = new List<object> { 128, 256, 512, 1024, "Disabled" };
 
         [UIValue("scaling-value")]
         private object ScalingValue

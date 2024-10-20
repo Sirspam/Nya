@@ -24,8 +24,10 @@ namespace Nya.Managers
         private readonly PluginConfig _pluginConfig;
         private readonly ImageSourcesManager _imageSourcesManager;
         
+        private byte[] _uncompressedNyaImageBytes = null!;
         private Sprite _nyaImageSprite = null!;
         
+        public ref readonly byte[] UncompressedNyaImageBytes => ref _uncompressedNyaImageBytes;
         public ref readonly Sprite NyaImageSprite => ref _nyaImageSprite;
 
         public event EventHandler? NyaImageChanged;
@@ -154,9 +156,8 @@ namespace Nya.Managers
                             break;
                     }
                 }
-
-                var sprite = await Utilities.LoadSpriteAsync(newImageBytes);
-                SetNyaImageSprite(sprite, spriteName);
+                
+                await SetNyaImageSpriteFromBytes(newImageBytes, spriteName);
             }
             catch (Exception exception)
             {
@@ -164,10 +165,20 @@ namespace Nya.Managers
                 SetErrorSprite();
             }
         }
-
-        private void SetNyaImageSprite(Sprite value, string spriteName)
+        
+        private async Task SetNyaImageSpriteFromBytes(byte[] imageBytes, string spriteName)
         {
-            _nyaImageSprite = value;
+            _uncompressedNyaImageBytes = imageBytes;
+            
+            var compressedBytes = BeatSaberUI.DownscaleImage(imageBytes, _pluginConfig.ImageScaleValue, _pluginConfig.ImageScaleValue);
+            
+            var sprite = await Utilities.LoadSpriteAsync(compressedBytes);
+            SetNyaImageSprite(sprite, spriteName);
+        }
+
+        private void SetNyaImageSprite(Sprite sprite, string spriteName)
+        {
+            _nyaImageSprite = sprite;
             _nyaImageSprite.name = spriteName;
             NyaImageChanged?.Invoke(this, EventArgs.Empty);
         }
