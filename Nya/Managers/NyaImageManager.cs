@@ -10,7 +10,6 @@ using Nya.Configuration;
 using Nya.Entries;
 using Nya.Utils;
 using SiraUtil.Logging;
-using UnityEngine;
 using Zenject;
 using Random = System.Random;
 
@@ -20,10 +19,10 @@ namespace Nya.Managers
     {
         private readonly Random _random;
         private readonly SiraLog _siraLog;
+        private NyaImageInfo _nyaImageInfo;
         private readonly WebUtils _webUtils;
         private readonly PluginConfig _pluginConfig;
         private readonly ImageSourcesManager _imageSourcesManager;
-        private NyaImageInfo _nyaImageInfo = null!;
 
         public NyaImageInfo NyaImageInfo
         {
@@ -42,6 +41,10 @@ namespace Nya.Managers
         {
             _random = new Random();
             _siraLog = siraLog;
+
+            var blankSpriteBytes = Convert.FromBase64String(
+                "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=");
+            _nyaImageInfo = new NyaImageInfo(blankSpriteBytes, "Blank.png");
             _webUtils = webUtils;
             _pluginConfig = pluginConfig;
             _imageSourcesManager = imageSourcesManager;
@@ -77,8 +80,8 @@ namespace Nya.Managers
             
             try
             {
-                byte[]? newImageBytes = null;
-                var spriteName = "Nya Sprite";
+                byte[]? newImageBytes;
+                string spritePath;
                 
                 if (imageSource.IsLocal)
                 {
@@ -95,7 +98,7 @@ namespace Nya.Managers
                         var path = Path.Combine(sources[_pluginConfig.SelectedAPI].Url, folder);
                         var files = Directory.GetFiles(path).Where(file =>
                             file.EndsWith(".png") || file.EndsWith(".jpeg") || file.EndsWith(".jpg") ||
-                            file.EndsWith(".gif") || file.EndsWith(".apng")).ToArray();
+                            file.EndsWith(".gif")).ToArray();
                         if (files.Length == 0)
                         {
                             _siraLog.Error($"No suitable files in folder: {path}");
@@ -104,10 +107,12 @@ namespace Nya.Managers
                         }
 
                         newImageFilePath = files[_random.Next(files.Length)];
+                        _siraLog.Info(NyaImageInfo.ImageUrl);
+                        _siraLog.Info(newImageFilePath);
                     } while (NyaImageInfo.ImageUrl == newImageFilePath);
 
                     newImageBytes = File.ReadAllBytes(newImageFilePath);
-                    spriteName = Path.GetFileNameWithoutExtension(newImageFilePath);
+                    spritePath = newImageFilePath;
                 }
                 else
                 {
@@ -131,7 +136,7 @@ namespace Nya.Managers
                                 }
                                 
                                 newImageBytes = await urlResponse.ReadAsByteArrayAsync();
-                                spriteName = Path.GetFileName(imageUrl.ToString());
+                                spritePath = imageUrl.ToString();
                             }
                             else
                             {
@@ -157,12 +162,12 @@ namespace Nya.Managers
 
                             newImageBytes = await imageResponse.ReadAsByteArrayAsync();
                             var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmssfff");
-                            spriteName = $"image_{timestamp}.png";
+                            spritePath = $"image_{timestamp}.png";
                             break;
                     }
                 }
                 
-                await SetNyaImageInfo(newImageBytes, spriteName);
+                await SetNyaImageInfo(newImageBytes, spritePath);
             }
             catch (Exception exception)
             {
@@ -174,11 +179,14 @@ namespace Nya.Managers
         private async Task SetNyaImageInfo(byte[] imageBytes, string imageUrl)
         {
             // TODO: Confirm if compressed sprites are needed anymore
-            var compressedBytes = await Task.Run(() => BeatSaberUI.DownscaleImage(imageBytes, _pluginConfig.ImageScaleValue, _pluginConfig.ImageScaleValue));
+            if (_pluginConfig.ImageScaleValue != 0)
+            {
+                imageBytes = await Task.Run(() => BeatSaberUI.DownscaleImage(imageBytes, _pluginConfig.ImageScaleValue, _pluginConfig.ImageScaleValue));   
+            }
             
             // var sprite = await Utilities.LoadSpriteAsync(compressedBytes);
 
-            NyaImageInfo = new NyaImageInfo(compressedBytes, imageUrl);
+            NyaImageInfo = new NyaImageInfo(imageBytes, imageUrl);
         }
         
         private async void SetErrorSprite()

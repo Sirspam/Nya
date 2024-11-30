@@ -98,7 +98,7 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
 
         #endregion actions
 
-        private void NyaImageManagerOnNyaImageChanged(object sender, EventArgs e)
+        private async void NyaImageManagerOnNyaImageChanged(object sender, EventArgs e)
         {
             _siraLog.Info($"Received new Nya image");
             
@@ -118,7 +118,7 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
                 };
             }
             
-            _imageUtils.SetImageViewSprite(NyaImage, _nyaImageManager.NyaImageInfo, callback);
+            await _imageUtils.SetImageViewSprite(NyaImage, _nyaImageManager.NyaImageInfo, callback);
         }
         
         private void NyaImageManagerOnErrorSpriteLoaded(object sender, EventArgs e)
