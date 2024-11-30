@@ -4,14 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using IPA.Loader;
 using IPA.Utilities;
 using Newtonsoft.Json;
 using Nya.Configuration;
 using Nya.Entries;
 using SiraUtil.Logging;
 using SiraUtil.Web;
-using SiraUtil.Zenject;
 
 namespace Nya.Managers
 {
@@ -20,20 +18,18 @@ namespace Nya.Managers
         private readonly SiraLog _siraLog;
         private readonly IHttpService _httpService;
         private readonly PluginConfig _pluginConfig;
-        private readonly PluginMetadata _pluginMetadata;
 
-        public ImageSourcesManager(SiraLog siraLog, IHttpService httpService, PluginConfig pluginConfig, UBinder<Plugin, PluginMetadata> pluginMetadata)
+        public ImageSourcesManager(SiraLog siraLog, IHttpService httpService, PluginConfig pluginConfig)
         {
             _siraLog = siraLog;
             _httpService = httpService;
             _pluginConfig = pluginConfig;
-            _pluginMetadata = pluginMetadata.Value;
         }
         
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
         
         private Dictionary<string, ImageSourceEntry>? _sources;
-        private bool _sourceFetchSuccesful;
+        private bool _sourceFetchSuccessful;
 
         private async Task<Dictionary<string, ImageSourceEntry>> PopulateSources()
         {
@@ -76,14 +72,14 @@ namespace Nya.Managers
         private async Task<Dictionary<string, ImageSourceEntry>> FetchRemoteSources()
         {
             Dictionary<string, ImageSourceEntry> sources = new Dictionary<string, ImageSourceEntry>();
-            _sourceFetchSuccesful = false;
+            _sourceFetchSuccessful = false;
             
             try
             {
                 if (new Uri(Plugin.ImageSourcesJsonLink).IsFile)
                 {
                     var jsonString = File.ReadAllText(Plugin.ImageSourcesJsonLink);
-                    sources = JsonConvert.DeserializeObject<Dictionary<string, ImageSourceEntry>>(jsonString);
+                    sources = JsonConvert.DeserializeObject<Dictionary<string, ImageSourceEntry>>(jsonString)!;
                 }
                 else
                 {
@@ -97,17 +93,17 @@ namespace Nya.Managers
                     else
                     {
                         var jsonString = await response.ReadAsStringAsync();
-                        sources = JsonConvert.DeserializeObject<Dictionary<string, ImageSourceEntry>>(jsonString);
+                        sources = JsonConvert.DeserializeObject<Dictionary<string, ImageSourceEntry>>(jsonString)!;
                     }   
                 }
             }
             catch (Exception e)
             {
                 _siraLog.Error("Failed to fetch image sources from " + Plugin.ImageSourcesJsonLink);
-                _siraLog.Error(e);
+                _siraLog.Error(e.Message);
             }
             
-            _sourceFetchSuccesful = true;
+            _sourceFetchSuccessful = true;
             return sources;
         }
         
@@ -118,7 +114,13 @@ namespace Nya.Managers
                 var jsonString = File.ReadAllText(Plugin.CustomImageSourcesPath);
                 
                 var commentedImageSourcesEntries = JsonConvert.DeserializeObject<CommentedImageSourcesEntries>(jsonString);
-                return commentedImageSourcesEntries.Sources;
+                if (commentedImageSourcesEntries != null)
+                {
+                    return commentedImageSourcesEntries.Sources;
+                }
+
+                _siraLog.Error("Failed to read CustomImageSources.json: Deserialization failed");
+                return new Dictionary<string, ImageSourceEntry>();
             }
             catch (Exception e)
             {
@@ -157,7 +159,7 @@ namespace Nya.Managers
 
         private void FixConfigImageSourcesIssues(Dictionary<string, ImageSourceEntry> sources)
         {
-            if (!_sourceFetchSuccesful)
+            if (!_sourceFetchSuccessful)
             {
                 // Don't want to nuke the config just because the user booted the game without internet or something
                 return;

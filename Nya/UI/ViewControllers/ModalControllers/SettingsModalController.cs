@@ -212,7 +212,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
         protected void DownloadNya()
         {
             _uiUtils.ButtonUnderlineClick(NyaDownloadButton.gameObject);
-            Task.Run(() => _imageUtils.SaveImageBytesToDisk(_nyaImageManager.UncompressedNyaImageBytes, _nyaImageManager.NyaImageSprite.name));
+            Task.Run(() => _imageUtils.SaveImageBytesToDisk(_nyaImageManager.NyaImageInfo.ImageBytes, _nyaImageManager.NyaImageInfo.GetFileName()));
         }
 
         [UIAction("nya-open-clicked")]

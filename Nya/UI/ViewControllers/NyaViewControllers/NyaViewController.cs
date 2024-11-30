@@ -68,20 +68,15 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
         #region actions
 
         [UIAction("#post-parse")]
-        protected void NyaPostParse()
+        protected async Task NyaPostParse()
         {
             var className = ToString();
             var imageName = className.Substring(className.LastIndexOf(".", StringComparison.Ordinal) + 1).Replace("Controller", "Image");
             NyaImage.name = imageName;
             NyaImage.material = _imageUtils.UIRoundEdgeMaterial;
             SetNyaButtonsInteractability(false);
-            _imageUtils.SetImageViewSprite(NyaImage, _nyaImageManager.NyaImageSprite, () =>
+            await _imageUtils.SetImageViewSprite(NyaImage, _nyaImageManager.NyaImageInfo, () =>
             {
-                if (_nyaImageManager.NyaImageSprite.name == nameof(Utilities.ImageResources.BlankSprite))
-                {
-                    return;
-                }
-                
                 UnityMainThreadTaskScheduler.Factory.StartNew(NyaButtonCooldown);
             });
         }
@@ -123,7 +118,7 @@ namespace Nya.UI.ViewControllers.NyaViewControllers
                 };
             }
             
-            _imageUtils.SetImageViewSprite(NyaImage, _nyaImageManager.NyaImageSprite, callback);
+            _imageUtils.SetImageViewSprite(NyaImage, _nyaImageManager.NyaImageInfo, callback);
         }
         
         private void NyaImageManagerOnErrorSpriteLoaded(object sender, EventArgs e)

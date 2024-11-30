@@ -1,12 +1,16 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using BeatSaberMarkupLanguage;
+using BeatSaberMarkupLanguage.Animations;
 using HMUI;
 using IPA.Utilities;
 using Nya.Configuration;
+using Nya.Entries;
 using SiraUtil.Logging;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Nya.Utils
 {
@@ -41,22 +45,37 @@ namespace Nya.Utils
             File.WriteAllBytes(Path.Combine(UnityGame.UserDataPath, "Nya", _pluginConfig.NsfwImages ? "nsfw" : "sfw", fileName), bytes);
         }
         
-        public void SetImageViewSprite(ImageView imageView, Sprite sprite, Action? callback)
+        public async Task SetImageViewSprite(ImageView imageView, NyaImageInfo imageInfo, Action? callback)
         {
-            _siraLog.Info($"{imageView.name} attempting to load sprite {sprite.name}");
+            _siraLog.Info($"{imageView.name} attempting to load sprite {imageInfo.GetFileName()}");
             Action loggingCallback = () =>
             {
                 _siraLog.Info("Sprite loaded!");
                 callback?.Invoke();
             };
 
-            imageView.sprite = sprite;
-            loggingCallback?.Invoke();
-        }
+            // GIF logic taken from BSML's SetImageAsync
+            // https://github.com/monkeymanboy/BeatSaberMarkupLanguage/blob/f51845a050f2133a33597202ade73aa102858bd2/BeatSaberMarkupLanguage/BeatSaberUI.cs#L478
+            if (imageView.TryGetComponent(out AnimationStateUpdater oldStateUpdater))
+            {
+                Object.DestroyImmediate(oldStateUpdater);
+            }
 
-        public byte[] DownscaleImageBytes(byte[] imageBytes)
-        {
-            return BeatSaberUI.DownscaleImage(imageBytes, _pluginConfig.ImageScaleValue, _pluginConfig.ImageScaleValue);
+            if (imageInfo.IsAnimated())
+            {
+                var stateUpdater = imageView.gameObject.AddComponent<AnimationStateUpdater>();
+                stateUpdater.Image = imageView;
+
+                var animationData = await AnimationLoader.ProcessGifAsync(imageInfo.ImageBytes);
+                var controllerData = AnimationController.Instance.Register(imageInfo.ImageUrl, animationData);
+                stateUpdater.ControllerData = controllerData;
+            }
+            else
+            {
+                imageView.sprite = await Utilities.LoadSpriteAsync(imageInfo.ImageBytes);                
+            }
+
+            loggingCallback?.Invoke();
         }
     }
 }

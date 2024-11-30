@@ -23,12 +23,17 @@ namespace Nya.Managers
         private readonly WebUtils _webUtils;
         private readonly PluginConfig _pluginConfig;
         private readonly ImageSourcesManager _imageSourcesManager;
-        
-        private byte[] _uncompressedNyaImageBytes = null!;
-        private Sprite _nyaImageSprite = null!;
-        
-        public ref readonly byte[] UncompressedNyaImageBytes => ref _uncompressedNyaImageBytes;
-        public ref readonly Sprite NyaImageSprite => ref _nyaImageSprite;
+        private NyaImageInfo _nyaImageInfo = null!;
+
+        public NyaImageInfo NyaImageInfo
+        {
+            get => _nyaImageInfo;
+            private set
+            {
+                _nyaImageInfo = value;
+                NyaImageChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
 
         public event EventHandler? NyaImageChanged;
         public event EventHandler? ErrorSpriteLoaded;
@@ -99,7 +104,7 @@ namespace Nya.Managers
                         }
 
                         newImageFilePath = files[_random.Next(files.Length)];
-                    } while (NyaImageSprite.name == newImageFilePath);
+                    } while (NyaImageInfo.ImageUrl == newImageFilePath);
 
                     newImageBytes = File.ReadAllBytes(newImageFilePath);
                     spriteName = Path.GetFileNameWithoutExtension(newImageFilePath);
@@ -126,7 +131,7 @@ namespace Nya.Managers
                                 }
                                 
                                 newImageBytes = await urlResponse.ReadAsByteArrayAsync();
-                                spriteName = Path.GetFileNameWithoutExtension(imageUrl.ToString());
+                                spriteName = Path.GetFileName(imageUrl.ToString());
                             }
                             else
                             {
@@ -152,12 +157,12 @@ namespace Nya.Managers
 
                             newImageBytes = await imageResponse.ReadAsByteArrayAsync();
                             var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmssfff");
-                            spriteName = $"image_{timestamp}";
+                            spriteName = $"image_{timestamp}.png";
                             break;
                     }
                 }
                 
-                await SetNyaImageSpriteFromBytes(newImageBytes, spriteName);
+                await SetNyaImageInfo(newImageBytes, spriteName);
             }
             catch (Exception exception)
             {
@@ -166,27 +171,27 @@ namespace Nya.Managers
             }
         }
         
-        private async Task SetNyaImageSpriteFromBytes(byte[] imageBytes, string spriteName)
+        private async Task SetNyaImageInfo(byte[] imageBytes, string imageUrl)
         {
-            _uncompressedNyaImageBytes = imageBytes;
+            // TODO: Confirm if compressed sprites are needed anymore
+            var compressedBytes = await Task.Run(() => BeatSaberUI.DownscaleImage(imageBytes, _pluginConfig.ImageScaleValue, _pluginConfig.ImageScaleValue));
             
-            var compressedBytes = BeatSaberUI.DownscaleImage(imageBytes, _pluginConfig.ImageScaleValue, _pluginConfig.ImageScaleValue);
-            
-            var sprite = await Utilities.LoadSpriteAsync(compressedBytes);
-            SetNyaImageSprite(sprite, spriteName);
-        }
+            // var sprite = await Utilities.LoadSpriteAsync(compressedBytes);
 
-        private void SetNyaImageSprite(Sprite sprite, string spriteName)
-        {
-            _nyaImageSprite = sprite;
-            _nyaImageSprite.name = spriteName;
-            NyaImageChanged?.Invoke(this, EventArgs.Empty);
+            NyaImageInfo = new NyaImageInfo(compressedBytes, imageUrl);
         }
         
         private async void SetErrorSprite()
         {
-            var sprite = await Utilities.LoadSpriteFromAssemblyAsync(Assembly.GetExecutingAssembly(), "Nya.Resources.Chocola_Dead.png");
-            SetNyaImageSprite(sprite, "Error Sprite");
+            var assembly = Assembly.GetExecutingAssembly();
+            using (var stream = assembly.GetManifestResourceStream("Nya.Resources.Chocola_Dead.png"))
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await stream!.CopyToAsync(memoryStream);
+                    await SetNyaImageInfo(memoryStream.ToArray(), "Chocola_Dead.png");
+                }
+            }
             
             _siraLog.Warn("Error sprite set");
             ErrorSpriteLoaded?.Invoke(this, EventArgs.Empty);
@@ -194,9 +199,6 @@ namespace Nya.Managers
 
         public async void Initialize()
         {
-            _nyaImageSprite = Utilities.ImageResources.BlankSprite;
-            _nyaImageSprite.name = nameof(Utilities.ImageResources.BlankSprite);
-            
             await RequestNewNyaImage();
         }
     }
