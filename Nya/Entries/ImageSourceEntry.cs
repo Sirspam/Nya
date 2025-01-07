@@ -60,7 +60,7 @@ namespace Nya.Entries
 
         /// <summary>
         /// List of NSFW endpoints which the API supports
-        /// List can be empty be is required
+        /// List can be empty but is required
         /// </summary>
         [JsonProperty("NsfwEndpoints")]
         [JsonRequired]

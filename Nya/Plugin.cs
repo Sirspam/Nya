@@ -38,8 +38,7 @@ namespace Nya
                         new
                         {
                             _comment =
-                                // TODO: Update link for when documentation is done
-                                "Here you can add your own APIs to Nya! More info: https://github.com/Sirspam/Nya/blob/dev/README.md",
+                                "Here you can add your own APIs to Nya! More info: https://github.com/Sirspam/Nya/wiki/Adding-Custom-Image-Sources",
                             Sources = new {}
                         }, Formatting.Indented)); 
             }
