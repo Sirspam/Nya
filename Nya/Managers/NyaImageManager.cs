@@ -167,7 +167,7 @@ namespace Nya.Managers
                     }
                 }
                 
-                await SetNyaImageInfo(newImageBytes, spritePath);
+                SetNyaImageInfo(newImageBytes, spritePath);
             }
             catch (Exception exception)
             {
@@ -176,16 +176,8 @@ namespace Nya.Managers
             }
         }
         
-        private async Task SetNyaImageInfo(byte[] imageBytes, string imageUrl)
+        private void SetNyaImageInfo(byte[] imageBytes, string imageUrl)
         {
-            // TODO: Confirm if compressed sprites are needed anymore
-            if (_pluginConfig.ImageScaleValue != 0)
-            {
-                imageBytes = await Task.Run(() => BeatSaberUI.DownscaleImage(imageBytes, _pluginConfig.ImageScaleValue, _pluginConfig.ImageScaleValue));   
-            }
-            
-            // var sprite = await Utilities.LoadSpriteAsync(compressedBytes);
-
             NyaImageInfo = new NyaImageInfo(imageBytes, imageUrl);
         }
         
@@ -197,7 +189,7 @@ namespace Nya.Managers
                 using (var memoryStream = new MemoryStream())
                 {
                     await stream!.CopyToAsync(memoryStream);
-                    await SetNyaImageInfo(memoryStream.ToArray(), "Chocola_Dead.png");
+                    SetNyaImageInfo(memoryStream.ToArray(), "Chocola_Dead.png");
                 }
             }
             

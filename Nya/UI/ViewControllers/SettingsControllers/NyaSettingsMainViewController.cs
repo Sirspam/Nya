@@ -36,7 +36,6 @@ namespace Nya.UI.ViewControllers.SettingsControllers
         private Color _backgroundColor;
         private int _autoNyaWait;
         private bool _persistantAutoNya;
-        private int _scaleValue;
         private bool _separatePositions;
         private bool _easterEggs;
         private bool _nsfwFeatures;
@@ -206,33 +205,6 @@ namespace Nya.UI.ViewControllers.SettingsControllers
             {
                 _persistantAutoNya = value;
                 NotifyPropertyChanged();
-            }
-        }
-
-        [UIValue("scaling-choices")] 
-        private List<object> _scalingChoices = new List<object> { 128, 256, 512, 1024, "Disabled" };
-
-        [UIValue("scaling-value")]
-        private object ScalingValue
-        {
-            get
-            {
-                if (_scaleValue == 0)
-                    return "Disabled";
-                return _scaleValue;
-            }
-            set
-            {
-                if (value.ToString() == "Disabled")
-                {
-                    _scaleValue = 0;
-                    NotifyPropertyChanged();
-                    return;
-                }
-                
-                _scaleValue = (int) value;
-                NotifyPropertyChanged();
-
             }
         }
 
@@ -445,7 +417,6 @@ namespace Nya.UI.ViewControllers.SettingsControllers
             BackgroundColor = _pluginConfig.BackgroundColor;
             AutoNyaWait = _pluginConfig.AutoNyaWait;
             PersistantAutoNya = _pluginConfig.PersistantAutoNya;
-            ScalingValue = _pluginConfig.ImageScaleValue;
             SeparatePositions = _pluginConfig.SeparatePositions;
             EasterEggs = _pluginConfig.EasterEggs;
             NsfwFeatures = _pluginConfig.NsfwFeatures;
@@ -467,7 +438,6 @@ namespace Nya.UI.ViewControllers.SettingsControllers
             _pluginConfig.BackgroundColor = BackgroundColor;
             _pluginConfig.AutoNyaWait = AutoNyaWait;
             _pluginConfig.PersistantAutoNya = PersistantAutoNya;
-            _pluginConfig.ImageScaleValue = _scaleValue;
             _pluginConfig.SeparatePositions = SeparatePositions;
             _pluginConfig.EasterEggs = EasterEggs;
             _pluginConfig.NsfwFeatures = NsfwFeatures;

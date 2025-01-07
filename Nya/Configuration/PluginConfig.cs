@@ -37,7 +37,6 @@ namespace Nya.Configuration
         public virtual bool RainbowBackgroundColor { get; set; } = false;
         public virtual bool PersistantAutoNya { get; set; } = false;
         public virtual int AutoNyaWait { get; set; } = 5;
-        public virtual int ImageScaleValue { get; set; } = 512; // 0 means scaling disabled
         public virtual bool EasterEggs { get; set; } = true;
         public virtual string SelectedAPI { get; set; } = String.Empty;
 
