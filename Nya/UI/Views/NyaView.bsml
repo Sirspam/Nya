@@ -6,9 +6,9 @@
     <vertical pad-top="2">
         <img id="nya-image" preserve-aspect="true" pref-width="95" pref-height="74"/>
         <horizontal spacing="10" horizontal-fit="PreferredSize" pref-width="70">
-            <button id="auto-button" text="Auto Nya" font-size="4.5" on-click="nya-auto-clicked" active="true" min-width="20"/>
-            <primary-button id="nya-button" text="Nya" font-size="4.5" on-click="nya-click" active="true" min-width="20"/>
-            <button id="settings-button" text="⚙" font-size="4.5" on-click="settings-button-clicked" min-width="20"/>
+            <button id="auto-button" text="Auto Nya" font-size="4.5" on-click="nya-auto-clicked" active="true" min-height="9" min-width="20"/>
+            <primary-button id="nya-button" text="Nya" font-size="4.5" on-click="nya-click" active="true" min-height="9" min-width="20"/>
+            <button id="settings-button" text="⚙" font-size="4.5" on-click="settings-button-clicked" min-height="9" min-width="20"/>
         </horizontal>
     </vertical>
 </bg>

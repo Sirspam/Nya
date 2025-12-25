@@ -1,11 +1,13 @@
-﻿using System;
-using System.Globalization;
-using System.Reflection;
-using BeatSaberMarkupLanguage;
+﻿using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.Parser;
+using BGLib.Polyglot;
 using HMUI;
+using System;
+using System.Globalization;
+using System.Reflection;
+using TMPro;
 using Tweening;
 using UnityEngine;
 using UnityEngine.UI;
@@ -76,7 +78,7 @@ namespace Nya.UI.ViewControllers.ModalControllers
 		private void Construct(TimeTweeningManager timeTweeningManager)
 		{
 			_timeTweeningManager = timeTweeningManager;
-		}
+        }
 
 		private int ConfirmationStage
 		{
@@ -125,8 +127,11 @@ namespace Nya.UI.ViewControllers.ModalControllers
 		
 		[UIComponent("no-button")]
 		private readonly Button _noButton = null!;
-		
-		[UIComponent("yes-button")]
+
+		private TextMeshProUGUI _noButtonText = null!;
+        private TextMeshProUGUI _yesButtonText = null!;
+
+        [UIComponent("yes-button")]
 		private readonly Button _yesButton = null!;
 		
 		[UIComponent("slider")]
@@ -161,13 +166,30 @@ namespace Nya.UI.ViewControllers.ModalControllers
 		
 		internal void ShowModal(Transform parentTransform, Action? yesButtonPressedCallback)
 		{
-			Parse(parentTransform);
+            Parse(parentTransform);
 			_parserParams.EmitEvent("close-modal");
 			_parserParams.EmitEvent("open-modal");
 			_yesButtonPressedCallback = yesButtonPressedCallback;
 		}
 
-		private void HideModal()
+		internal TextMeshProUGUI? GetTextMeshProUGUI(Button button)
+		{
+            LocalizedTextMeshProUGUI componentInChildren = button.GetComponentInChildren<LocalizedTextMeshProUGUI>(includeInactive: true);
+            if ((UnityEngine.Object)(object)componentInChildren != null)
+            {
+                UnityEngine.Object.Destroy((UnityEngine.Object)(object)componentInChildren);
+            }
+
+            TextMeshProUGUI componentInChildren2 = button.GetComponentInChildren<TextMeshProUGUI>();
+            if (componentInChildren2 != null)
+            {
+				return componentInChildren2;
+            }
+
+			return null;
+        }
+
+        private void HideModal()
 		{
 			_parserParams.EmitEvent("close-modal");
 		}
@@ -273,11 +295,26 @@ namespace Nya.UI.ViewControllers.ModalControllers
 					_sliderLayoutGameObject.SetActive(false);
 					
 					_buttonsSwapped = modalContent.ButtonsSwapped;
-				
-					_noButton.SetButtonText(modalContent.NoButtonText);
-					_yesButton.SetButtonText(modalContent.YesButtonText);
 
-					if (modalContent.ButtonIntractabilityCooldown)
+                    if (_noButtonText == null)
+                    {
+                        _noButtonText = GetTextMeshProUGUI(_noButton);
+                    }
+					if (_yesButtonText == null)
+					{
+                        _yesButtonText = GetTextMeshProUGUI(_yesButton);
+                    }
+
+                    if (_noButtonText != null)
+					{
+                        _noButtonText.SetText(modalContent.NoButtonText);
+                    }
+                    if (_yesButtonText != null)
+                    {
+                        _yesButtonText.SetText(modalContent.YesButtonText);
+                    }
+
+                    if (modalContent.ButtonIntractabilityCooldown)
 					{
 #if !DEBUG
 						IntractabilityCooldown(_noButton);

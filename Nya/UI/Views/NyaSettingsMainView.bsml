@@ -58,7 +58,7 @@
         </tab>
     </vertical>
 
-    <vertical anchor-pos-y="-28">
+    <vertical anchor-pos-y="-28" size-delta-y="-75">
         <text active="~restart-required" text="Applying these settings will require the game to internally restart" hover-hint="You know, that annoying thing where the whole screen goes black for awhile then you have to wait for everything to load again" anchor-pos-x="55" anchor-pos-y="-47" font-size="5" italics="true" color="red" align="Center"/>
     </vertical>
 

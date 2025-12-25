@@ -47,6 +47,11 @@ namespace Nya.Utils
         
         public async Task SetImageViewSprite(ImageView imageView, NyaImageInfo imageInfo, Action? callback)
         {
+            if(imageInfo.ImageBytes == null || imageInfo.ImageBytes.Length == 0)
+            {
+                return;
+            }
+
             _siraLog.Info($"{imageView.name} attempting to load sprite {imageInfo.GetFileName()}");
             Action loggingCallback = () =>
             {
